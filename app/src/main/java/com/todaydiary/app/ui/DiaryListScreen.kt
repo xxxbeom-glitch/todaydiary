@@ -12,14 +12,17 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
@@ -29,6 +32,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import com.todaydiary.app.ui.components.DiaryTopBar
+import com.todaydiary.app.ui.components.MonthPickerBottomSheet
 import com.todaydiary.app.ui.theme.DiaryOnSurface
 import com.todaydiary.app.ui.theme.rememberDiaryTextStyles
 import com.todaydiary.app.ui.models.DiaryEntry
@@ -42,6 +46,8 @@ fun DiaryListScreen(
     onSelectItem: (DiaryEntry) -> Unit = {},
     onPullDownToCompose: () -> Unit = {},
     onSettings: () -> Unit = {},
+    onMonthChange: (LocalDate) -> Unit = {},
+    yearRange: IntRange = (month.year - 1)..(month.year + 1),
 ) {
     val textStyles = rememberDiaryTextStyles()
     val monthTitle = remember(month) { "${month.monthValue}월" }
@@ -82,6 +88,8 @@ fun DiaryListScreen(
         }
     }
 
+    var isMonthSheetOpen by remember { mutableStateOf(false) }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
@@ -101,13 +109,17 @@ fun DiaryListScreen(
                 onBack = onBack,
                 showBack = false,
                 right = {
-                    TextButton(onClick = onSettings) {
-                        Text(
-                            text = "설정",
-                            color = DiaryOnSurface,
-                            style = textStyles.headerDone,
-                        )
-                    }
+                    val clickSource = remember { MutableInteractionSource() }
+                    Text(
+                        text = "설정",
+                        modifier = Modifier.clickable(
+                            interactionSource = clickSource,
+                            indication = null,
+                            onClick = onSettings,
+                        ),
+                        color = DiaryOnSurface,
+                        style = textStyles.headerDone,
+                    )
                 }
             )
 
@@ -118,6 +130,10 @@ fun DiaryListScreen(
                 text = monthTitle,
                 color = MaterialTheme.colorScheme.onSurface,
                 style = textStyles.title,
+                modifier = Modifier.clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                ) { isMonthSheetOpen = true },
             )
             Spacer(modifier = Modifier.height(36.dp))
 
@@ -129,18 +145,33 @@ fun DiaryListScreen(
                 contentPadding = PaddingValues(bottom = 24.dp),
             ) {
                 items(entries) { entry ->
+                    val itemClickSource = remember { MutableInteractionSource() }
                     Text(
                         text = formatListItemDate(entry.date),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { onSelectItem(entry) },
+                            .clickable(
+                                interactionSource = itemClickSource,
+                                indication = null,
+                            ) { onSelectItem(entry) },
                         color = DiaryOnSurface,
-                        style = textStyles.bodyInput,
+                        style = textStyles.listItemDate,
                     )
-                    Spacer(modifier = Modifier.height(25.dp))
+                    Spacer(modifier = Modifier.height(29.dp))
                 }
             }
         }
+    }
+
+    if (isMonthSheetOpen) {
+        MonthPickerBottomSheet(
+            initialMonth = month,
+            yearRange = yearRange,
+            onDismiss = { isMonthSheetOpen = false },
+            onMonthPicked = { y, m ->
+                onMonthChange(LocalDate.of(y, m, 1))
+            },
+        )
     }
 }
 

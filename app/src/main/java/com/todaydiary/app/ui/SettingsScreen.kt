@@ -9,6 +9,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -66,7 +69,7 @@ fun SettingsScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(268.dp),
+                    .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(14.dp),
             ) {
                 items.forEachIndexed { idx, label ->
@@ -76,12 +79,16 @@ fun SettingsScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                     ) {
+                        val clickSource = remember { MutableInteractionSource() }
                         Text(
                             text = label,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(33.dp)
-                                .clickable {
+                                .clickable(
+                                    interactionSource = clickSource,
+                                    indication = null,
+                                ) {
                                     expandedIndex = if (isExpanded) null else idx
                                 },
                             color = DiaryOnSurface,
