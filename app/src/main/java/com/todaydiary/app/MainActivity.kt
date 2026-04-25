@@ -4,14 +4,22 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import com.todaydiary.app.ui.theme.TodayDiaryTheme
+import com.todaydiary.app.ui.DiaryEditorScreen
+import com.todaydiary.app.ui.DiaryListScreen
+import com.todaydiary.app.ui.DiaryViewScreen
+import com.todaydiary.app.ui.SettingsScreen
+import com.todaydiary.app.ui.models.DiaryEntry
+import java.time.LocalDate
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,29 +27,77 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TodayDiaryTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                Scaffold(modifier = Modifier.fillMaxSize()) {
+                    var screen by remember { mutableStateOf("editor") }
+                    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+                    var selectedBody by remember { mutableStateOf("") }
+                    var currentMonth by remember { mutableStateOf(LocalDate.now().withDayOfMonth(1)) }
+                    val entries = remember { mutableStateListOf<DiaryEntry>() }
+
+                    BackHandler {
+                        when (screen) {
+                            "view" -> screen = "list"
+                            "editor" -> screen = "list"
+                            "settings" -> screen = "list"
+                            "list" -> finish()
+                            else -> finish()
+                        }
+                    }
+
+                    when (screen) {
+                        "list" -> DiaryListScreen(
+                            onBack = { /* no-op */ },
+                            month = currentMonth,
+                            entries = entries
+                                .asSequence()
+                                .filter { it.date.year == currentMonth.year && it.date.month == currentMonth.month }
+                                .sortedByDescending { it.date }
+                                .toList(),
+                            onSelectItem = { entry ->
+                                selectedDate = entry.date
+                                selectedBody = entry.body
+                                screen = "view"
+                            },
+                            onPullDownToCompose = {
+                                val now = LocalDate.now()
+                                selectedDate = now
+                                selectedBody = ""
+                                currentMonth = now.withDayOfMonth(1)
+                                screen = "editor"
+                            },
+                            onSettings = {
+                                screen = "settings"
+                            },
+                        )
+                        "settings" -> SettingsScreen(
+                            onBack = { screen = "list" }
+                        )
+                        "view" -> DiaryViewScreen(
+                            date = selectedDate,
+                            body = selectedBody,
+                            onBack = { screen = "list" },
+                            onEdit = { screen = "editor" },
+                        )
+                        else -> DiaryEditorScreen(
+                            date = selectedDate,
+                            body = selectedBody,
+                            onBodyChange = { selectedBody = it },
+                            onBack = {
+                                currentMonth = selectedDate.withDayOfMonth(1)
+                                screen = "list"
+                            },
+                            onDone = {
+                                // Save: upsert by date, then go to current month's list
+                                val idx = entries.indexOfFirst { it.date == selectedDate }
+                                if (idx >= 0) entries[idx] = DiaryEntry(date = selectedDate, body = selectedBody)
+                                else entries.add(DiaryEntry(date = selectedDate, body = selectedBody))
+                                currentMonth = selectedDate.withDayOfMonth(1)
+                                screen = "list"
+                            },
+                        )
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    TodayDiaryTheme {
-        Greeting("Android")
     }
 }

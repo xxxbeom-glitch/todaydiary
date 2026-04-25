@@ -2,10 +2,14 @@ package com.todaydiary.app.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+// From Figma node 22:42 ("01_오늘의 일기_edit")
+val DiaryBackground = Color(0xFFFFFCF5) // rgb(255, 252, 245)
+val DiarySurface = DiaryBackground
+val DiaryOnSurface = Color(0xFF303030) // rgb(48, 48, 48)
+val DiaryPlaceholder = Color(0xFFCAC5B9) // rgb(202, 197, 185)
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+val DiaryDivider = Color(0x1A303030)
+
+val DiaryAccentRed = Color(0xFFEA5050)
+
+val DiaryBodyText = Color(0xFF575757)
