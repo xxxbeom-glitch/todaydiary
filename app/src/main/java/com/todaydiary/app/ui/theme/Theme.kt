@@ -12,34 +12,31 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalContext
 
-private val DiaryLightColorScheme = lightColorScheme(
-    primary = DiaryOnSurface,
-    onPrimary = DiarySurface,
-    background = DiaryBackground,
-    onBackground = DiaryOnSurface,
-    surface = DiarySurface,
-    onSurface = DiaryOnSurface,
-    surfaceVariant = DiarySurface,
-    onSurfaceVariant = DiaryOnSurface,
-    outline = DiaryDivider,
+private val AppLightColorScheme = lightColorScheme(
+    background = Background,
+    onBackground = TextBody,
+    surface = PopupBackground,
+    onSurface = TextBody,
+    primary = TextBody,
+    onPrimary = Background,
+    secondary = TextSecondary,
+    outline = BorderUnderline
 )
 
-private val DiaryDarkColorScheme = darkColorScheme(
-    primary = DiaryBackground,
-    onPrimary = DiaryOnSurface,
-    background = DiaryBackground,
-    onBackground = DiaryOnSurface,
-    surface = DiarySurface,
-    onSurface = DiaryOnSurface,
-    surfaceVariant = DiarySurface,
-    onSurfaceVariant = DiaryOnSurface,
-    outline = DiaryDivider,
+private val AppDarkColorScheme = darkColorScheme(
+    background = Background,
+    onBackground = TextBody,
+    surface = PopupBackground,
+    onSurface = TextBody,
+    primary = TextBody,
+    onPrimary = Background,
+    secondary = TextSecondary,
+    outline = BorderUnderline
 )
 
 @Composable
 fun TodayDiaryTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
@@ -48,15 +45,14 @@ fun TodayDiaryTheme(
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-
-        darkTheme -> DiaryDarkColorScheme
-        else -> DiaryLightColorScheme
+        darkTheme -> AppDarkColorScheme
+        else -> AppLightColorScheme
     }
 
     CompositionLocalProvider(LocalIndication provides NoIndication) {
         MaterialTheme(
             colorScheme = colorScheme,
-            typography = TodayDiaryTypography(),
+            typography = AppTypography,
             content = content
         )
     }
