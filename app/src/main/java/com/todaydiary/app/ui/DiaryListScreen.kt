@@ -113,7 +113,12 @@ fun DiaryListScreen(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
-                items(entries) { entry ->
+                items(
+                    items = entries,
+                    key = { entry ->
+                        if (entry.id.isNotBlank()) entry.id else "${entry.date}#${entry.body.hashCode()}"
+                    },
+                ) { entry ->
                     DiaryListItem(
                         title = formatListItemDate(entry.date),
                         preview = entry.body,

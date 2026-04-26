@@ -162,6 +162,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "200339538980-4u5d7bu6e2ia1qa1r6nshcg80t6unsnl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.todaydiary.app",
+            "certificate_hash": "cc673d211b08357aa62ceaf225251f90dc2f7cb2"
+          }
+        },
+        {
           "client_id": "200339538980-dcns3vafkransdp86o3sd74n1ontbb1j.apps.googleusercontent.com",
           "client_type": 3
         }
