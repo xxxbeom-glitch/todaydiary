@@ -7,8 +7,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.todaydiary.app.ui.responsiveSp
 import java.time.LocalDate
 
 @Composable
@@ -18,6 +18,16 @@ fun MonthPickerDialog(
     onDismiss: () -> Unit,
     onMonthPicked: (year: Int, month: Int) -> Unit,
 ) {
+    val cornerR = popupDp(16f)
+    val pad = popupDp(24f)
+    val yearW = popupDp(80f)
+    val monthW = popupDp(50f)
+    val wheelH = popupDp(128f)
+    val spacerW = popupDp(59f)
+    val wheelTextStyle = MaterialTheme.typography.bodyLarge.copy(
+        fontSize = popupLabelSp(15).responsiveSp(),
+    )
+
     val years = remember(yearRange) { yearRange.toList() }
     val months = remember { (1..12).toList() }
 
@@ -33,9 +43,9 @@ fun MonthPickerDialog(
             modifier = Modifier
                 .background(
                     color = MaterialTheme.colorScheme.surface,
-                    shape = RoundedCornerShape(16.dp)
+                    shape = RoundedCornerShape(cornerR)
                 )
-                .padding(24.dp)
+                .padding(pad)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -47,22 +57,22 @@ fun MonthPickerDialog(
                     selectedIndex = selectedYearIndex,
                     onSelectedIndexChange = { selectedYearIndex = it },
                     modifier = Modifier
-                        .width(80.dp)
-                        .height(128.dp),
-                    textStyle = MaterialTheme.typography.bodyLarge,
+                        .width(yearW)
+                        .height(wheelH),
+                    textStyle = wheelTextStyle,
                     label = { "${it}년" },
                 )
 
-                Spacer(modifier = Modifier.width(59.dp))
+                Spacer(modifier = Modifier.width(spacerW))
 
                 WheelPicker(
                     items = months,
                     selectedIndex = selectedMonthIndex,
                     onSelectedIndexChange = { selectedMonthIndex = it },
                     modifier = Modifier
-                        .width(50.dp)
-                        .height(128.dp),
-                    textStyle = MaterialTheme.typography.bodyLarge,
+                        .width(monthW)
+                        .height(wheelH),
+                    textStyle = wheelTextStyle,
                     label = { "${it}월" },
                 )
             }

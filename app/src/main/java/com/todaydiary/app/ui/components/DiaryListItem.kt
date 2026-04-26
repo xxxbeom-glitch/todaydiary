@@ -1,6 +1,5 @@
 package com.todaydiary.app.ui.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -36,6 +34,8 @@ fun DiaryListItem(
     textBlockVerticalPadding: Dp = 8.dp,
     gapBetweenTextLines: Dp = 4.dp,
     gapBetweenTextAndMore: Dp = 10.dp,
+    // 1: 한 줄 + 말줄임. 일기는 DiaryListScreen에서 본문 줄바꿈을 공백으로 눕힌 뒤 전달
+    previewMaxLines: Int = 1,
     previewWidth: Dp = 220.dp,
     onClick: (() -> Unit)? = null,
     // trailing more
@@ -43,6 +43,7 @@ fun DiaryListItem(
     moreIconResId: Int = R.drawable.ico_more,
     moreContentDescription: String = "More",
     onClickMore: () -> Unit = {},
+    showPreview: Boolean = true,
 ) {
     Row(
         modifier = modifier
@@ -58,21 +59,28 @@ fun DiaryListItem(
             modifier = Modifier
                 .weight(1f)
                 .padding(vertical = textBlockVerticalPadding),
-            verticalArrangement = Arrangement.spacedBy(gapBetweenTextLines),
+            verticalArrangement = if (showPreview) {
+                Arrangement.spacedBy(gapBetweenTextLines)
+            } else {
+                Arrangement.Top
+            },
         ) {
             Text(
                 text = title,
                 style = titleStyle,
                 color = titleColor,
             )
-            Text(
-                text = preview,
-                style = previewStyle,
-                color = previewColor,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.width(previewWidth),
-            )
+            if (showPreview) {
+                Text(
+                    text = preview,
+                    style = previewStyle,
+                    color = previewColor,
+                    maxLines = previewMaxLines,
+                    overflow = TextOverflow.Ellipsis,
+                    softWrap = true,
+                    modifier = Modifier.width(previewWidth),
+                )
+            }
         }
 
         if (showMore) {
@@ -80,8 +88,8 @@ fun DiaryListItem(
                 onClick = onClickMore,
                 modifier = Modifier.size(28.dp),
             ) {
-                Image(
-                    painter = painterResource(id = moreIconResId),
+                ThemedPngIcon(
+                    resId = moreIconResId,
                     contentDescription = moreContentDescription,
                     modifier = Modifier.size(28.dp),
                 )

@@ -1,6 +1,5 @@
 package com.todaydiary.app.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,20 +7,21 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.todaydiary.app.R
 import com.todaydiary.app.ui.components.DiaryListItem
 import com.todaydiary.app.ui.components.DiaryTopBar
+import com.todaydiary.app.ui.components.HeaderPngIconButton
+import com.todaydiary.app.ui.components.FontSelectDialog
 import com.todaydiary.app.ui.components.OptionSelectDialog
+import com.todaydiary.app.ui.components.ThemedPngIcon
 
 @Composable
 fun SettingsScreen(
@@ -30,6 +30,10 @@ fun SettingsScreen(
     linkedEmail: String?,
     onClickLogin: () -> Unit = {},
     onClickLogout: () -> Unit = {},
+    screenThemeIndex: Int = 0,
+    onScreenThemeIndexChange: (Int) -> Unit = {},
+    fontIndex: Int = 0,
+    onFontIndexChange: (Int) -> Unit = {},
 ) {
     val textBody = MaterialTheme.colorScheme.onBackground
     val textSecondary = MaterialTheme.colorScheme.secondary
@@ -41,10 +45,16 @@ fun SettingsScreen(
     val titleStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 15.responsiveSp())
     val subtitleStyle = MaterialTheme.typography.bodySmall.copy(fontSize = 12.responsiveSp())
 
-    val screenOptions = remember { listOf("Light Mode", "Dark Mode") }
-    val fontOptions = remember { listOf("폰트1", "폰트2", "폰트3") }
-    var selectedScreenIndex by remember { mutableIntStateOf(0) }
-    var selectedFontIndex by remember { mutableIntStateOf(0) }
+    val screenOptions = remember { listOf("라이트 모드", "다크 모드") }
+    val fontOptions = remember {
+        listOf(
+            "SUIT체",
+            "바른바탕체",
+            "카페24 고운밤체",
+            "교보 이유빈체",
+            "교보 박도연체",
+        )
+    }
     var showScreenDialog by remember { mutableStateOf(false) }
     var showFontDialog by remember { mutableStateOf(false) }
 
@@ -55,14 +65,11 @@ fun SettingsScreen(
         topBar = {
             DiaryTopBar(
                 left = {
-                    IconButton(onClick = onBack, modifier = Modifier.size(28.dp)) {
-                        // PNG 원본 그대로 (tint/크기 조절 없음)
-                        Image(
-                            painter = painterResource(id = R.drawable.ico_back),
-                            contentDescription = "Back",
-                            modifier = Modifier.size(28.dp),
-                        )
-                    }
+                    HeaderPngIconButton(
+                        onClick = onBack,
+                        resId = R.drawable.ico_back,
+                        contentDescription = "Back",
+                    )
                 },
                 center = {
                     Text(
@@ -94,6 +101,7 @@ fun SettingsScreen(
                 previewStyle = subtitleStyle,
                 titleColor = textBody,
                 previewColor = textSecondary,
+                previewMaxLines = 1,
                 verticalPadding = 8.dp,
                 textBlockVerticalPadding = 8.dp,
                 previewWidth = 170.dp,
@@ -115,11 +123,12 @@ fun SettingsScreen(
             // 2) 화면 설정 (more 없음)
             DiaryListItem(
                 title = "화면 설정",
-                preview = screenOptions[selectedScreenIndex],
+                preview = screenOptions[screenThemeIndex.coerceIn(0, screenOptions.lastIndex)],
                 titleStyle = titleStyle,
                 previewStyle = subtitleStyle,
                 titleColor = textBody,
                 previewColor = textSecondary,
+                previewMaxLines = 1,
                 verticalPadding = 8.dp,
                 textBlockVerticalPadding = 8.dp,
                 previewWidth = 170.dp,
@@ -130,30 +139,17 @@ fun SettingsScreen(
             // 3) 폰트 설정 (more 없음)
             DiaryListItem(
                 title = "폰트 설정",
-                preview = fontOptions[selectedFontIndex],
+                preview = fontOptions[fontIndex.coerceIn(0, fontOptions.lastIndex)],
                 titleStyle = titleStyle,
                 previewStyle = subtitleStyle,
                 titleColor = textBody,
                 previewColor = textSecondary,
+                previewMaxLines = 1,
                 verticalPadding = 8.dp,
                 textBlockVerticalPadding = 8.dp,
                 previewWidth = 170.dp,
                 showMore = false,
                 onClick = { showFontDialog = true },
-            )
-
-            // 4) 삭제된 일기 (more 없음)
-            DiaryListItem(
-                title = "삭제된 일기",
-                preview = "총 4건",
-                titleStyle = titleStyle,
-                previewStyle = subtitleStyle,
-                titleColor = textBody,
-                previewColor = textSecondary,
-                verticalPadding = 8.dp,
-                textBlockVerticalPadding = 8.dp,
-                previewWidth = 170.dp,
-                showMore = false,
             )
 
             Spacer(modifier = Modifier.size(0.dp))
@@ -162,18 +158,20 @@ fun SettingsScreen(
         if (showScreenDialog) {
             OptionSelectDialog(
                 options = screenOptions,
-                selectedIndex = selectedScreenIndex,
+                selectedIndex = screenThemeIndex.coerceIn(0, screenOptions.lastIndex),
                 onDismiss = { showScreenDialog = false },
-                onSelect = { selectedScreenIndex = it },
+                onSelect = { index ->
+                    onScreenThemeIndexChange(index)
+                },
             )
         }
 
         if (showFontDialog) {
-            OptionSelectDialog(
+            FontSelectDialog(
                 options = fontOptions,
-                selectedIndex = selectedFontIndex,
+                selectedIndex = fontIndex.coerceIn(0, fontOptions.lastIndex),
                 onDismiss = { showFontDialog = false },
-                onSelect = { selectedFontIndex = it },
+                onSelect = { onFontIndexChange(it) },
             )
         }
 

@@ -10,6 +10,8 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 
 private val AppLightColorScheme = lightColorScheme(
@@ -24,19 +26,23 @@ private val AppLightColorScheme = lightColorScheme(
 )
 
 private val AppDarkColorScheme = darkColorScheme(
-    background = Background,
-    onBackground = TextBody,
-    surface = PopupBackground,
-    onSurface = TextBody,
-    primary = TextBody,
-    onPrimary = Background,
-    secondary = TextSecondary,
-    outline = BorderUnderline
+    background = DarkBackground,
+    onBackground = DarkTextBody,
+    surface = DarkSurface,
+    onSurface = DarkTextBody,
+    primary = DarkTextBody,
+    onPrimary = DarkBackground,
+    secondary = DarkTextSecondary,
+    outline = DarkBorder
 )
+
+/** in-app [TodayDiaryTheme] 다크·라이트 (`darkTheme` 인자). 시스템 `isSystemInDarkTheme`와는 별개. */
+val LocalIsAppDarkMode = compositionLocalOf { false }
 
 @Composable
 fun TodayDiaryTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
+    fontIndex: Int = 0,
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
@@ -48,11 +54,17 @@ fun TodayDiaryTheme(
         darkTheme -> AppDarkColorScheme
         else -> AppLightColorScheme
     }
+    val typography = remember(fontIndex) {
+        diaryTypography(diaryFontFamily(fontIndex))
+    }
 
-    CompositionLocalProvider(LocalIndication provides NoIndication) {
+    CompositionLocalProvider(
+        LocalIndication provides NoIndication,
+        LocalIsAppDarkMode provides darkTheme,
+    ) {
         MaterialTheme(
             colorScheme = colorScheme,
-            typography = AppTypography,
+            typography = typography,
             content = content
         )
     }

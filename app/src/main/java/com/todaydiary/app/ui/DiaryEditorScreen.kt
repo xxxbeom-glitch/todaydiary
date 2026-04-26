@@ -5,7 +5,6 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.*
@@ -14,20 +13,24 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.todaydiary.app.R
 import com.todaydiary.app.ui.components.DiaryTopBar
+import com.todaydiary.app.ui.components.HeaderPngIconButton
+import com.todaydiary.app.ui.components.ThemedPngIcon
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Job
+import java.time.Instant
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -38,9 +41,11 @@ fun DiaryEditorScreen(
     onBack: () -> Unit = {},
     initialDate: LocalDate = LocalDate.now(),
     initialBody: String = "",
-    onAutoSave: (date: LocalDate, body: String) -> Unit = { _, _ -> },
+    onAutoSave: (date: LocalDate, body: String, writtenAt: Instant) -> Unit = { _, _, _ -> },
 ) {
-    var diaryValue by remember(initialBody) { mutableStateOf(TextFieldValue(initialBody)) }
+    // initialBody를 remember 키로 쓰면(자동저장으로 부모의 draft 문자열이 갱신될 때마다) 전부 재초기화되며
+    // 커서/IME 조합이 튑니다. 편집 세션 id는 MainActivity의 key(editorResetKey) + 화면 전환으로 맞춥니다.
+    var diaryValue by remember { mutableStateOf(TextFieldValue(initialBody)) }
     val diaryText = diaryValue.text
     val today = initialDate
     val formatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일 (E)", Locale.KOREAN)
@@ -52,6 +57,7 @@ fun DiaryEditorScreen(
 
     val headerTextStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 15.responsiveSp(), fontWeight = FontWeight.Medium)
     val bodyTextStyle = MaterialTheme.typography.bodyLarge.copy(fontSize = 15.responsiveSp(), lineHeight = 36.responsiveSp())
+    val bodyColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.85f)
     val placeholderTextStyle = bodyTextStyle.copy(color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f))
 
     val density = LocalDensity.current
@@ -66,19 +72,14 @@ fun DiaryEditorScreen(
         topBar = {
             DiaryTopBar(
                 left = {
-                    IconButton(
+                    HeaderPngIconButton(
                         onClick = {
-                            onAutoSave(today, diaryText)
+                            onAutoSave(today, diaryText, Instant.now())
                             onBack()
                         },
-                        modifier = Modifier.size(28.dp)
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ico_back),
-                            contentDescription = "Back",
-                            modifier = Modifier.size(28.dp),
-                        )
-                    }
+                        resId = R.drawable.ico_back,
+                        contentDescription = "Back",
+                    )
                 },
                 center = {
                     Text(
@@ -88,14 +89,16 @@ fun DiaryEditorScreen(
                     )
                 },
                 right = {
-                    IconButton(
-                        onClick = { onAutoSave(today, diaryText) },
-                        modifier = Modifier.size(28.dp)
+                    Box(
+                        modifier = Modifier.size(28.dp),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ico_more),
-                            contentDescription = "Save",
-                            modifier = Modifier.size(28.dp),
+                        ThemedPngIcon(
+                            resId = R.drawable.ico_more,
+                            contentDescription = "More",
+                            modifier = Modifier
+                                .size(28.dp)
+                                .alpha(0.2f),
                         )
                     }
                 },
@@ -124,7 +127,7 @@ fun DiaryEditorScreen(
                     pendingSaveJob?.cancel()
                     pendingSaveJob = coroutineScope.launch {
                         kotlinx.coroutines.delay(400)
-                        onAutoSave(today, diaryValue.text)
+                        onAutoSave(today, diaryValue.text, Instant.now())
                     }
                 },
                 onTextLayout = { textLayoutResult = it },
@@ -134,7 +137,7 @@ fun DiaryEditorScreen(
                     .weight(1f) // Column 내에서 남은 공간을 모두 차지
                     .verticalScroll(scrollState)
                     .padding(top = 44.dp, start = 16.dp, end = 16.dp, bottom = 24.dp),
-                textStyle = bodyTextStyle.copy(color = MaterialTheme.colorScheme.onBackground),
+                textStyle = bodyTextStyle.copy(color = bodyColor),
                 cursorBrush = SolidColor(Color.Transparent),
                 decorationBox = { innerTextField ->
                     Box {

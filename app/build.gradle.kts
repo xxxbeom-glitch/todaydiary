@@ -15,6 +15,8 @@ android {
     sourceSets {
         getByName("main") {
             assets.srcDir(file("../fonts"))
+            // Pencake 백업 `restore/Story_*/Text/Article_*.txt` (+ Image 등) — [BundledArchiveImporter]에서 로드
+            assets.srcDir(file("../restore"))
         }
     }
 
@@ -59,8 +61,10 @@ dependencies {
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(platform("com.google.firebase:firebase-bom:34.12.0"))
     implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-storage")
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.android.gms:play-services-auth:21.4.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

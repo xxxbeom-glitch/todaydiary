@@ -18,7 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.todaydiary.app.ui.responsiveSp
@@ -30,6 +29,13 @@ fun OptionSelectDialog(
     onDismiss: () -> Unit,
     onSelect: (Int) -> Unit,
 ) {
+    val cornerR = popupDp(12f)
+    val panelW = popupDp(204f)
+    val pad = popupDp(18f)
+    val rowGap = popupDp(12f)
+    val rowH = popupDp(36f)
+    val labelSp = popupLabelSp(15)
+
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(
@@ -47,17 +53,17 @@ fun OptionSelectDialog(
         ) {
             Surface(
                 color = MaterialTheme.colorScheme.surface,
-                shape = RoundedCornerShape(12.dp),
-                modifier = Modifier.width(204.dp),
+                shape = RoundedCornerShape(cornerR),
+                modifier = Modifier.width(panelW),
             ) {
                 val itemStyle = MaterialTheme.typography.labelLarge.copy(
-                    fontSize = 15.responsiveSp(),
+                    fontSize = labelSp.responsiveSp(),
                     fontWeight = FontWeight.Medium,
                 )
 
                 Column(
-                    modifier = Modifier.padding(18.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.padding(pad),
+                    verticalArrangement = Arrangement.spacedBy(rowGap),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     options.forEachIndexed { index, label ->
@@ -65,7 +71,7 @@ fun OptionSelectDialog(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(36.dp)
+                                .height(rowH)
                                 .noIndicationClickable {
                                     onSelect(index)
                                     onDismiss()

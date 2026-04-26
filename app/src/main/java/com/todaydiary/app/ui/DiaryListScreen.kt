@@ -10,22 +10,26 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.IconButton
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import com.todaydiary.app.R
 import com.todaydiary.app.ui.components.DiaryListItem
+import com.todaydiary.app.ui.components.ThemedPngIcon
 import com.todaydiary.app.ui.components.DiaryTopBar
-import com.todaydiary.app.ui.components.noIndicationClickable
+import com.todaydiary.app.ui.components.HeaderPngIconButton
 import com.todaydiary.app.ui.models.DiaryEntry
 import java.time.LocalDate
 
@@ -58,20 +62,25 @@ fun DiaryListScreen(
         topBar = {
             DiaryTopBar(
                 left = {
-                    IconButton(
+                    HeaderPngIconButton(
                         onClick = onClickHeaderLeft,
-                        modifier = Modifier.size(28.dp),
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ico_setting),
-                            contentDescription = "Settings",
-                            modifier = Modifier.size(28.dp),
-                        )
-                    }
+                        resId = R.drawable.ico_setting,
+                        contentDescription = "Settings",
+                        tint = textBody,
+                    )
                 },
                 center = {
+                    val monthInteraction = remember { MutableInteractionSource() }
+                    val monthPressed by monthInteraction.collectIsPressedAsState()
+                    val monthContentAlpha = if (monthPressed) 0.8f else 1f
                     Row(
-                        modifier = Modifier.noIndicationClickable(onClickMonth),
+                        modifier = Modifier
+                            .clickable(
+                                onClick = onClickMonth,
+                                interactionSource = monthInteraction,
+                                indication = null,
+                            )
+                            .alpha(monthContentAlpha),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
@@ -80,24 +89,21 @@ fun DiaryListScreen(
                             color = textBody,
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Image(
-                            painter = painterResource(id = R.drawable.ico_dropdown),
+                        ThemedPngIcon(
+                            resId = R.drawable.ico_dropdown,
                             contentDescription = "Month dropdown",
                             modifier = Modifier.size(10.dp),
+                            tint = textBody,
                         )
                     }
                 },
                 right = {
-                    IconButton(
+                    HeaderPngIconButton(
                         onClick = onClickCreate,
-                        modifier = Modifier.size(28.dp),
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ico_new),
-                            contentDescription = "New",
-                            modifier = Modifier.size(28.dp),
-                        )
-                    }
+                        resId = R.drawable.ico_new,
+                        contentDescription = "New",
+                        tint = textBody,
+                    )
                 },
             )
         },
@@ -121,12 +127,12 @@ fun DiaryListScreen(
                 ) { entry ->
                     DiaryListItem(
                         title = formatListItemDate(entry.date),
-                        preview = entry.body,
+                        preview = "",
+                        showPreview = false,
                         titleStyle = dateStyle,
                         previewStyle = previewStyle,
                         titleColor = textBody,
                         previewColor = textSecondary,
-                        // 현재 화면 스펙 유지
                         verticalPadding = 8.dp,
                         textBlockVerticalPadding = 8.dp,
                         previewWidth = 220.dp,
