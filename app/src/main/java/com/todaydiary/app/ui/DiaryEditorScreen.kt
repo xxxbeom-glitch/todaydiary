@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.todaydiary.app.R
 import com.todaydiary.app.ui.components.DiaryTopBar
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Job
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -37,7 +38,7 @@ fun DiaryEditorScreen(
     onBack: () -> Unit = {},
     initialDate: LocalDate = LocalDate.now(),
     initialBody: String = "",
-    onSave: (date: LocalDate, body: String) -> Unit = { _, _ -> },
+    onAutoSave: (date: LocalDate, body: String) -> Unit = { _, _ -> },
 ) {
     var diaryValue by remember(initialBody) { mutableStateOf(TextFieldValue(initialBody)) }
     val diaryText = diaryValue.text
@@ -47,6 +48,7 @@ fun DiaryEditorScreen(
     val isFocused by interactionSource.collectIsFocusedAsState()
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
+    var pendingSaveJob: Job? by remember { mutableStateOf(null) }
 
     val headerTextStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 15.responsiveSp(), fontWeight = FontWeight.Medium)
     val bodyTextStyle = MaterialTheme.typography.bodyLarge.copy(fontSize = 15.responsiveSp(), lineHeight = 36.responsiveSp())
@@ -66,7 +68,7 @@ fun DiaryEditorScreen(
                 left = {
                     IconButton(
                         onClick = {
-                            onSave(today, diaryText)
+                            onAutoSave(today, diaryText)
                             onBack()
                         },
                         modifier = Modifier.size(28.dp)
@@ -87,7 +89,7 @@ fun DiaryEditorScreen(
                 },
                 right = {
                     IconButton(
-                        onClick = { onSave(today, diaryText) },
+                        onClick = { onAutoSave(today, diaryText) },
                         modifier = Modifier.size(28.dp)
                     ) {
                         Image(
@@ -118,6 +120,12 @@ fun DiaryEditorScreen(
                     diaryValue = it
                     // 텍스트 변경 시 스크롤을 가장 아래로 이동
                     coroutineScope.launch { scrollState.animateScrollTo(scrollState.maxValue) }
+                    // 작성 중에는 기기에 우선 자동저장 (debounce)
+                    pendingSaveJob?.cancel()
+                    pendingSaveJob = coroutineScope.launch {
+                        kotlinx.coroutines.delay(400)
+                        onAutoSave(today, diaryValue.text)
+                    }
                 },
                 onTextLayout = { textLayoutResult = it },
                 interactionSource = interactionSource,

@@ -19,6 +19,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.todaydiary.app.data.DraftStore
 import com.todaydiary.app.data.FirestoreDiaryRepository
 import com.todaydiary.app.ui.DiaryEditorScreen
 import com.todaydiary.app.ui.DiaryListScreen
@@ -90,6 +91,7 @@ class MainActivity : ComponentActivity() {
                     var showMonthPicker by remember { mutableStateOf(false) }
                     val repo = remember { FirestoreDiaryRepository() }
                     var entries by remember { mutableStateOf<List<DiaryEntry>>(emptyList()) }
+                    val draftStore = remember(context) { DraftStore(context) }
 
                     DisposableEffect(firebaseUser?.uid) {
                         val uid = firebaseUser?.uid
@@ -108,17 +110,24 @@ class MainActivity : ComponentActivity() {
 
                     when (screen) {
                         "editor" -> {
+                            val editorDate = selectedEntry?.date ?: LocalDate.now()
+                            val editorBody = if (selectedEntry != null) {
+                                selectedEntry?.body ?: ""
+                            } else {
+                                draftStore.loadDraft(editorDate)
+                            }
                             DiaryEditorScreen(
                                 onBack = { screen = "list" },
-                                initialDate = selectedEntry?.date ?: java.time.LocalDate.now(),
-                                initialBody = selectedEntry?.body ?: "",
-                                onSave = { date, body ->
+                                initialDate = editorDate,
+                                initialBody = editorBody,
+                                onAutoSave = { date, body ->
+                                    // 1) 로컬(기기) 우선 저장
+                                    draftStore.saveDraft(date, body)
+                                    // 2) 로그인된 경우에만 클라우드 백업(Firestore)
                                     val uid = firebaseUser?.uid
-                                    if (uid.isNullOrBlank()) {
-                                        authError = "저장하려면 먼저 구글 로그인이 필요합니다."
-                                        return@DiaryEditorScreen
+                                    if (!uid.isNullOrBlank()) {
+                                        repo.saveEntry(uid, DiaryEntry(date = date, body = body))
                                     }
-                                    repo.saveEntry(uid, DiaryEntry(date = date, body = body))
                                 },
                             )
                         }
@@ -166,9 +175,18 @@ class MainActivity : ComponentActivity() {
                     }
 
                     if (showMonthPicker) {
+                        val nowYm = YearMonth.now()
+                        val available = entries
+                            .map { YearMonth.from(it.date) }
+                            .distinct()
+                            .sorted()
+                            .let { months ->
+                                // 데이터가 현재월 1개뿐이면 그 1개만 보여줌 (이전달/이전월 노출 X)
+                                if (months.isEmpty()) listOf(nowYm) else months
+                            }
                         MonthDrumRollDialog(
                             initial = currentMonth,
-                            yearRange = (currentMonth.year - 5)..(currentMonth.year + 5),
+                            availableMonths = available,
                             onDismiss = { showMonthPicker = false },
                             onPicked = { picked -> currentMonth = picked },
                         )

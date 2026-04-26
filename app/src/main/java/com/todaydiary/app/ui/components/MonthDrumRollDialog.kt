@@ -30,23 +30,33 @@ import java.time.YearMonth
 @Composable
 fun MonthDrumRollDialog(
     initial: YearMonth,
-    yearRange: IntRange,
+    availableMonths: List<YearMonth>,
     onDismiss: () -> Unit,
     onPicked: (YearMonth) -> Unit,
 ) {
-    val years = remember(yearRange) { yearRange.toList() }
-    val months = remember { (1..12).toList() }
+    val sortedMonths = remember(availableMonths) { availableMonths.distinct().sorted() }
+    val years = remember(sortedMonths) { sortedMonths.map { it.year }.distinct().sorted() }
 
-    var selectedYearIndex by remember(initial, yearRange) {
-        mutableIntStateOf((initial.year - yearRange.first).coerceIn(0, years.lastIndex))
+    val initialYearIndex = remember(initial, years) {
+        years.indexOf(initial.year).let { if (it >= 0) it else 0 }
     }
-    var selectedMonthIndex by remember(initial) {
-        mutableIntStateOf((initial.monthValue - 1).coerceIn(0, 11))
+    var selectedYearIndex by remember(initialYearIndex) { mutableIntStateOf(initialYearIndex) }
+
+    val monthsForSelectedYear = remember(sortedMonths, selectedYearIndex, years) {
+        val year = years.getOrNull(selectedYearIndex) ?: initial.year
+        sortedMonths.filter { it.year == year }.map { it.monthValue }.distinct().sorted()
     }
+
+    val initialMonthIndex = remember(initial, monthsForSelectedYear) {
+        monthsForSelectedYear.indexOf(initial.monthValue).let { if (it >= 0) it else 0 }
+    }
+    var selectedMonthIndex by remember(initialMonthIndex) { mutableIntStateOf(initialMonthIndex) }
 
     // 드래그 중에도 최신값을 유지하고, 닫힐 때/변경될 때 콜백
     LaunchedEffect(selectedYearIndex, selectedMonthIndex) {
-        onPicked(YearMonth.of(years[selectedYearIndex], months[selectedMonthIndex]))
+        val y = years.getOrNull(selectedYearIndex) ?: initial.year
+        val m = monthsForSelectedYear.getOrNull(selectedMonthIndex) ?: initial.monthValue
+        onPicked(YearMonth.of(y, m))
     }
 
     Dialog(
@@ -98,7 +108,7 @@ fun MonthDrumRollDialog(
                     )
 
                     WheelPicker(
-                        items = months,
+                        items = monthsForSelectedYear,
                         selectedIndex = selectedMonthIndex,
                         onSelectedIndexChange = { selectedMonthIndex = it },
                         modifier = Modifier
