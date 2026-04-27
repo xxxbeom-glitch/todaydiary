@@ -38,6 +38,17 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+/**
+ * 에디터 커서·본문 수직 정렬 디버그용 Logcat 태그.
+ *
+ * **Android Studio:** Logcat 검색창에 `DiaryCursor` 또는 `tag:DiaryCursor`
+ *
+ * **adb:** `adb logcat -s DiaryCursor:D`
+ *
+ * debug 빌드에서만 출력됩니다.
+ */
+private const val DIARY_CURSOR_LOG_TAG = "DiaryCursor"
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DiaryEditorScreen(
@@ -58,19 +69,24 @@ fun DiaryEditorScreen(
     val coroutineScope = rememberCoroutineScope()
     var pendingSaveJob: Job? by remember { mutableStateOf(null) }
 
-    val headerTextStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 15.responsiveSp(), fontWeight = FontWeight.Medium)
+    // Medium은 일부 일기 폰트에 없어 시스템 산세리프로 떨어질 수 있음 → Normal 고정
+    val headerTextStyle = MaterialTheme.typography.bodyMedium.copy(
+        fontSize = 15.responsiveSp(),
+        fontWeight = FontWeight.Normal,
+    )
     val bodyTextStyle = MaterialTheme.typography.bodyLarge.copy(fontSize = 15.responsiveSp(), lineHeight = 36.responsiveSp())
     val bodyColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.85f)
     val placeholderTextStyle = bodyTextStyle.copy(color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f))
 
     val density = LocalDensity.current
     val lineHeightPx = with(density) { bodyTextStyle.lineHeight.toPx() }
-    val firstLineY = with(density) { bodyTextStyle.fontSize.toPx() + 10.dp.toPx() }
+    // 본문 lineHeight와 맞춤: fontSize+고정dp는 첫 가로선이 첫 행 중간을 가름
+    val firstLineY = lineHeightPx
     val lineColor = MaterialTheme.colorScheme.outline
     val cursorColor = MaterialTheme.colorScheme.primary
     val cursorVisualHeightPx = with(density) { bodyTextStyle.fontSize.toPx() * 1.08f }
     val cursorStrokePx = with(density) { 1.2.dp.toPx() }
-    /** 삽입 줄 박스 중앙 기준; 순수 중앙은 살짝 위로 보일 때가 있어 아주 소량만 아래로 */
+    /** 베이스라인 정렬 후 미세 보정(픽셀 단위, 필요 시 0.dp) */
     val cursorVerticalNudgePx = with(density) { 0.65.dp.toPx() }
 
     // 시스템 뒤로가기도 상단 버튼과 같이 마지막 본문을 반영(빈 문자열이면 저장/클라 초기화)
@@ -122,22 +138,41 @@ fun DiaryEditorScreen(
         )
         var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
 
-        // 디버그 빌드만: Logcat 필터 `DiaryCursor` — 커서 보정 값 맞출 때 붙여 보내기 좋음
-        LaunchedEffect(isFocused, diaryText, diaryValue.selection, textLayoutResult, cursorVerticalNudgePx) {
+        // 디버그 빌드만 — 위 [DIARY_CURSOR_LOG_TAG] 주석 참고
+        LaunchedEffect(
+            isFocused,
+            diaryText,
+            diaryValue.selection,
+            textLayoutResult,
+            cursorVerticalNudgePx,
+            cursorVisualHeightPx,
+        ) {
             if (!BuildConfig.DEBUG || !isFocused) return@LaunchedEffect
             val layout = textLayoutResult ?: return@LaunchedEffect
             val len = layout.layoutInput.text.text.length
             val off = diaryValue.selection.end.coerceIn(0, len)
             val r = layout.getCursorRect(off)
             val line = layout.getLineForOffset(off)
+            val lineCount = layout.lineCount
+            val lineTop = layout.getLineTop(line)
+            val lineBottom = layout.getLineBottom(line)
             val baseline = layout.getLineBaseline(line)
+            // 캐럿 하단 ≈ baseline + nudge (이전 0.52*visH는 drawBottom이 baseline 아래로 내려가 글자와 어긋남)
+            val idealTopRaw = baseline - cursorVisualHeightPx + cursorVerticalNudgePx
+            val maxTop = (r.bottom - cursorVisualHeightPx).coerceAtLeast(r.top)
+            val clamped = idealTopRaw.coerceIn(r.top, maxTop) != idealTopRaw
             val drawTop = caretDrawTopPx(r.top, r.bottom, baseline, cursorVisualHeightPx, cursorVerticalNudgePx)
             val fontPx = with(density) { bodyTextStyle.fontSize.toPx() }
             Log.d(
-                "DiaryCursor",
-                "off=$off line=$line rect=[${r.top},${r.bottom}] baseline=$baseline " +
-                    "drawTop=$drawTop drawBottom=${drawTop + cursorVisualHeightPx} " +
-                    "nudgePx=$cursorVerticalNudgePx visH=$cursorVisualHeightPx fontPx=$fontPx lineHpx=$lineHeightPx",
+                DIARY_CURSOR_LOG_TAG,
+                "off=$off sel=${diaryValue.selection} line=$line/$lineCount " +
+                    "cursorRect=(${r.left.toInt()},${r.top.toInt()})-(${r.right.toInt()},${r.bottom.toInt()}) " +
+                    "lineY=[${lineTop.toInt()},${lineBottom.toInt()}] baseline=${baseline.toInt()} " +
+                    "idealTop=${idealTopRaw.toInt()} drawTop=${drawTop.toInt()} " +
+                    "drawBottom=${(drawTop + cursorVisualHeightPx).toInt()} clamped=$clamped " +
+                    "caretH=${cursorVisualHeightPx.toInt()} nudge=${cursorVerticalNudgePx.toInt()} stroke=${cursorStrokePx.toInt()} " +
+                    "fontPx=${fontPx.toInt()} lineHpx=${lineHeightPx.toInt()} firstLineY=${firstLineY.toInt()} " +
+                    "scrollY=${scrollState.value}",
             )
         }
 
@@ -213,7 +248,10 @@ fun DiaryEditorScreen(
     }
 }
 
-/** [getCursorRect] 세로 범위 안에서만, 막대가 베이스라인 근처를 가리키도록 배치(큰 lineHeight 2번째 줄 등) */
+/**
+ * I-beam 하단이 [baselineY]에 닿도록 상단을 둠(큰 lineHeight에서도 베이스라인과 글자 정렬 유지).
+ * [getCursorRect] 세로 범위 밖으로 나가지 않게만 클램프.
+ */
 private fun caretDrawTopPx(
     rectTop: Float,
     rectBottom: Float,
@@ -221,7 +259,7 @@ private fun caretDrawTopPx(
     caretHeightPx: Float,
     nudgePx: Float,
 ): Float {
-    val idealTop = baselineY - caretHeightPx * 0.52f + nudgePx
+    val idealTop = baselineY - caretHeightPx + nudgePx
     val maxTop = (rectBottom - caretHeightPx).coerceAtLeast(rectTop)
     return idealTop.coerceIn(rectTop, maxTop)
 }

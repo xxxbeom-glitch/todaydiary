@@ -27,7 +27,7 @@ fun DiaryViewScreen(
 ) {
     val headerTextStyle = MaterialTheme.typography.bodyMedium.copy(
         fontSize = 15.responsiveSp(),
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.Normal,
     )
     val bodyTextStyle = MaterialTheme.typography.bodyLarge.copy(
         fontSize = 15.responsiveSp(),
@@ -36,7 +36,7 @@ fun DiaryViewScreen(
 
     val density = LocalDensity.current
     val lineHeightPx = with(density) { bodyTextStyle.lineHeight.toPx() }
-    val firstLineY = with(density) { bodyTextStyle.fontSize.toPx() + 10.dp.toPx() }
+    val firstLineY = lineHeightPx
     val lineColor = MaterialTheme.colorScheme.outline
     val bodyColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.85f)
 

@@ -40,7 +40,7 @@ fun SettingsScreen(
 
     val headerStyle = MaterialTheme.typography.bodyMedium.copy(
         fontSize = 15.responsiveSp(),
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.Normal,
     )
     val titleStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 15.responsiveSp())
     val subtitleStyle = MaterialTheme.typography.bodySmall.copy(fontSize = 12.responsiveSp())

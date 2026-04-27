@@ -91,7 +91,7 @@ fun FontSelectDialog(
                                 text = label,
                                 style = MaterialTheme.typography.labelLarge.copy(
                                     fontSize = labelSp.responsiveSp(),
-                                    fontWeight = FontWeight.Medium,
+                                    fontWeight = FontWeight.Normal,
                                     fontFamily = rowFont,
                                 ),
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = alpha),

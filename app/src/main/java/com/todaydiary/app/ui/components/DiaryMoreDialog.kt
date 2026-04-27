@@ -60,7 +60,7 @@ fun DiaryMoreDialog(
             ) {
                 val itemStyle = MaterialTheme.typography.labelLarge.copy(
                     fontSize = labelSp.responsiveSp(),
-                    fontWeight = FontWeight.Medium,
+                    fontWeight = FontWeight.Normal,
                 )
 
                 Column(
