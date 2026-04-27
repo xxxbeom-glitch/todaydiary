@@ -1,6 +1,7 @@
 package com.todaydiary.app
 
 import android.os.Bundle
+import android.os.SystemClock
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
@@ -15,10 +16,14 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.compose.ui.unit.Density
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -48,10 +53,45 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.tasks.await
+
+/**
+ * 일기 목록「보는 달」을 실제 달이 넘어갔을 때 자동으로 맞춤.
+ * - 백그라운드: 멈출 때 보던 달이 당시 달력과 같았다면(실시간 일기 중), 돌아올 때 오늘 달로 이동.
+ * - 과거 월만 보는 중(pause 시점에 이미 달력과 다름)이면 건드리지 않음.
+ * - 포그라운드에서 한 달만 넘어간 경우: 직전 달 → 다음 달 한 칸 이동.
+ */
+/** Firestore 리스너가 짧은 간격으로 여러 번 호출될 때(캐시→서버 등) 목록이 한 줄씩 늘어나 보이지 않게 묶음 */
+private class CloudSnapshotCoalesce {
+    var firstEventAtElapsed: Long = 0L
+    var job: Job? = null
+    var pending: List<DiaryEntry> = emptyList()
+}
+
+private fun computeAutoAdvanceMonth(
+    pausedListMonth: String?,
+    pausedWallMonth: String?,
+    currentMonthString: String,
+): YearMonth? {
+    val nowYm = YearMonth.now()
+    val cur = runCatching { YearMonth.parse(currentMonthString) }.getOrElse { nowYm }
+    val pList = pausedListMonth?.let { runCatching { YearMonth.parse(it) }.getOrNull() }
+    val pWall = pausedWallMonth?.let { runCatching { YearMonth.parse(it) }.getOrNull() }
+    if (pList != null && pWall != null && pList == pWall && nowYm > pWall) {
+        return nowYm
+    }
+    if (cur < nowYm && cur.plusMonths(1) == nowYm) {
+        return nowYm
+    }
+    return null
+}
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -111,6 +151,8 @@ class MainActivity : ComponentActivity() {
 
                     var screen by remember { mutableStateOf("list") }
                     val coroutineScope = rememberCoroutineScope()
+                    /** 에디터에서 Firestore 저장/삭제가 겹치면(지운 뒤 이전 저장이 늦게 완료) 목록에 유령 본문이 남음 */
+                    val editorCloudMutex = remember { Mutex() }
                     var selectedEntry: DiaryEntry? by remember { mutableStateOf(null) }
                     // Firestore/로컬 임시저장에서 사용할 문서 ID(새 글은 + 누를 때 생성)
                     var activeEntryId by remember { mutableStateOf("") }
@@ -129,14 +171,60 @@ class MainActivity : ComponentActivity() {
                     var monthPickerInitial by remember { mutableStateOf(YearMonth.now()) }
                     /** 다이얼로그를 열 때마다 +1. [MonthDrumRollDialog] 내부 [remember]가 `years`/`availableMonths` 갱신으로 휠이 초기화되지 않게 씀. */
                     var monthPickerOpenSession by remember { mutableIntStateOf(0) }
+                    /** [ON_STOP] 때의 목록 달 / 당시 달력 달 — 실시간 일기 vs 과거 보관 구분용 */
+                    var pausedListMonth by rememberSaveable { mutableStateOf<String?>(null) }
+                    var pausedWallMonth by rememberSaveable { mutableStateOf<String?>(null) }
                     val repo = remember { FirestoreDiaryRepository() }
+                    /** 마이그레이션·동기화용: 리스너가 주는 최신 목록(지연 없음) */
                     var cloudEntries by remember { mutableStateOf<List<DiaryEntry>>(emptyList()) }
+                    /** 목록 UI 병합용: 초기 연속 스냅샷만 짧게 묶어 '1건→전체' 번쩍임 완화 */
+                    var cloudEntriesForUi by remember { mutableStateOf<List<DiaryEntry>>(emptyList()) }
+                    val cloudCoalesce = remember(firebaseUser?.uid) { CloudSnapshotCoalesce() }
                     // Firestore diaries 첫 스냅샷이 도착했는지(로딩/빈 컬렉션 구분용)
                     var cloudDataReady by remember { mutableStateOf(false) }
                     // 로그인 세션(uid)마다 1회: 기기에만 남은 레거시(날짜키) 드래프트를 Firestore로 백업
                     var didMigrateLocalDrafts by remember { mutableStateOf(false) }
                     val draftStore = remember(context) { DraftStore(context) }
                     var draftRevision by remember { mutableIntStateOf(0) }
+
+                    val lifecycleOwner = LocalLifecycleOwner.current
+                    val currentMonthStrForLifecycle = rememberUpdatedState(currentMonthString)
+                    DisposableEffect(lifecycleOwner) {
+                        val observer = LifecycleEventObserver { _, event ->
+                            when (event) {
+                                Lifecycle.Event.ON_STOP -> {
+                                    pausedListMonth = currentMonthStrForLifecycle.value
+                                    pausedWallMonth = YearMonth.now().toString()
+                                }
+                                Lifecycle.Event.ON_RESUME -> {
+                                    computeAutoAdvanceMonth(
+                                        pausedListMonth = pausedListMonth,
+                                        pausedWallMonth = pausedWallMonth,
+                                        currentMonthString = currentMonthStrForLifecycle.value,
+                                    )?.let { ym -> currentMonthString = ym.toString() }
+                                }
+                                else -> Unit
+                            }
+                        }
+                        lifecycleOwner.lifecycle.addObserver(observer)
+                        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+                    }
+
+                    val screenRef = rememberUpdatedState(screen)
+                    val monthStrRef = rememberUpdatedState(currentMonthString)
+                    LaunchedEffect(Unit) {
+                        while (true) {
+                            delay(45_000L)
+                            if (screenRef.value != "list") continue
+                            computeAutoAdvanceMonth(
+                                pausedListMonth = null,
+                                pausedWallMonth = null,
+                                currentMonthString = monthStrRef.value,
+                            )?.let { ym ->
+                                currentMonthString = ym.toString()
+                            }
+                        }
+                    }
 
                     LaunchedEffect(firebaseUser?.uid) {
                         val u = firebaseUser
@@ -159,19 +247,40 @@ class MainActivity : ComponentActivity() {
                     DisposableEffect(firebaseUser?.uid) {
                         val uid = firebaseUser?.uid
                         if (uid.isNullOrBlank()) {
+                            cloudCoalesce.job?.cancel()
                             cloudEntries = emptyList()
+                            cloudEntriesForUi = emptyList()
                             cloudDataReady = false
                             onDispose { }
                         } else {
                             val reg = repo.listenEntries(
                                 uid = uid,
                                 onUpdate = { list ->
-                                    cloudEntries = list
                                     cloudDataReady = true
+                                    cloudEntries = list
+                                    cloudCoalesce.pending = list
+                                    val now = SystemClock.elapsedRealtime()
+                                    if (cloudCoalesce.firstEventAtElapsed == 0L) {
+                                        cloudCoalesce.firstEventAtElapsed = now
+                                    }
+                                    val inBurst = now - cloudCoalesce.firstEventAtElapsed < 280L
+                                    if (inBurst) {
+                                        cloudCoalesce.job?.cancel()
+                                        cloudCoalesce.job = coroutineScope.launch {
+                                            delay(72L)
+                                            cloudEntriesForUi = cloudCoalesce.pending
+                                        }
+                                    } else {
+                                        cloudCoalesce.job?.cancel()
+                                        cloudEntriesForUi = list
+                                    }
                                 },
                                 onError = { e -> dataError = "데이터 로드 실패: ${e.message ?: e.javaClass.simpleName}" },
                             )
-                            onDispose { reg.remove() }
+                            onDispose {
+                                cloudCoalesce.job?.cancel()
+                                reg.remove()
+                            }
                         }
                     }
 
@@ -247,8 +356,8 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
-                    val mergedEntries = remember(cloudEntries, draftRevision) {
-                        mergeDiaryEntries(cloud = cloudEntries, drafts = draftStore.listDraftEntries())
+                    val mergedEntries = remember(cloudEntriesForUi, draftRevision) {
+                        mergeDiaryEntries(cloud = cloudEntriesForUi, drafts = draftStore.listDraftEntries())
                     }
                     val listEntries = remember(mergedEntries, currentMonth) {
                         mergedEntries
@@ -265,12 +374,13 @@ class MainActivity : ComponentActivity() {
                     val monthPickerAvailable = remember(mergedEntries, currentMonth) {
                         val fromData = mergedEntries.map { YearMonth.from(it.date) }.toMutableSet()
                         fromData.add(currentMonth)
+                        fromData.add(YearMonth.now())
                         fromData.sorted()
                     }
 
                     // 시스템/제스처 뒤로가기: 대화/피커 먼저 닫기, 그다음 list가 아닌 화면만 list로(루트에선 앱 종료)
                     val shouldInterceptBack = (showMore && moreTarget != null) ||
-                        showMonthPicker || uiError != null || screen in setOf("editor", "view", "settings")
+                        showMonthPicker || uiError != null || screen in setOf("view", "settings")
                     BackHandler(enabled = shouldInterceptBack) {
                         when {
                             showMore && moreTarget != null -> showMore = false
@@ -278,10 +388,6 @@ class MainActivity : ComponentActivity() {
                             uiError != null -> {
                                 dataError = null
                                 authError = null
-                            }
-                            screen == "editor" -> {
-                                forceNewBlank = false
-                                screen = "list"
                             }
                             screen == "view" -> screen = "list"
                             screen == "settings" -> screen = "list"
@@ -317,46 +423,64 @@ class MainActivity : ComponentActivity() {
                                         val entryId = (selectedEntry?.id?.ifBlank { null } ?: activeEntryId.ifBlank { null }).orEmpty()
                                         draftStore.saveDraft(entryId, date, body)
                                         draftRevision++
-                                        // 2) 빈 본문이면 Firestore/목록에 빈 일기로 남기지 않음(클라우드 저장 생략)
-                                        if (body.isNotBlank()) {
-                                            val uid = firebaseUser?.uid
-                                            if (!uid.isNullOrBlank()) {
-                                                val idForCloud = (selectedEntry?.id?.ifBlank { null } ?: activeEntryId.ifBlank { null }).orEmpty()
-                                                if (idForCloud.isBlank()) {
-                                                    // 안전장치: id 없이 저장하면(레거시 경로) 또 하루 1문서로 덮어쓰기 됨
-                                                    dataError = "내부 오류: 일기 ID가 없습니다. 앱을 다시 실행해보세요."
-                                                } else {
+
+                                        val uid = firebaseUser?.uid
+                                        val idForCloud = (selectedEntry?.id?.ifBlank { null } ?: activeEntryId.ifBlank { null }).orEmpty()
+                                        val editingExisting = selectedEntry != null
+                                        if (uid.isNullOrBlank()) {
+                                            /* 로그인 없으면 클라우드 생략 */
+                                        } else if (idForCloud.isBlank()) {
+                                            if (body.isNotBlank()) {
+                                                dataError = "내부 오류: 일기 ID가 없습니다. 앱을 다시 실행해보세요."
+                                            }
+                                        } else {
+                                            coroutineScope.launch {
+                                                editorCloudMutex.withLock {
+                                                    if (body.isBlank()) {
+                                                        // 새 글(+): 이미 올라간 초안이 있으면 제거. 기존 글 편집은 빈 저장으로 클라우드를 건드리지 않음(이전 본문 유지)
+                                                        if (!editingExisting) {
+                                                            withContext(Dispatchers.IO) {
+                                                                runCatching {
+                                                                    repo.deleteEntry(uid, idForCloud, date)
+                                                                }
+                                                            }
+                                                        }
+                                                        return@withLock
+                                                    }
                                                     val photosForSave = selectedEntry
                                                         ?.takeIf { it.id == idForCloud }
                                                         ?.photos
                                                         ?: emptyList()
-                                                    coroutineScope.launch {
-                                                        val photos = try {
-                                                            DiaryPhotoStorage.ensurePhotosInRemoteStorage(
-                                                                context,
-                                                                uid,
-                                                                idForCloud,
-                                                                photosForSave,
-                                                            )
-                                                        } catch (e: Exception) {
-                                                            if (e is CancellationException) throw e
-                                                            dataError =
-                                                                "사진 처리 실패: ${e.message ?: e.javaClass.simpleName}"
-                                                            return@launch
-                                                        }
-                                                        repo.saveEntry(
-                                                            uid = uid,
-                                                            entry = DiaryEntry(
-                                                                id = idForCloud,
-                                                                date = date,
-                                                                body = body,
-                                                                photos = photos,
-                                                            ),
-                                                            writtenAt = writtenAt,
-                                                            onFailure = { err ->
-                                                                dataError = "Firestore 저장 실패: ${err.message ?: err.javaClass.simpleName}"
-                                                            },
+                                                    val photos = try {
+                                                        DiaryPhotoStorage.ensurePhotosInRemoteStorage(
+                                                            context,
+                                                            uid,
+                                                            idForCloud,
+                                                            photosForSave,
                                                         )
+                                                    } catch (e: Exception) {
+                                                        if (e is CancellationException) throw e
+                                                        dataError =
+                                                            "사진 처리 실패: ${e.message ?: e.javaClass.simpleName}"
+                                                        return@withLock
+                                                    }
+                                                    try {
+                                                        withContext(Dispatchers.IO) {
+                                                            repo.saveEntry(
+                                                                uid = uid,
+                                                                entry = DiaryEntry(
+                                                                    id = idForCloud,
+                                                                    date = date,
+                                                                    body = body,
+                                                                    photos = photos,
+                                                                ),
+                                                                writtenAt = writtenAt,
+                                                            ).await()
+                                                        }
+                                                    } catch (e: Exception) {
+                                                        if (e is CancellationException) throw e
+                                                        dataError =
+                                                            "Firestore 저장 실패: ${e.message ?: e.javaClass.simpleName}"
                                                     }
                                                 }
                                             }

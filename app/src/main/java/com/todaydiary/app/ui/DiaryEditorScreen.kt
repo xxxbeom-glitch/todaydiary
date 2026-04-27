@@ -1,5 +1,7 @@
 package com.todaydiary.app.ui
 
+import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
@@ -24,6 +26,7 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.todaydiary.app.BuildConfig
 import com.todaydiary.app.R
 import com.todaydiary.app.ui.components.DiaryTopBar
 import com.todaydiary.app.ui.components.HeaderPngIconButton
@@ -63,10 +66,18 @@ fun DiaryEditorScreen(
     val density = LocalDensity.current
     val lineHeightPx = with(density) { bodyTextStyle.lineHeight.toPx() }
     val firstLineY = with(density) { bodyTextStyle.fontSize.toPx() + 10.dp.toPx() }
-    val cursorHeight = with(density) { bodyTextStyle.fontSize.toPx() * 1.2f }
-    val cursorStrokeWidth = with(density) { 1.5.dp.toPx() }
     val lineColor = MaterialTheme.colorScheme.outline
     val cursorColor = MaterialTheme.colorScheme.primary
+    val cursorVisualHeightPx = with(density) { bodyTextStyle.fontSize.toPx() * 1.08f }
+    val cursorStrokePx = with(density) { 1.2.dp.toPx() }
+    /** 삽입 줄 박스 중앙 기준; 순수 중앙은 살짝 위로 보일 때가 있어 아주 소량만 아래로 */
+    val cursorVerticalNudgePx = with(density) { 0.65.dp.toPx() }
+
+    // 시스템 뒤로가기도 상단 버튼과 같이 마지막 본문을 반영(빈 문자열이면 저장/클라 초기화)
+    BackHandler {
+        onAutoSave(today, diaryText, Instant.now())
+        onBack()
+    }
 
     Scaffold(
         topBar = {
@@ -106,10 +117,29 @@ fun DiaryEditorScreen(
         },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
-        var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
         val cursorAlpha by rememberInfiniteTransition(label = "").animateFloat(
             initialValue = 1f, targetValue = 0f, animationSpec = infiniteRepeatable(animation = tween(500)), label = ""
         )
+        var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
+
+        // 디버그 빌드만: Logcat 필터 `DiaryCursor` — 커서 보정 값 맞출 때 붙여 보내기 좋음
+        LaunchedEffect(isFocused, diaryText, diaryValue.selection, textLayoutResult, cursorVerticalNudgePx) {
+            if (!BuildConfig.DEBUG || !isFocused) return@LaunchedEffect
+            val layout = textLayoutResult ?: return@LaunchedEffect
+            val len = layout.layoutInput.text.text.length
+            val off = diaryValue.selection.end.coerceIn(0, len)
+            val r = layout.getCursorRect(off)
+            val line = layout.getLineForOffset(off)
+            val baseline = layout.getLineBaseline(line)
+            val drawTop = caretDrawTopPx(r.top, r.bottom, baseline, cursorVisualHeightPx, cursorVerticalNudgePx)
+            val fontPx = with(density) { bodyTextStyle.fontSize.toPx() }
+            Log.d(
+                "DiaryCursor",
+                "off=$off line=$line rect=[${r.top},${r.bottom}] baseline=$baseline " +
+                    "drawTop=$drawTop drawBottom=${drawTop + cursorVisualHeightPx} " +
+                    "nudgePx=$cursorVerticalNudgePx visH=$cursorVisualHeightPx fontPx=$fontPx lineHpx=$lineHeightPx",
+            )
+        }
 
         Column(
             modifier = Modifier
@@ -138,10 +168,11 @@ fun DiaryEditorScreen(
                     .verticalScroll(scrollState)
                     .padding(top = 44.dp, start = 16.dp, end = 16.dp, bottom = 24.dp),
                 textStyle = bodyTextStyle.copy(color = bodyColor),
+                // lineHeight가 크면 기본 커서도 줄 전체로 커짐 → 숨기고 아래에서 글자 높이만큼만 그림
                 cursorBrush = SolidColor(Color.Transparent),
                 decorationBox = { innerTextField ->
                     Box {
-                        // 1. 줄무늬 그리기
+                        // 배경 줄무늬
                         Canvas(modifier = Modifier.matchParentSize()) {
                             val lineCount = (size.height / lineHeightPx).toInt() + 10
                             for (i in 0..lineCount) {
@@ -150,31 +181,47 @@ fun DiaryEditorScreen(
                             }
                         }
 
-                        // 2. 플레이스홀더 또는 커서 그리기
                         if (diaryText.isEmpty() && !isFocused) {
                             Text(text = "오늘의 하루를 기록하세요", style = placeholderTextStyle)
-                        } else if (isFocused) {
-                            textLayoutResult?.let { layoutResult ->
-                                val layoutTextLength = layoutResult.layoutInput.text.text.length
-                                val selectionEnd = diaryValue.selection.end
-                                val safeOffset = selectionEnd.coerceIn(0, layoutTextLength)
-                                val cursorRect = layoutResult.getCursorRect(safeOffset)
+                        }
+
+                        innerTextField()
+
+                        // 텍스트 위: 줄 박스 중앙(midY)은 lineHeight 크면 베이스라인과 어긋남 → 베이스라인 기준 + rect 안 클램프
+                        if (isFocused) {
+                            textLayoutResult?.let { layout ->
+                                val len = layout.layoutInput.text.text.length
+                                val off = diaryValue.selection.end.coerceIn(0, len)
+                                val r = layout.getCursorRect(off)
+                                val line = layout.getLineForOffset(off)
+                                val baseline = layout.getLineBaseline(line)
+                                val top = caretDrawTopPx(r.top, r.bottom, baseline, cursorVisualHeightPx, cursorVerticalNudgePx)
                                 Canvas(modifier = Modifier.matchParentSize()) {
                                     drawLine(
                                         color = cursorColor.copy(alpha = cursorAlpha),
-                                        start = Offset(cursorRect.left, cursorRect.top),
-                                        end = Offset(cursorRect.left, cursorRect.top + cursorHeight),
-                                        strokeWidth = cursorStrokeWidth
+                                        start = Offset(r.left, top),
+                                        end = Offset(r.left, top + cursorVisualHeightPx),
+                                        strokeWidth = cursorStrokePx
                                     )
                                 }
                             }
                         }
-
-                        // 3. 실제 텍스트 필드 그리기 (가장 위에)
-                        innerTextField()
                     }
                 }
             )
         }
     }
+}
+
+/** [getCursorRect] 세로 범위 안에서만, 막대가 베이스라인 근처를 가리키도록 배치(큰 lineHeight 2번째 줄 등) */
+private fun caretDrawTopPx(
+    rectTop: Float,
+    rectBottom: Float,
+    baselineY: Float,
+    caretHeightPx: Float,
+    nudgePx: Float,
+): Float {
+    val idealTop = baselineY - caretHeightPx * 0.52f + nudgePx
+    val maxTop = (rectBottom - caretHeightPx).coerceAtLeast(rectTop)
+    return idealTop.coerceIn(rectTop, maxTop)
 }
