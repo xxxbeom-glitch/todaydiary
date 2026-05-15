@@ -1,11 +1,5 @@
 ﻿import type { DiaryEntry } from '../../features/diary';
 import { previewBody } from '../../lib/date';
-import { cn } from '../../lib/cn';
-
-interface DiaryCardProps {
-  entry: DiaryEntry;
-  onClick: () => void;
-}
 
 const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'] as const;
 
@@ -13,6 +7,11 @@ function cardDateLabel(dateStr: string): string {
   const [y, m, d] = dateStr.split('-').map(Number);
   const dt = new Date(y, m - 1, d);
   return `${m}월 ${d}일 ${WEEKDAYS[dt.getDay()]}`;
+}
+
+interface DiaryCardProps {
+  entry: DiaryEntry;
+  onClick: () => void;
 }
 
 export function DiaryCard({ entry, onClick }: DiaryCardProps) {
@@ -23,24 +22,21 @@ export function DiaryCard({ entry, onClick }: DiaryCardProps) {
     <button
       type="button"
       onClick={onClick}
-      className={cn(
-        'group w-full rounded-2xl border border-stone-200/80 bg-white px-5 py-4 text-left',
-        'shadow-[0_1px_4px_rgba(0,0,0,0.04)]',
-        'transition-all hover:border-stone-300 hover:shadow-[0_2px_10px_rgba(0,0,0,0.07)]',
-        'active:scale-[0.99]',
-      )}
+      className="app-card w-full text-left transition-[border-color] active:border-[var(--color-accent)]"
     >
-      <div className="flex items-center justify-between">
-        <time className="text-[11px] tracking-wide text-neutral-400">
+      <div className="flex items-center justify-between gap-2">
+        <time className="type-caption" style={{ color: 'var(--color-text-muted)' }}>
           {cardDateLabel(entry.date)}
         </time>
         {hasPhotos && (
-          <span className="text-[11px] text-neutral-400">
+          <span className="type-caption" style={{ color: 'var(--color-text-muted)' }}>
             사진 {entry.photos.length}
           </span>
         )}
       </div>
-      <p className="mt-2.5 text-[14px] leading-7 text-neutral-700 line-clamp-3">{snippet}</p>
+      <p className="type-body mt-3 line-clamp-3" style={{ color: 'var(--color-text-secondary)' }}>
+        {snippet}
+      </p>
     </button>
   );
 }

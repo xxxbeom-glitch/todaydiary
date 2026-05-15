@@ -1,9 +1,9 @@
-﻿import type { AutosaveStatus } from '../../hooks/useDiaryEditor';
+import type { AutosaveStatus } from '../../hooks/useDiaryEditor';
 import { cn } from '../../lib/cn';
 
 const LABEL: Record<AutosaveStatus, string | null> = {
   idle: null,
-  saving: '?? ??',
+  saving: '?? ?',
   saved: '???',
   error: '?? ??',
 };
@@ -19,11 +19,10 @@ export function AutosaveIndicator({ status, className }: AutosaveIndicatorProps)
 
   return (
     <span
-      className={cn(
-        'text-xs text-neutral-600',
-        status === 'error' && 'text-red-700',
-        className,
-      )}
+      className={cn('type-caption', className)}
+      style={{
+        color: status === 'error' ? 'var(--color-danger)' : 'var(--color-text-muted)',
+      }}
     >
       {label}
     </span>

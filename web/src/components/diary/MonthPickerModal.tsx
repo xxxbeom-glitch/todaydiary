@@ -10,18 +10,18 @@ interface MonthPickerModalProps {
 export function MonthPickerModal({ value, months, onChange, onClose }: MonthPickerModalProps) {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/20 backdrop-blur-[2px] sm:items-center"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-[#2b2721]/20 backdrop-blur-[2px]"
       role="presentation"
       onClick={onClose}
     >
       <div
         role="dialog"
         aria-labelledby="month-picker-title"
-        className="w-full max-w-sm rounded-t-3xl border border-stone-200/60 bg-[#faf8f5] px-6 pb-8 pt-6 shadow-2xl sm:rounded-3xl"
+        className="w-full max-w-[var(--app-max-width)] rounded-t-[22px] border border-b-0 border-[var(--color-border)] bg-[var(--color-surface)] px-[18px] pb-8 pt-5"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="mb-1 h-1 w-10 rounded-full bg-stone-300 mx-auto sm:hidden" />
-        <h2 id="month-picker-title" className="mt-3 text-[15px] font-medium text-neutral-800">
+        <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-[var(--color-border)]" />
+        <h2 id="month-picker-title" className="type-section-title">
           월 선택
         </h2>
         <select
@@ -30,7 +30,7 @@ export function MonthPickerModal({ value, months, onChange, onClose }: MonthPick
             onChange(e.target.value);
             onClose();
           }}
-          className="mt-4 w-full rounded-xl border border-stone-200 bg-white px-4 py-3 text-[14px] text-neutral-800 outline-none focus:border-stone-400"
+          className="app-input mt-4"
         >
           {months.map((m) => (
             <option key={m} value={m}>
@@ -38,11 +38,7 @@ export function MonthPickerModal({ value, months, onChange, onClose }: MonthPick
             </option>
           ))}
         </select>
-        <button
-          type="button"
-          onClick={onClose}
-          className="mt-4 w-full rounded-xl border border-stone-200 bg-white py-3 text-[14px] text-neutral-600 hover:bg-stone-50"
-        >
+        <button type="button" onClick={onClose} className="app-btn app-btn-primary mt-3 w-full">
           닫기
         </button>
       </div>

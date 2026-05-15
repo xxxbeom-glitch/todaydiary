@@ -19,13 +19,16 @@ export function LoginPage({ onLogin, loading, error }: LoginPageProps) {
   const loginDisabled = loading || envMissing.length > 0;
 
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-center bg-[#faf8f5] px-8">
-      <div className="w-full max-w-sm text-center">
-        <p className="text-[11px] tracking-[0.18em] text-neutral-400 uppercase">Today Diary</p>
-        <h1 className="mt-5 text-[2.6rem] font-light tracking-tight text-neutral-800">
-          하루기록
-        </h1>
-        <p className="mt-5 text-[13px] leading-7 text-neutral-500">
+    <div className="app-shell flex min-h-dvh flex-col items-center justify-center px-[18px] py-12">
+      <div className="w-full max-w-[320px] text-center">
+        <p
+          className="type-caption tracking-[0.16em] uppercase"
+          style={{ color: 'var(--color-text-muted)' }}
+        >
+          Today Diary
+        </p>
+        <h1 className="type-page-title mt-5">하루기록</h1>
+        <p className="type-body mt-4" style={{ color: 'var(--color-text-secondary)' }}>
           조용히 하루를 남기는 곳.
           <br />
           Android 앱과 같은 계정으로 이어집니다.
@@ -33,14 +36,14 @@ export function LoginPage({ onLogin, loading, error }: LoginPageProps) {
 
         {displayError && (
           <div className="mt-7 space-y-2.5 text-left">
-            <p className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-[13px] text-red-700">
-              {displayError}
-            </p>
+            <p className="app-alert-danger">{displayError}</p>
             {envError && (
-              <div className="rounded-xl border border-amber-100 bg-amber-50 px-4 py-3 text-[12px] leading-relaxed text-amber-900">
-                <p className="font-medium">배포 환경(Vercel) 설정 필요</p>
-                <p className="mt-1.5 text-amber-800">{firebaseEnvSetupHint()}</p>
-                <ul className="mt-2 list-inside list-disc font-mono text-[11px] text-amber-700">
+              <div className="app-alert-warn">
+                <p className="type-body-strong" style={{ color: 'var(--color-text-primary)' }}>
+                  배포 환경(Vercel) 설정 필요
+                </p>
+                <p className="type-caption mt-1.5">{firebaseEnvSetupHint()}</p>
+                <ul className="type-caption mt-2 list-inside list-disc font-mono">
                   {FIREBASE_ENV_KEYS.map((k) => (
                     <li key={k}>{k}</li>
                   ))}
@@ -54,14 +57,12 @@ export function LoginPage({ onLogin, loading, error }: LoginPageProps) {
           type="button"
           disabled={loginDisabled}
           onClick={onLogin}
-          className="mt-10 w-full rounded-2xl border border-stone-200 bg-white py-4 text-[14px] text-neutral-800 shadow-sm transition-colors hover:bg-stone-50 active:bg-stone-100 disabled:opacity-40"
+          className="app-btn app-btn-primary mt-10 w-full"
         >
           {loading ? '연결 중…' : 'Google로 계속하기'}
         </button>
 
-        <p className="mt-8 text-[11px] text-neutral-400">
-          로그인하면 Android 앱의 일기가 동기화됩니다.
-        </p>
+        <p className="type-caption mt-8">로그인하면 Android 앱의 일기가 동기화됩니다.</p>
       </div>
     </div>
   );

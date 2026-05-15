@@ -10,15 +10,10 @@ interface HeaderProps {
 
 export function Header({ left, center, right, className }: HeaderProps) {
   return (
-    <header
-      className={cn(
-        'sticky top-0 z-30 grid h-14 grid-cols-[3rem_1fr_3rem] items-center border-b border-stone-200/70 bg-[#faf8f5]/95 backdrop-blur-sm',
-        className,
-      )}
-    >
-      <div className="flex items-center justify-start pl-2">{left}</div>
-      <div className="truncate text-center text-[15px] font-medium text-neutral-800">{center}</div>
-      <div className="flex items-center justify-end pr-2">{right}</div>
+    <header className={cn('app-header', className)}>
+      <div className="flex items-center justify-start pl-1">{left}</div>
+      <div className="truncate px-1 text-center type-body-strong">{center}</div>
+      <div className="flex items-center justify-end pr-1">{right}</div>
     </header>
   );
 }

@@ -97,19 +97,13 @@ export default function App() {
   }
 
   if (!user) {
-    return (
-      <LoginPage
-        onLogin={() => void handleLogin()}
-        loading={loginPending}
-        error={uiError}
-      />
-    );
+    return <LoginPage onLogin={() => void handleLogin()} loading={loginPending} error={uiError} />;
   }
 
   return (
     <AppShell>
       {uiError && screen === 'list' && (
-        <div className="border-b border-red-100 bg-red-50 px-4 py-2.5 text-center text-xs text-red-700">
+        <div className="app-banner">
           {uiError}
           <button
             type="button"
@@ -163,7 +157,7 @@ export default function App() {
       )}
 
       {screen === 'editor' && (!uid || !activeId) && (
-        <p className="p-8 text-center text-sm text-neutral-500">
+        <p className="app-page type-caption text-center">
           ??? ?????. ?? ?? ?? ?????.
         </p>
       )}
