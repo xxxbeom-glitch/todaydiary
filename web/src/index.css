@@ -1,3 +1,35 @@
-body {
-  margin: 0;
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Pretendard Variable', 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif;
+  --font-serif: 'Noto Serif KR', 'Nanum Myeongjo', Georgia, serif;
+
+  --color-paper: #faf8f5;
+  --color-paper-warm: #f5f1eb;
+  --color-ink: #2c2824;
+  --color-ink-muted: #8a847c;
+  --color-line: #e8e4de;
+  --color-line-soft: #f0ece6;
+  --color-accent: #6b5d4d;
+  --color-accent-soft: #ebe4da;
+}
+
+@layer base {
+  html {
+    @apply antialiased;
+  }
+
+  body {
+    @apply bg-paper text-ink font-sans;
+    margin: 0;
+    min-height: 100dvh;
+  }
+
+  #root {
+    min-height: 100dvh;
+  }
+
+  button {
+    @apply cursor-pointer;
+  }
 }

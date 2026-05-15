@@ -1,77 +1,158 @@
-/**
- * 임시 테스트 UI — Firebase Auth + Firestore `users/{uid}/diaries` 연동 확인
- */
-import type { CSSProperties } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useAuth } from './features/auth';
-import { useDiaries } from './features/diary';
+import {
+  deleteDiaryEntry,
+  newEntryId,
+  useDiaries,
+  type DiaryEntry,
+} from './features/diary';
+import { AppShell } from './components/layout/AppShell';
+import { LoadingView } from './components/ui/LoadingView';
+import { LoginPage } from './pages/LoginPage';
+import { DiaryListPage } from './pages/DiaryListPage';
+import { EditorPage } from './pages/EditorPage';
+import { DetailPage } from './pages/DetailPage';
+import { todayISO, yearMonthKey } from './lib/date';
+
+type Screen = 'list' | 'editor' | 'detail';
 
 export default function App() {
-  const { user, loading, error: authError, loginWithGoogle, logout } = useAuth();
-  const { count, ready, error: diaryError } = useDiaries(user?.uid);
+  const { user, loading: authLoading, error: authError, setError: setAuthError, loginWithGoogle, logout } =
+    useAuth();
+  const uid = user?.uid;
+  const { entries, ready, error: diaryError, setError: setDiaryError } = useDiaries(uid);
 
-  if (loading) {
-    return <p style={styles.muted}>인증 상태 확인 중…</p>;
+  const [screen, setScreen] = useState<Screen>('list');
+  const [monthKey, setMonthKey] = useState(() => yearMonthKey());
+  const [selected, setSelected] = useState<DiaryEntry | null>(null);
+  const [activeId, setActiveId] = useState('');
+  const [editorDate, setEditorDate] = useState(todayISO);
+  const [forceBlank, setForceBlank] = useState(false);
+  const [loginPending, setLoginPending] = useState(false);
+
+  const uiError = authError ?? diaryError;
+
+  const handleLogin = useCallback(async () => {
+    setLoginPending(true);
+    setAuthError(null);
+    try {
+      await loginWithGoogle();
+    } finally {
+      setLoginPending(false);
+    }
+  }, [loginWithGoogle, setAuthError]);
+
+  const openCreate = useCallback(() => {
+    setSelected(null);
+    setActiveId(newEntryId());
+    setEditorDate(todayISO());
+    setForceBlank(true);
+    setScreen('editor');
+  }, []);
+
+  const openEdit = useCallback((entry: DiaryEntry) => {
+    setSelected(entry);
+    setActiveId(entry.id);
+    setEditorDate(entry.date);
+    setForceBlank(false);
+    setScreen('editor');
+  }, []);
+
+  const openView = useCallback((entry: DiaryEntry) => {
+    setSelected(entry);
+    setActiveId(entry.id);
+    setScreen('detail');
+  }, []);
+
+  const handleDelete = useCallback(async () => {
+    if (!uid || !selected) return;
+    try {
+      await deleteDiaryEntry(uid, selected.id, selected.date);
+      setSelected(null);
+      setScreen('list');
+    } catch (e) {
+      setDiaryError(e instanceof Error ? e.message : '삭제에 실패했습니다');
+    }
+  }, [uid, selected, setDiaryError]);
+
+  const editorInitialBody = useMemo(() => {
+    if (forceBlank) return '';
+    return selected?.body ?? '';
+  }, [forceBlank, selected]);
+
+  const editorPhotos = selected?.photos ?? [];
+
+  if (authLoading) {
+    return (
+      <AppShell>
+        <LoadingView label="잠시만요…" />
+      </AppShell>
+    );
+  }
+
+  if (!user) {
+    return (
+      <LoginPage
+        onLogin={() => void handleLogin()}
+        loading={loginPending}
+        error={uiError}
+      />
+    );
   }
 
   return (
-    <main style={styles.main}>
-      <h1 style={styles.h1}>하루기록 Web — 연동 테스트</h1>
-      <p style={styles.muted}>Firestore DB: diary · 경로: users/&#123;uid&#125;/diaries</p>
-
-      {authError && <p style={styles.error}>Auth: {authError}</p>}
-      {diaryError && <p style={styles.error}>Firestore: {diaryError}</p>}
-
-      {!user ? (
-        <button type="button" style={styles.btn} onClick={() => void loginWithGoogle()}>
-          Google 로그인
-        </button>
-      ) : (
-        <section style={styles.card}>
-          <dl style={styles.dl}>
-            <dt>UID</dt>
-            <dd style={styles.mono}>{user.uid}</dd>
-            <dt>이메일</dt>
-            <dd>{user.email ?? '(없음)'}</dd>
-            <dt>일기 개수</dt>
-            <dd>{ready ? `${count}건` : '불러오는 중…'}</dd>
-          </dl>
-          <button type="button" style={styles.btnSecondary} onClick={() => void logout()}>
-            로그아웃
+    <AppShell>
+      {uiError && screen === 'list' && (
+        <p className="border-b border-red-100 bg-red-50/70 px-4 py-2 text-center text-xs text-red-800">
+          {uiError}
+          <button
+            type="button"
+            className="ml-2 underline"
+            onClick={() => {
+              setAuthError(null);
+              setDiaryError(null);
+            }}
+          >
+            닫기
           </button>
-        </section>
+        </p>
       )}
-    </main>
+
+      {screen === 'list' && (
+        <DiaryListPage
+          entries={entries}
+          loading={!ready}
+          monthKey={monthKey}
+          onMonthChange={setMonthKey}
+          onSelect={openView}
+          onCreate={openCreate}
+          onLogout={() => void logout()}
+        />
+      )}
+
+      {screen === 'editor' && uid && (
+        <EditorPage
+          uid={uid}
+          entryId={activeId}
+          date={editorDate}
+          initialBody={editorInitialBody}
+          isNew={forceBlank}
+          photos={editorPhotos}
+          onBack={() => {
+            setForceBlank(false);
+            setScreen('list');
+          }}
+        />
+      )}
+
+      {screen === 'detail' && selected && (
+        <DetailPage
+          entry={selected}
+          onBack={() => setScreen('list')}
+          onEdit={() => openEdit(selected)}
+          onDelete={() => void handleDelete()}
+        />
+      )}
+    </AppShell>
   );
 }
-
-const styles: Record<string, CSSProperties> = {
-  main: { fontFamily: 'system-ui, sans-serif', padding: 24, maxWidth: 480, margin: '0 auto' },
-  h1: { fontSize: 20, fontWeight: 600, margin: '0 0 8px' },
-  muted: { color: '#666', fontSize: 14, margin: '0 0 16px' },
-  error: { color: '#b00020', fontSize: 14 },
-  btn: {
-    padding: '10px 20px',
-    fontSize: 15,
-    cursor: 'pointer',
-    border: 'none',
-    borderRadius: 6,
-    background: '#1a73e8',
-    color: '#fff',
-  },
-  btnSecondary: {
-    marginTop: 16,
-    padding: '8px 16px',
-    fontSize: 14,
-    cursor: 'pointer',
-    border: '1px solid #ccc',
-    borderRadius: 6,
-    background: '#fff',
-  },
-  card: {
-    border: '1px solid #e0e0e0',
-    borderRadius: 8,
-    padding: 16,
-  },
-  dl: { margin: 0, display: 'grid', gridTemplateColumns: '88px 1fr', gap: '8px 12px' },
-  mono: { fontFamily: 'ui-monospace, monospace', fontSize: 13, wordBreak: 'break-all' },
-};
