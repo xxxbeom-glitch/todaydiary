@@ -1,0 +1,42 @@
+// Firestore 보안 규칙 — named database "diary"
+//
+// 적용 방법 (두 가지 중 하나):
+//
+// [A] Firebase Console (권장)
+//   Firebase Console → https://console.firebase.google.com/
+//   → 프로젝트 cole-c3f96
+//   → Firestore Database → "diary" 데이터베이스 선택
+//   → [규칙] 탭 → 아래 내용 붙여넣기 → 게시
+//
+// [B] Firebase CLI
+//   firebase deploy --only firestore:rules --project cole-c3f96
+//   (firebase.json 에 { "firestore": { "database": "diary", "rules": "firestore.rules" } } 필요)
+//
+// 규칙 요약:
+//   - 로그인한 사용자만 접근 가능
+//   - 자신의 uid 하위 데이터만 읽기/쓰기/삭제 가능
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // users/{userId} — 프로필 문서
+    match /users/{userId} {
+      allow read, write: if request.auth != null
+                         && request.auth.uid == userId;
+
+      // users/{userId}/diaries/{diaryId} — 일기
+      match /diaries/{diaryId} {
+        allow read, write, delete: if request.auth != null
+                                   && request.auth.uid == userId;
+      }
+
+      // users/{userId}/deletedDiaries/{diaryId} — 삭제 아카이브 (Android 연동)
+      match /deletedDiaries/{diaryId} {
+        allow read, write, delete: if request.auth != null
+                                   && request.auth.uid == userId;
+      }
+    }
+
+  }
+}
