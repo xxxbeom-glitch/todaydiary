@@ -48,6 +48,16 @@ export async function signInWithGoogle(): Promise<User | null> {
       );
     }
 
+    if (code === 'auth/unauthorized-domain') {
+      const host =
+        typeof window !== 'undefined' ? window.location.hostname : '배포 도메인';
+      throw new Error(
+        `이 도메인(${host})이 Firebase에 등록되지 않았습니다. ` +
+          'Firebase Console → Authentication → Settings → Authorized domains에 ' +
+          `「${host}」을 추가하세요. (https:// 없이 도메인만)`,
+      );
+    }
+
     throw e;
   }
 }

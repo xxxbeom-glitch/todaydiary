@@ -72,7 +72,11 @@ Vite는 `npm run dev` 시 `.env.local`을 자동 로드합니다.
 ### Firebase Console 추가 설정
 
 - **Authentication** → Sign-in method → **Google** 사용
-- **Authentication** → Settings → **Authorized domains**에 `localhost` 포함
+- **Authentication** → Settings → **Authorized domains**에 아래 도메인 추가 (`https://` 없이)
+  - `localhost` (로컬)
+  - Vercel 배포 URL (예: `todaydiary-xxx.vercel.app` — 브라우저 주소창의 호스트명 그대로)
+  - 커스텀 도메인을 쓰면 그 도메인도 추가
+  - `auth/unauthorized-domain` 오류는 이 목록에 없을 때 발생
 - **Firestore** → 데이터베이스 **`diary`** 가 생성되어 있는지 확인
 
 ---

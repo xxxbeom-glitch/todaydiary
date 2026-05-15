@@ -145,9 +145,10 @@ export default function App() {
           initialBody={editorInitialBody}
           isNew={forceBlank}
           photos={editorPhotos}
-          onBack={() => {
+          onBack={(savedDate) => {
             setForceBlank(false);
             setScreen('list');
+            if (savedDate) setMonthKey(savedDate.slice(0, 7));
           }}
         />
       )}
