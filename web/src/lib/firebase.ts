@@ -5,28 +5,42 @@ import {
   type Auth,
 } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
+import {
+  logImportMetaEnvDev,
+  readFirebaseEnv,
+  validateFirebaseEnv,
+} from './env';
 
 /**
  * Android `FirestoreInstances` + Firebase 초기화.
- * @see app/.../data/FirestoreInstances.kt — DIARY_DATABASE_ID = "diary"
- * @see app/.../auth/FirebaseAuthState.kt — FirebaseAuth.getInstance()
+ * env: `import.meta.env.VITE_*` only (not process.env).
  */
-export const DIARY_DATABASE_ID =
-  import.meta.env.VITE_FIREBASE_DATABASE_ID ?? 'diary';
+export function getFirebaseEnvForDebug() {
+  logImportMetaEnvDev();
+  const cfg = readFirebaseEnv();
+  const missing = validateFirebaseEnv(cfg);
+  return { cfg, missing, ok: missing.length === 0 };
+}
+
+const env = readFirebaseEnv();
+
+export const DIARY_DATABASE_ID = env.databaseId;
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  apiKey: env.apiKey,
+  authDomain: env.authDomain,
+  projectId: env.projectId,
+  storageBucket: env.storageBucket,
+  messagingSenderId: env.messagingSenderId,
+  appId: env.appId,
 };
 
 function assertConfig(): void {
-  if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
+  const missing = validateFirebaseEnv(env);
+  if (missing.length > 0) {
     throw new Error(
-      'Firebase 설정이 없습니다. web/.env.local에 VITE_* 값을 채우세요. (docs/setup.md)',
+      `Firebase 환경 변수가 없습니다: ${missing.join(', ')}. ` +
+        '파일 위치: web/.env.local (확장자 .txt 아님). `cd web` 후 npm run dev 실행.',
     );
   }
 }
@@ -35,30 +49,39 @@ let app: FirebaseApp | undefined;
 let auth: Auth | undefined;
 let diaryDb: Firestore | undefined;
 let googleProvider: GoogleAuthProvider | undefined;
+let loggedDev = false;
 
-/** `initializeApp` — 단일 Firebase 앱 인스턴스 */
+function ensureDevLog(): void {
+  if (import.meta.env.DEV && !loggedDev) {
+    loggedDev = true;
+    logImportMetaEnvDev();
+    const missing = validateFirebaseEnv(env);
+    if (missing.length > 0) {
+      console.error('[Firebase] missing env:', missing);
+    } else {
+      console.log('[Firebase] env OK, databaseId=', DIARY_DATABASE_ID);
+    }
+  }
+}
+
 export function getFirebaseApp(): FirebaseApp {
+  ensureDevLog();
   assertConfig();
   if (!app) app = initializeApp(firebaseConfig);
   return app;
 }
 
-/** Android `FirebaseAuth.getInstance()` */
 export function getFirebaseAuth(): Auth {
   getFirebaseApp();
   if (!auth) auth = getAuth();
   return auth;
 }
 
-/** Android MainActivity — Google Sign-In / `GoogleAuthProvider` */
 export function getGoogleAuthProvider(): GoogleAuthProvider {
-  if (!googleProvider) {
-    googleProvider = new GoogleAuthProvider();
-  }
+  if (!googleProvider) googleProvider = new GoogleAuthProvider();
   return googleProvider;
 }
 
-/** Android `FirestoreInstances.diary` — `getFirestore(app, 'diary')` */
 export function getDiaryFirestore(): Firestore {
   getFirebaseApp();
   if (!diaryDb) diaryDb = getFirestore(getFirebaseApp(), DIARY_DATABASE_ID);

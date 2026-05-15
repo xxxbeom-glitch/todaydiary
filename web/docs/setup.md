@@ -43,6 +43,19 @@ cp .env.example .env.local
 Vite는 `npm run dev` 시 `.env.local`을 자동 로드합니다.  
 `.env.local`은 `.gitignore`에 포함되어 있어 Git에 올라가지 않습니다.
 
+### 자주 하는 실수
+
+| 문제 | 해결 |
+|------|------|
+| 파일 위치 | 반드시 **`web/.env.local`** (저장소 루트가 아님) |
+| 파일명 | `.env.local.txt` 가 아닌 **`.env.local`** (Windows에서 확장자 숨김 확인) |
+| 실행 위치 | `cd web` 후 `npm run dev` |
+| 접두사 | 모든 키는 **`VITE_`** 로 시작 |
+| DATABASE_ID | **`diary`** (Google Analytics `G-…` ID 아님) |
+| Vercel 배포 | `.env.local`은 업로드 안 됨 → Vercel 대시보드에 동일 변수 등록 |
+
+개발 시 브라우저 콘솔에 `[import.meta.env]`, `[Firebase env]` 로그가 출력됩니다.
+
 ### Firebase Console 추가 설정
 
 - **Authentication** → Sign-in method → **Google** 사용
