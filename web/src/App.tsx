@@ -1,4 +1,4 @@
-﻿import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useAuth } from './features/auth';
 import {
   deleteDiaryEntry,
@@ -13,13 +13,18 @@ import { DiaryListPage } from './pages/DiaryListPage';
 import { EditorPage } from './pages/EditorPage';
 import { DetailPage } from './pages/DetailPage';
 import { todayISO, yearMonthKey } from './lib/date';
-import { debugBorder } from './lib/debugUi';
 
 type Screen = 'list' | 'editor' | 'detail';
 
 export default function App() {
-  const { user, loading: authLoading, error: authError, setError: setAuthError, loginWithGoogle, logout } =
-    useAuth();
+  const {
+    user,
+    loading: authLoading,
+    error: authError,
+    setError: setAuthError,
+    loginWithGoogle,
+    logout,
+  } = useAuth();
   const uid = user?.uid;
   const { entries, ready, error: diaryError, setError: setDiaryError } = useDiaries(uid);
 
@@ -72,7 +77,7 @@ export default function App() {
       setSelected(null);
       setScreen('list');
     } catch (e) {
-      setDiaryError(e instanceof Error ? e.message : '??? ??????');
+      setDiaryError(e instanceof Error ? e.message : '??? ??????.');
     }
   }, [uid, selected, setDiaryError]);
 
@@ -83,44 +88,28 @@ export default function App() {
 
   const editorPhotos = selected?.photos ?? [];
 
-  /* ?? ??? ??? ??? */
-  const debugStrip = (
-    <p
-      className={`border-b border-red-300 bg-red-50 px-3 py-1.5 text-center text-xs font-medium text-red-800 ${debugBorder()}`}
-    >
-      UI ?? OK � auth={authLoading ? 'loading' : user ? `uid:${user.uid.slice(0, 8)}?` : 'guest'} � screen=
-      {screen}
-    </p>
-  );
-
   if (authLoading) {
     return (
       <AppShell>
-        {debugStrip}
-        <LoadingView label="?? ?? ?? (loading)" />
+        <LoadingView />
       </AppShell>
     );
   }
 
   if (!user) {
     return (
-      <>
-        {debugStrip}
-        <LoginPage
-          onLogin={() => void handleLogin()}
-          loading={loginPending}
-          error={uiError}
-        />
-      </>
+      <LoginPage
+        onLogin={() => void handleLogin()}
+        loading={loginPending}
+        error={uiError}
+      />
     );
   }
 
   return (
     <AppShell>
-      {debugStrip}
-
       {uiError && screen === 'list' && (
-        <p className="border-b border-red-200 bg-red-50 px-4 py-2 text-center text-xs text-red-800">
+        <div className="border-b border-red-100 bg-red-50 px-4 py-2.5 text-center text-xs text-red-700">
           {uiError}
           <button
             type="button"
@@ -132,7 +121,7 @@ export default function App() {
           >
             ??
           </button>
-        </p>
+        </div>
       )}
 
       {screen === 'list' && (
@@ -144,6 +133,7 @@ export default function App() {
           onSelect={openView}
           onCreate={openCreate}
           onLogout={() => void logout()}
+          userName={user.displayName ?? user.email ?? ''}
         />
       )}
 
@@ -171,9 +161,10 @@ export default function App() {
         />
       )}
 
-      {/* screen ?? ??? ? ? ?? ?? */}
       {screen === 'editor' && (!uid || !activeId) && (
-        <p className="p-6 text-center text-neutral-700">???? ? ? ????. ???? ??? ???.</p>
+        <p className="p-8 text-center text-sm text-neutral-500">
+          ??? ?????. ?? ?? ?? ?????.
+        </p>
       )}
     </AppShell>
   );

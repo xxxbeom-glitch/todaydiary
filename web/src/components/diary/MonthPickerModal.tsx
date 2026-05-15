@@ -1,5 +1,4 @@
 ﻿import { formatMonthTitle } from '../../lib/date';
-import { debugBorder } from '../../lib/debugUi';
 
 interface MonthPickerModalProps {
   value: string;
@@ -11,23 +10,27 @@ interface MonthPickerModalProps {
 export function MonthPickerModal({ value, months, onChange, onClose }: MonthPickerModalProps) {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/20 p-4 sm:items-center"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/20 backdrop-blur-[2px] sm:items-center"
       role="presentation"
       onClick={onClose}
     >
       <div
         role="dialog"
         aria-labelledby="month-picker-title"
-        className={`w-full max-w-sm rounded-2xl border border-stone-200 bg-stone-50 p-6 text-neutral-800 shadow-lg ${debugBorder()}`}
+        className="w-full max-w-sm rounded-t-3xl border border-stone-200/60 bg-[#faf8f5] px-6 pb-8 pt-6 shadow-2xl sm:rounded-3xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 id="month-picker-title" className="text-lg font-semibold text-neutral-900">
-          ???�택
+        <div className="mb-1 h-1 w-10 rounded-full bg-stone-300 mx-auto sm:hidden" />
+        <h2 id="month-picker-title" className="mt-3 text-[15px] font-medium text-neutral-800">
+          월 선택
         </h2>
         <select
           value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="mt-4 w-full rounded-lg border border-stone-300 bg-white px-3 py-2.5 text-[15px] text-neutral-900 outline-none"
+          onChange={(e) => {
+            onChange(e.target.value);
+            onClose();
+          }}
+          className="mt-4 w-full rounded-xl border border-stone-200 bg-white px-4 py-3 text-[14px] text-neutral-800 outline-none focus:border-stone-400"
         >
           {months.map((m) => (
             <option key={m} value={m}>
@@ -35,22 +38,13 @@ export function MonthPickerModal({ value, months, onChange, onClose }: MonthPick
             </option>
           ))}
         </select>
-        <div className="mt-5 flex justify-end gap-2">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-lg px-4 py-2 text-sm text-neutral-600 hover:bg-stone-200"
-          >
-            취소
-          </button>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-lg bg-stone-700 px-4 py-2 text-sm text-white"
-          >
-            ?�인
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={onClose}
+          className="mt-4 w-full rounded-xl border border-stone-200 bg-white py-3 text-[14px] text-neutral-600 hover:bg-stone-50"
+        >
+          닫기
+        </button>
       </div>
     </div>
   );
