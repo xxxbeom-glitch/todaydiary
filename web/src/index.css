@@ -148,6 +148,60 @@
     border: 1px solid var(--color-border);
   }
 
+  /* Diary list (no body preview) */
+  .app-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .app-list-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 76px;
+    max-height: 84px;
+    padding: 14px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    background-color: var(--color-surface);
+    box-shadow: none;
+    color: var(--color-text-primary);
+    transition: background-color 0.15s ease;
+  }
+
+  .app-list-item:active {
+    background-color: var(--color-surface-muted);
+  }
+
+  .app-list-item__day {
+    flex-shrink: 0;
+    width: 40px;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--color-text-primary);
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+  }
+
+  .app-list-item__meta {
+    min-width: 0;
+    color: var(--color-text-secondary);
+    font-weight: 500;
+  }
+
+  .app-list-item__status {
+    color: var(--color-text-muted);
+  }
+
+  .app-list-item__chevron {
+    display: flex;
+    align-items: center;
+    color: var(--color-text-muted);
+  }
+
   /* Header */
   .app-header {
     position: sticky;

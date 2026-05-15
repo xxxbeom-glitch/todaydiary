@@ -1,6 +1,6 @@
 ﻿import { useMemo, useState } from 'react';
 import type { DiaryEntry } from '../features/diary';
-import { DiaryCard } from '../components/diary/DiaryCard';
+import { DiaryListItem } from '../components/diary/DiaryListItem';
 import { FloatingWriteButton } from '../components/diary/FloatingWriteButton';
 import { MonthPickerModal } from '../components/diary/MonthPickerModal';
 import { EmptyState } from '../components/ui/EmptyState';
@@ -132,10 +132,10 @@ export function DiaryListPage({
             description="오른쪽 아래 버튼으로 오늘의 한 페이지를 채워 보세요."
           />
         ) : (
-          <ul className="flex flex-col gap-3">
+          <ul className="app-list">
             {monthEntries.map((entry) => (
               <li key={entry.id || entry.date}>
-                <DiaryCard entry={entry} onClick={() => onSelect(entry)} />
+                <DiaryListItem entry={entry} onClick={() => onSelect(entry)} />
               </li>
             ))}
           </ul>
