@@ -6,6 +6,7 @@ import {
 } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
 import {
+  formatFirebaseEnvError,
   logImportMetaEnvDev,
   readFirebaseEnv,
   validateFirebaseEnv,
@@ -22,26 +23,28 @@ export function getFirebaseEnvForDebug() {
   return { cfg, missing, ok: missing.length === 0 };
 }
 
-const env = readFirebaseEnv();
+function loadEnv() {
+  return readFirebaseEnv();
+}
 
-export const DIARY_DATABASE_ID = env.databaseId;
-
-const firebaseConfig = {
-  apiKey: env.apiKey,
-  authDomain: env.authDomain,
-  projectId: env.projectId,
-  storageBucket: env.storageBucket,
-  messagingSenderId: env.messagingSenderId,
-  appId: env.appId,
-};
+function buildFirebaseConfig() {
+  const env = loadEnv();
+  return {
+    apiKey: env.apiKey,
+    authDomain: env.authDomain,
+    projectId: env.projectId,
+    storageBucket: env.storageBucket,
+    messagingSenderId: env.messagingSenderId,
+    appId: env.appId,
+    databaseId: env.databaseId,
+  };
+}
 
 function assertConfig(): void {
+  const env = loadEnv();
   const missing = validateFirebaseEnv(env);
   if (missing.length > 0) {
-    throw new Error(
-      `Firebase 환경 변수가 없습니다: ${missing.join(', ')}. ` +
-        '파일 위치: web/.env.local (확장자 .txt 아님). `cd web` 후 npm run dev 실행.',
-    );
+    throw new Error(formatFirebaseEnvError(missing));
   }
 }
 
@@ -55,19 +58,23 @@ function ensureDevLog(): void {
   if (import.meta.env.DEV && !loggedDev) {
     loggedDev = true;
     logImportMetaEnvDev();
-    const missing = validateFirebaseEnv(env);
+    const missing = validateFirebaseEnv(loadEnv());
     if (missing.length > 0) {
       console.error('[Firebase] missing env:', missing);
     } else {
-      console.log('[Firebase] env OK, databaseId=', DIARY_DATABASE_ID);
+      console.log('[Firebase] env OK, databaseId=', loadEnv().databaseId);
     }
   }
+}
+
+export function getDiaryDatabaseId(): string {
+  return loadEnv().databaseId;
 }
 
 export function getFirebaseApp(): FirebaseApp {
   ensureDevLog();
   assertConfig();
-  if (!app) app = initializeApp(firebaseConfig);
+  if (!app) app = initializeApp(buildFirebaseConfig());
   return app;
 }
 
@@ -84,6 +91,8 @@ export function getGoogleAuthProvider(): GoogleAuthProvider {
 
 export function getDiaryFirestore(): Firestore {
   getFirebaseApp();
-  if (!diaryDb) diaryDb = getFirestore(getFirebaseApp(), DIARY_DATABASE_ID);
+  if (!diaryDb) {
+    diaryDb = getFirestore(getFirebaseApp(), getDiaryDatabaseId());
+  }
   return diaryDb;
 }

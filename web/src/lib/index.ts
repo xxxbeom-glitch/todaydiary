@@ -1,5 +1,5 @@
 export {
-  DIARY_DATABASE_ID,
+  getDiaryDatabaseId,
   getDiaryFirestore,
   getFirebaseApp,
   getFirebaseAuth,

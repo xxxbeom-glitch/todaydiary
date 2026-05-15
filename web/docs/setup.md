@@ -54,7 +54,20 @@ Vite는 `npm run dev` 시 `.env.local`을 자동 로드합니다.
 | DATABASE_ID | **`diary`** (Google Analytics `G-…` ID 아님) |
 | Vercel 배포 | `.env.local`은 업로드 안 됨 → Vercel 대시보드에 동일 변수 등록 |
 
-개발 시 브라우저 콘솔에 `[import.meta.env]`, `[Firebase env]` 로그가 출력됩니다.
+개발 시 브라우저 콘솔에 `[import.meta.env]`, `[Firebase env]` 로그가 출력됩니다.  
+`[Firebase] env OK, databaseId= diary` 가 보이면 정상입니다.
+
+### 로컬인데 env 오류가 날 때
+
+1. **터미널에 나온 URL만** 연다 (예: `http://localhost:5177/`).  
+   예전에 켜 둔 dev 서버가 5173·5174에 남아 있으면, 그 주소는 env 없는 옛 빌드일 수 있습니다.
+2. 예전 서버 종료 후 다시 실행:
+   ```powershell
+   cd web
+   npm run dev
+   ```
+3. `npm run preview` 는 **build 결과**를 띄웁니다. preview 전에 `npm run build` 가 성공해야 합니다.
+4. 코드에서는 `import.meta.env.VITE_*` 를 **직접** 참조해야 합니다 (`const e = import.meta.env` 후 `e.VITE_*` 는 배포/preview 에서 비어 있을 수 있음).
 
 ### Firebase Console 추가 설정
 
@@ -105,7 +118,26 @@ npm run dev
 
 ### 환경 변수 (필수)
 
-Vercel → Project → Settings → Environment Variables에 `.env.local`과 동일한 `VITE_*` 값을 등록합니다.  
-`VITE_FIREBASE_DATABASE_ID=diary` 는 반드시 포함합니다.
+### Vercel 환경 변수 (배포 필수)
+
+`.env.local`은 Git·Vercel 업로드에 **포함되지 않습니다**.  
+Vite는 **빌드할 때** `VITE_*` 값을 JS에 박아 넣으므로, 변수 없이 빌드되면 배포 사이트에서 지금 같은 오류가 납니다.
+
+1. [Vercel](https://vercel.com) → 프로젝트 → **Settings** → **Environment Variables**
+2. `web/.env.local`과 **동일한 7개** 추가 (이름·값 그대로)
+3. Environment: **Production** + **Preview** 모두 체크
+4. 저장 후 **Deployments** → 최신 배포 **⋯** → **Redeploy** (변수 추가만으로는 기존 빌드가 갱신되지 않음)
+
+| 변수 | 예시/비고 |
+|------|-----------|
+| `VITE_FIREBASE_API_KEY` | Firebase 웹 API 키 |
+| `VITE_FIREBASE_AUTH_DOMAIN` | `cole-c3f96.firebaseapp.com` |
+| `VITE_FIREBASE_PROJECT_ID` | `cole-c3f96` |
+| `VITE_FIREBASE_STORAGE_BUCKET` | Storage bucket |
+| `VITE_FIREBASE_MESSAGING_SENDER_ID` | 숫자 |
+| `VITE_FIREBASE_APP_ID` | 웹 앱 App ID |
+| `VITE_FIREBASE_DATABASE_ID` | **`diary`** (Analytics `G-…` 아님) |
+
+빌드 로그에 `[vite] production 빌드에 Firebase env 가 없습니다` 가 보이면 위 변수가 빌드 시 전달되지 않은 것입니다.
 
 배포 후 404가 나오면 Root Directory가 `web`이 아닌 채로 빌드됐는지 확인하세요.
