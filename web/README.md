@@ -35,6 +35,12 @@ web/src/
 
 `App.tsx`는 로그인·일기 건수만 보여 주는 **최소 개발 셸**입니다.
 
+## Vercel 배포
+
+- 저장소 루트 [`vercel.json`](../vercel.json) → `web/dist` 배포 (Android 루트 404 방지)
+- Vercel 환경 변수에 `VITE_*` 전부 등록 (`.env.local`과 동일)
+- 자세한 내용: [docs/setup.md](docs/setup.md#vercel-배포)
+
 ## 원칙
 
 - Android `app/` 코드는 수정하지 않음

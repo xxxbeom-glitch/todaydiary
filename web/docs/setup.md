@@ -69,3 +69,30 @@ npm run dev
 ```
 
 브라우저에서 Google 로그인 후 일기 건수가 표시되면 연동이 된 것입니다. UI는 이후 단계에서 구현합니다.
+
+---
+
+## Vercel 배포
+
+저장소 루트는 Android 프로젝트이므로, 웹만 배포하려면 아래 중 **하나**를 사용합니다.
+
+### 방법 A (권장): 루트 `vercel.json` 사용
+
+저장소 루트의 [`vercel.json`](../vercel.json)이 `web/`을 빌드·`web/dist`를 배포합니다.  
+추가 설정 없이 재배포하면 됩니다.
+
+### 방법 B: Vercel 대시보드
+
+| 항목 | 값 |
+|------|-----|
+| Root Directory | `web` |
+| Framework Preset | Vite |
+| Build Command | `npm run build` |
+| Output Directory | `dist` |
+
+### 환경 변수 (필수)
+
+Vercel → Project → Settings → Environment Variables에 `.env.local`과 동일한 `VITE_*` 값을 등록합니다.  
+`VITE_FIREBASE_DATABASE_ID=diary` 는 반드시 포함합니다.
+
+배포 후 404가 나오면 Root Directory가 `web`이 아닌 채로 빌드됐는지 확인하세요.
