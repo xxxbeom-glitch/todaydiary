@@ -78,7 +78,7 @@ export function EditorPage({
 
       {error && <p className="app-banner">{error}</p>}
 
-      <div className="app-page flex-1">
+      <div className="app-page app-page-prose flex-1">
         <textarea
           value={body}
           onChange={(e) => setBody(e.target.value)}

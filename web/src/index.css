@@ -249,10 +249,11 @@
     resize: none;
     border: 0;
     background: transparent;
-    padding: 0;
+    background-image: none;
+    padding: 8px 0;
     font-size: 15px;
     font-weight: 400;
-    line-height: 1.75;
+    line-height: 1.8;
     color: var(--color-text-primary);
     outline: none;
   }
@@ -373,20 +374,21 @@
     color: var(--color-danger);
   }
 
-  /* Read body (detail) */
+  /* Write / read prose (editor, detail) — no notebook lines */
+  .app-page-prose {
+    padding-top: 24px;
+    padding-bottom: 40px;
+  }
+
   .app-read-body {
     min-height: 50vh;
     white-space: pre-wrap;
     font-size: 15px;
-    line-height: 1.75;
+    line-height: 1.8;
     color: var(--color-text-primary);
-    background-image: repeating-linear-gradient(
-      transparent,
-      transparent 1.75em,
-      var(--color-surface-muted) 1.75em,
-      var(--color-surface-muted) calc(1.75em + 1px)
-    );
-    background-attachment: local;
+    background: transparent;
+    background-image: none;
+    padding: 8px 0;
   }
 
   /* Spinner */

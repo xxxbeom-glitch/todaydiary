@@ -42,7 +42,7 @@ export function DetailPage({ entry, onBack, onEdit, onDelete }: DetailPageProps)
         }
       />
 
-      <article className="app-page flex-1">
+      <article className="app-page app-page-prose flex-1">
         <div className="app-read-body">
           {entry.body.trim() || (
             <span style={{ color: 'var(--color-text-muted)' }}>내용이 없는 일기입니다.</span>
