@@ -21,8 +21,6 @@ interface DiaryListPageProps {
   onMonthChange: (key: string) => void;
   onSelect: (entry: DiaryEntry) => void;
   onCreate: () => void;
-  onLogout: () => void;
-  userName?: string;
 }
 
 export function DiaryListPage({
@@ -32,8 +30,6 @@ export function DiaryListPage({
   onMonthChange,
   onSelect,
   onCreate,
-  onLogout,
-  userName,
 }: DiaryListPageProps) {
   const [pickerOpen, setPickerOpen] = useState(false);
 
@@ -53,75 +49,37 @@ export function DiaryListPage({
     [entries, monthKey],
   );
 
-  const userInitial = userName ? userName.charAt(0).toUpperCase() : '?';
-
   return (
     <div className="relative min-h-dvh pb-[var(--page-pad-bottom)]">
       <Header
+        className="app-header--month"
         left={
+          <IconButton
+            label="이전 달"
+            onClick={() => onMonthChange(shiftMonthKey(monthKey, -1))}
+          >
+            ‹
+          </IconButton>
+        }
+        center={
           <button
             type="button"
             onClick={() => setPickerOpen(true)}
-            className="type-body-strong flex items-center gap-1 px-1 py-1"
+            className="type-section-title px-2 py-1"
             aria-label="월 선택"
           >
             {formatMonthTitle(monthKey)}
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 12 12"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              style={{ color: 'var(--color-text-muted)' }}
-              aria-hidden="true"
-            >
-              <path d="M2 4l4 4 4-4" />
-            </svg>
           </button>
         }
         right={
-          <div className="flex items-center">
-            <IconButton label="이전 달" onClick={() => onMonthChange(shiftMonthKey(monthKey, -1))}>
-              ‹
-            </IconButton>
-            <IconButton label="다음 달" onClick={() => onMonthChange(shiftMonthKey(monthKey, 1))}>
-              ›
-            </IconButton>
-          </div>
+          <IconButton
+            label="다음 달"
+            onClick={() => onMonthChange(shiftMonthKey(monthKey, 1))}
+          >
+            ›
+          </IconButton>
         }
       />
-
-      <div
-        className="flex items-center justify-between border-b border-[var(--color-border)] px-[18px] py-3"
-        style={{ backgroundColor: 'var(--color-surface-muted)' }}
-      >
-        <div className="flex items-center gap-2.5">
-          <div
-            className="flex h-8 w-8 items-center justify-center rounded-full type-caption"
-            style={{
-              backgroundColor: 'var(--color-accent-soft)',
-              color: 'var(--color-accent)',
-              fontWeight: 600,
-            }}
-          >
-            {userInitial}
-          </div>
-          {userName && (
-            <span
-              className="type-caption max-w-[160px] truncate"
-              style={{ color: 'var(--color-text-secondary)' }}
-            >
-              {userName}
-            </span>
-          )}
-        </div>
-        <button type="button" onClick={onLogout} className="app-btn app-btn-ghost type-caption px-2 py-1">
-          로그아웃
-        </button>
-      </div>
 
       <main className="app-page app-page-stack">
         {loading ? (

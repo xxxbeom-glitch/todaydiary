@@ -23,7 +23,6 @@ export default function App() {
     error: authError,
     setError: setAuthError,
     loginWithGoogle,
-    logout,
   } = useAuth();
   const uid = user?.uid;
   const { entries, ready, error: diaryError, setError: setDiaryError } = useDiaries(uid);
@@ -126,8 +125,6 @@ export default function App() {
           onMonthChange={setMonthKey}
           onSelect={openView}
           onCreate={openCreate}
-          onLogout={() => void logout()}
-          userName={user.displayName ?? user.email ?? ''}
         />
       )}
 
