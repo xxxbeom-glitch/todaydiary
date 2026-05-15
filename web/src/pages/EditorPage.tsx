@@ -1,4 +1,4 @@
-import { useDiaryEditor } from '../hooks/useDiaryEditor';
+﻿import { useDiaryEditor } from '../hooks/useDiaryEditor';
 import { AutosaveIndicator } from '../components/diary/AutosaveIndicator';
 import { Header } from '../components/layout/Header';
 import { IconButton } from '../components/ui/IconButton';
@@ -46,8 +46,8 @@ export function EditorPage({
         }
         center={
           <div className="flex flex-col items-center gap-0.5">
-            <span className="text-xs text-ink-muted">{isNew ? '새 글' : '수정'}</span>
-            <span className="font-serif text-[14px]">{formatDetailDate(date)}</span>
+            <span className="text-xs text-neutral-500">{isNew ? '새 글' : '수정'}</span>
+            <span className=" text-[14px]">{formatDetailDate(date)}</span>
           </div>
         }
         right={<AutosaveIndicator status={status} />}
@@ -65,7 +65,7 @@ export function EditorPage({
           onChange={(e) => setBody(e.target.value)}
           placeholder="오늘 무엇이 마음에 남았나요…"
           autoFocus
-          className="min-h-[calc(100dvh-8rem)] w-full resize-none border-0 bg-transparent font-serif text-[17px] leading-[1.85] text-ink/90 outline-none placeholder:text-ink-muted/50"
+          className="min-h-[calc(100dvh-8rem)] w-full resize-none border-0 bg-transparent  text-[17px] leading-[1.85] text-neutral-900/90 outline-none placeholder:text-neutral-500/50"
         />
       </div>
     </div>

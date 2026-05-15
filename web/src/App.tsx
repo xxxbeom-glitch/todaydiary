@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+﻿import { useCallback, useMemo, useState } from 'react';
 import { useAuth } from './features/auth';
 import {
   deleteDiaryEntry,
@@ -13,6 +13,7 @@ import { DiaryListPage } from './pages/DiaryListPage';
 import { EditorPage } from './pages/EditorPage';
 import { DetailPage } from './pages/DetailPage';
 import { todayISO, yearMonthKey } from './lib/date';
+import { debugBorder } from './lib/debugUi';
 
 type Screen = 'list' | 'editor' | 'detail';
 
@@ -71,7 +72,7 @@ export default function App() {
       setSelected(null);
       setScreen('list');
     } catch (e) {
-      setDiaryError(e instanceof Error ? e.message : '삭제에 실패했습니다');
+      setDiaryError(e instanceof Error ? e.message : '??? ??????');
     }
   }, [uid, selected, setDiaryError]);
 
@@ -82,28 +83,44 @@ export default function App() {
 
   const editorPhotos = selected?.photos ?? [];
 
+  /* ?? ??? ??? ??? */
+  const debugStrip = (
+    <p
+      className={`border-b border-red-300 bg-red-50 px-3 py-1.5 text-center text-xs font-medium text-red-800 ${debugBorder()}`}
+    >
+      UI ?? OK � auth={authLoading ? 'loading' : user ? `uid:${user.uid.slice(0, 8)}?` : 'guest'} � screen=
+      {screen}
+    </p>
+  );
+
   if (authLoading) {
     return (
       <AppShell>
-        <LoadingView label="잠시만요…" />
+        {debugStrip}
+        <LoadingView label="?? ?? ?? (loading)" />
       </AppShell>
     );
   }
 
   if (!user) {
     return (
-      <LoginPage
-        onLogin={() => void handleLogin()}
-        loading={loginPending}
-        error={uiError}
-      />
+      <>
+        {debugStrip}
+        <LoginPage
+          onLogin={() => void handleLogin()}
+          loading={loginPending}
+          error={uiError}
+        />
+      </>
     );
   }
 
   return (
     <AppShell>
+      {debugStrip}
+
       {uiError && screen === 'list' && (
-        <p className="border-b border-red-100 bg-red-50/70 px-4 py-2 text-center text-xs text-red-800">
+        <p className="border-b border-red-200 bg-red-50 px-4 py-2 text-center text-xs text-red-800">
           {uiError}
           <button
             type="button"
@@ -113,7 +130,7 @@ export default function App() {
               setDiaryError(null);
             }}
           >
-            닫기
+            ??
           </button>
         </p>
       )}
@@ -130,7 +147,7 @@ export default function App() {
         />
       )}
 
-      {screen === 'editor' && uid && (
+      {screen === 'editor' && uid && activeId && (
         <EditorPage
           uid={uid}
           entryId={activeId}
@@ -152,6 +169,11 @@ export default function App() {
           onEdit={() => openEdit(selected)}
           onDelete={() => void handleDelete()}
         />
+      )}
+
+      {/* screen ?? ??? ? ? ?? ?? */}
+      {screen === 'editor' && (!uid || !activeId) && (
+        <p className="p-6 text-center text-neutral-700">???? ? ? ????. ???? ??? ???.</p>
       )}
     </AppShell>
   );

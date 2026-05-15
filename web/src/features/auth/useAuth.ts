@@ -25,15 +25,26 @@ export function useAuth(): UseAuthResult {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    return subscribeAuthState((u) => {
-      setUser(u);
-      setLoading(false);
-      void syncUserProfileIfNeeded(u).catch((e) => {
-        setError(
-          `유저 문서 동기화 실패: ${e instanceof Error ? e.message : String(e)}`,
-        );
+    let unsub: (() => void) | undefined;
+    try {
+      unsub = subscribeAuthState((u) => {
+        setUser(u);
+        setLoading(false);
+        void syncUserProfileIfNeeded(u).catch((e) => {
+          console.error('[useAuth] profile sync', e);
+          setError(
+            `유저 문서 동기화 실패: ${e instanceof Error ? e.message : String(e)}`,
+          );
+        });
       });
-    });
+    } catch (e) {
+      console.error('[useAuth] subscribe failed', e);
+      setLoading(false);
+      setError(
+        e instanceof Error ? e.message : 'Firebase Auth 초기화에 실패했습니다',
+      );
+    }
+    return () => unsub?.();
   }, []);
 
   const loginWithGoogle = useCallback(async () => {
@@ -42,6 +53,7 @@ export function useAuth(): UseAuthResult {
       const u = await signInWithGoogle();
       setUser(u);
     } catch (e) {
+      console.error('[useAuth] login', e);
       setError(
         `Google 로그인 실패: ${e instanceof Error ? e.message : String(e)}`,
       );
@@ -50,7 +62,12 @@ export function useAuth(): UseAuthResult {
 
   const logout = useCallback(async () => {
     setError(null);
-    await signOutUser();
+    try {
+      await signOutUser();
+    } catch (e) {
+      console.error('[useAuth] logout', e);
+      setError(e instanceof Error ? e.message : '로그아웃에 실패했습니다');
+    }
   }, []);
 
   return { user, loading, error, setError, loginWithGoogle, logout };

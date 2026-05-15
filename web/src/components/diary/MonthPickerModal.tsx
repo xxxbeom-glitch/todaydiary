@@ -1,4 +1,5 @@
-import { formatMonthTitle } from '../../lib/date';
+﻿import { formatMonthTitle } from '../../lib/date';
+import { debugBorder } from '../../lib/debugUi';
 
 interface MonthPickerModalProps {
   value: string;
@@ -10,23 +11,23 @@ interface MonthPickerModalProps {
 export function MonthPickerModal({ value, months, onChange, onClose }: MonthPickerModalProps) {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-ink/20 p-4 sm:items-center"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/20 p-4 sm:items-center"
       role="presentation"
       onClick={onClose}
     >
       <div
         role="dialog"
         aria-labelledby="month-picker-title"
-        className="w-full max-w-sm rounded-2xl border border-line bg-paper p-6 shadow-sm"
+        className={`w-full max-w-sm rounded-2xl border border-stone-200 bg-stone-50 p-6 text-neutral-800 shadow-lg ${debugBorder()}`}
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 id="month-picker-title" className="font-serif text-lg text-ink">
-          월 선택
+        <h2 id="month-picker-title" className="text-lg font-semibold text-neutral-900">
+          ???�택
         </h2>
         <select
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="mt-4 w-full rounded-lg border border-line bg-white px-3 py-2.5 text-[15px] text-ink outline-none focus:border-accent/40"
+          className="mt-4 w-full rounded-lg border border-stone-300 bg-white px-3 py-2.5 text-[15px] text-neutral-900 outline-none"
         >
           {months.map((m) => (
             <option key={m} value={m}>
@@ -38,16 +39,16 @@ export function MonthPickerModal({ value, months, onChange, onClose }: MonthPick
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg px-4 py-2 text-sm text-ink-muted hover:bg-paper-warm"
+            className="rounded-lg px-4 py-2 text-sm text-neutral-600 hover:bg-stone-200"
           >
             취소
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg bg-accent px-4 py-2 text-sm text-white"
+            className="rounded-lg bg-stone-700 px-4 py-2 text-sm text-white"
           >
-            확인
+            ?�인
           </button>
         </div>
       </div>
