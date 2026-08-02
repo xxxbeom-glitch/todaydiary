@@ -1,0 +1,95 @@
+---
+description: Jetpack Compose and Figma-to-Android UI implementation rules
+alwaysApply: false
+globs:
+  - "**/*.kt"
+  - "**/src/main/res/**"
+  - "**/src/debug/**"
+---
+
+# Android Compose UI Rules
+
+이 파일은 Android·Jetpack Compose UI를 구현하거나 수정할 때 적용한다.
+현재 앱이 Views 기반이어도, Compose 파일을 추가·수정하는 작업에는 이 규칙을 적용한다. Views-only 수정에는 Preview·Debug Catalog 완료 조건을 강제하지 않는다.
+
+## 1. Figma 해석
+
+- UI 구현 전 `agent/design/tokens.md`, `agent/design/rules.md`, 해당 화면 `agent/design/screenshots/`를 확인한다.
+- Figma MCP·스크린샷은 시각적 기준과 구조적 의도를 제공한다.
+- MCP가 준 hex·절대 좌표·임의 spacing은 `tokens.md`로 치환한다. 충돌 시 `agent/design/README.md` 우선순위를 따른다.
+- 프레임의 절대 좌표와 고정 픽셀 크기를 그대로 복사하지 않는다.
+- 콘텐츠 계층, 정렬, 여백 관계, 타이포그래피, 색상, 형태, 상태 변화는 최대한 동일하게 구현한다.
+- 디자인과 Android 플랫폼 관례가 충돌하면 사용성과 접근성을 보존하면서 가장 가까운 결과를 선택하고 차이를 보고한다.
+
+## 2. 적응형 레이아웃
+
+- 화면 크기를 특정 기기 너비 하나에 고정하지 않는다.
+- `dp`, `sp`, `WindowInsets`, 사용 가능한 너비, 필요 시 Window Size Class를 기준으로 구성한다.
+- `fillMaxWidth`, `weight`, `widthIn`, 최대 콘텐츠 너비와 안정적인 패딩을 우선 사용한다.
+- 텍스트 확대 시 잘림, 겹침, 터치 불가 상태가 생기지 않게 한다.
+- 최소 Compact 화면을 검증하고, 요구 범위에 따라 Medium 이상도 검토한다.
+
+## 3. 화면 구조
+
+- 화면 UI는 가능한 한 순수한 `Screen(uiState, onAction)` 형태로 작성한다.
+- Navigation, ViewModel, 데이터 수집은 `Route` 또는 상위 컨테이너에서 담당한다.
+- Composable 내부에 Repository, 네트워크, 데이터베이스 접근을 직접 넣지 않는다.
+- 화면에서 필요한 상태는 명시적인 `UiState`로 표현한다.
+- `Screen`은 Fake UiState만으로 Preview와 Debug Catalog에서 독립 실행할 수 있어야 한다.
+- 보안·로컬 데이터·권한·릴리즈 세부 규칙은 `30-production-engineering.mdc`를 따른다.
+
+## 4. 화면 상태
+
+화면 성격에 따라 아래 상태를 검토한다.
+
+- Loading
+- Content
+- Empty
+- Error
+- Disabled
+- Offline 또는 Permission Required
+
+모든 상태를 무조건 만들지 말고 실제 기능에서 발생 가능한 상태만 구현한다.
+
+## 5. 디자인 시스템
+
+- 색상, Typography, Shape, Spacing은 `agent/design/tokens.md`와 프로젝트 공통 컴포넌트를 우선 사용한다.
+- Material 3 기본값이나 Dynamic Color를 프로젝트 디자인 확인 없이 그대로 사용하지 않는다.
+- 같은 역할의 값과 컴포넌트를 화면마다 새로 하드코딩하지 않는다.
+- 단 한 화면에서만 쓰이는 값까지 성급하게 전역 토큰으로 승격하지 않는다.
+- 디자인만으로 알 수 없는 동작·제약은 `agent/design/rules.md`를 따른다.
+
+## 6. 리소스
+
+- 사용자에게 보이는 문자열은 원칙적으로 `strings.xml`에서 관리한다.
+- 아이콘은 Material Icons 또는 프로젝트 Vector Drawable을 우선 사용한다.
+- 사진·영상 포스터는 용도에 맞는 압축 포맷과 크기를 사용한다.
+- 리소스 이름은 소문자 snake_case로 명확하게 작성한다.
+
+## 7. 접근성
+
+- 주요 터치 영역은 가능한 한 최소 48dp를 확보한다.
+- 의미 있는 이미지와 아이콘에는 적절한 설명 또는 semantics를 제공한다.
+- 색상 하나만으로 선택, 오류, 성공 상태를 전달하지 않는다.
+- 읽기 순서와 포커스 흐름이 화면의 시각적 순서와 일치하도록 한다.
+
+## 8. Preview와 Debug Catalog
+
+- 새 주요 화면에는 대표 상태를 확인할 수 있는 Compose Preview를 작성한다.
+- 앱의 실제 Navigation 연결 여부와 무관하게 Debug Catalog에서 화면을 직접 열 수 있어야 한다.
+- Debug Catalog는 `src/debug`에 두고 Release 소스에는 포함하지 않는다.
+- Debug Catalog는 서버, DB, 로그인, ViewModel 없이 Fake UiState로 실행한다.
+- 새 주요 화면은 Debug Catalog의 카테고리, 화면명, 대표 상태에 등록한다.
+- Debug Catalog가 아직 없다면 첫 화면 구현 시 최소 구조를 한 번 생성한다.
+- 상세 구현은 `.cursor/skills/register-debug-screen/SKILL.md`와 `agent/specs/DEBUG_SCREEN_CATALOG_GUIDE.md`를 따른다.
+
+## 9. 구현 완료 조건
+
+화면 구현은 최소한 다음을 만족해야 한다.
+
+- 요구된 기본 상태가 구현됨
+- 대표 Compose Preview가 존재함
+- Debug Catalog에서 직접 실행 가능함
+- 다른 화면 크기에서 핵심 레이아웃이 깨지지 않음
+- Figma와의 의도하지 않은 차이가 보고됨
+- 프로젝트 검증 명령을 실행했거나 `NOT VERIFIED` 사유가 기록됨
