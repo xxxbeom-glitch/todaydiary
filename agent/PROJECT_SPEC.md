@@ -51,7 +51,7 @@ Named DB: `diary` (`FirestoreInstances.DIARY_DATABASE_ID` / `getFirestore(app, '
 | Firestore 스키마 | Android 구현 + `web/docs/firestore-schema.md`, `web/docs/android-data-structure.md` |
 | 디자인 토큰·규칙 | `agent/design/` (`tokens.md`는 리디자인 시 작성) |
 | Figma 화면 맵 | `agent/FIGMA_SCREEN_MAP.md` (리디자인 시 채움) |
-| Cursor 규칙 | `.cursor/rules/` |
+| Cursor 규칙 | `.cursor/rules/` (`00-project-core` 전역 · Compose는 앱 · `50-qa-web`/`55-git-workflow`는 web·관련 경로) |
 | 현재 작업 계약 | `agent/TASK_CONTRACT.md` |
 
 ## 작업 전 질문 (에이전트)

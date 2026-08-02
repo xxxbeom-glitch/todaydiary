@@ -1,0 +1,49 @@
+---
+description: Git commit/push 규칙 (하루기록 모노레포)
+alwaysApply: false
+globs:
+  - web/**/*
+  - app/**/*
+  - .gitignore
+  - SECURITY.md
+  - vercel.json
+  - firestore.rules
+---
+
+# Git Workflow
+
+- commit 전 `git status` 확인. 요청 범위 밖 파일이 있으면 **먼저 보고**.
+- 작업 단위가 명확할 때만 commit (섞인 변경은 분리).
+- **push는 사용자 명시 요청 없을 때 하지 않는다.**
+- force push / `--no-verify` / 비밀파일 커밋 금지.
+
+## 메시지
+
+형식: `[scope] 한글 한 줄` (왜 바꿨는지가 드러나게)
+
+예시:
+- `[web] 목록 헤더 단순화`
+- `[app] 일기 저장 merge 수정`
+- `[docs] PROJECT_SPEC 경계 보완`
+- `[rules] 웹 QA glob 추가`
+
+## 비밀파일 (커밋 금지)
+
+- `.env`, `.env.*` (`.env.example` 제외), 키·자격증명
+- `local.properties`, `google-services.json`, `*.jks` / `*.keystore`
+- 목록: 루트 `SECURITY.md`
+
+이미 추적 중인 비밀 파일이 status에 보이면 **포함하지 말고** 보고.
+
+## 웹 UI 변경
+
+- `web/` UI·동작을 바꿨으면 완료 보고에 검증 여부를 적는다 (`npm run build` / 브라우저 / `NOT VERIFIED`).
+- 검증 없이 PASS·완료처럼 말하지 않는다.
+- 문서·규칙만 바꾼 commit에는 브라우저 QA를 요구하지 않는다.
+
+## 금지
+
+- 범위 밖 파일 포함 commit
+- 비밀파일 포함 commit
+- 무단 push
+- 영문만·의미 없는 메시지

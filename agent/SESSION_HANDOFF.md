@@ -4,18 +4,17 @@
 
 ## Current Task
 
-- Task ID: LIBRARY-IMPORT-COMPOSE
+- Task ID: LIBRARY-IMPORT-WEB-MIN
 - Status: COMPLETED
 
 ## Completed
 
-- `markdown` 라이브러리 `compose-android` 팩 이식
-- `agent/PROJECT_SPEC.md` · `00-project-core.mdc`에 앱/웹 경계·Firestore SoT 반영
-- Liftly 잔여 문구를 하루기록 기준으로 정리 (`design/rules`, production 규칙, Debug Catalog 가이드)
+- 웹 최소 규칙 추가: `50-qa-web.mdc` (`web/**`), `55-git-workflow.mdc`
+- kmong `00-core.web` / 전체 QA·Figma·SEO 팩은 넣지 않음 (충돌·노이즈)
 
 ## Last Successful Verification
 
-- 문서·규칙 이식만 (앱/웹 빌드 미실행) — `NOT VERIFIED`
+- 규칙 문서만 — `NOT VERIFIED` (앱/웹 빌드 미실행)
 
 ## Open Blockers
 
@@ -27,12 +26,11 @@
 
 ## Next Action
 
-- 리디자인 시: `agent/design/tokens.md` 작성, `FIGMA_SCREEN_MAP` 채우기
-- 웹 작업이 커지면 `markdown`의 `web` 팩에서 필요한 `.mdc`만 선별 추가
-- (선택) Issue Bridge가 필요하면 `-IssueBridge`로 추가
+- 리디자인 시: `tokens.md`, `FIGMA_SCREEN_MAP`, 필요하면 Figma/반응형 `.mdc` 추가
+- (선택) Issue Bridge
 
 ## Resume Command
 
 ```text
-agent/PROJECT_SPEC.md 기준으로 이어서. Android SoT, web은 클라이언트. 리디자인 전까지 형태 유지.
+agent/PROJECT_SPEC.md 기준. 웹 QA는 50-qa-web, git은 55. 리디자인 전 형태 유지.
 ```

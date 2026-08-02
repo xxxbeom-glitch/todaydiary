@@ -1,0 +1,52 @@
+---
+description: 웹(web/) UI·기능 QA — React/Vite 일기 클라이언트
+alwaysApply: false
+globs:
+  - web/**/*
+  - _logs/qa-log.md
+---
+
+# Web QA Checklist (todaydiary)
+
+> 대상: `web/` (React · Vite · Tailwind). 정적 `site/`·WordPress QA 아님.  
+> SoT: `agent/PROJECT_SPEC.md` · Firestore는 Android 권위.
+
+## 언제
+
+- `web/` 화면·스타일·클라이언트 로직을 바꾼 뒤, **완료 선언 전**에 해당 항목만 확인.
+- 문서·주석·규칙만 바꾼 작업에는 이 체크리스트를 강제하지 않는다.
+
+## 기능 (해당 화면만)
+
+- [ ] 로그인 / 로그아웃 (건드렸으면)
+- [ ] 목록: 월 이동·빈 상태·항목 탭 → 상세/편집
+- [ ] 작성·수정: 저장 후 목록/상세에 반영, 이탈 시 드래프트 동작(있으면)
+- [ ] 삭제(있으면): 목록에서 사라지고 권한 오류 없음
+- [ ] Firestore 경로·필드 발명 없음 (`web/docs/firestore-schema.md`와 불일치 시 FAIL)
+
+## UI / 반응형
+
+- [ ] 주요 뷰포트에서 레이아웃 깨짐·가로 스크롤 없음 (최소 **390** · 필요 시 768+)
+- [ ] 헤더·FAB·모달이 본문을 가리거나 safe-area를 무시하지 않음
+- [ ] 로딩 / 빈 / 오류 상태가 구분됨
+
+## 콘솔·빌드
+
+- [ ] 치명 콘솔 오류 없음 (해당 플로우)
+- [ ] `cd web && npm run build` 통과 — 또는 보고에 `NOT VERIFIED`
+
+## 배포 (배포 손댈 때만)
+
+- [ ] 루트 `vercel.json` → `web/dist` 가정 유지
+- [ ] 필요한 `VITE_*`가 환경에 있는지 (값을 로그·문서에 붙이지 않음)
+
+## 기록
+
+- 반복 FAIL만 `_logs/qa-log.md` 또는 `_logs/failure-log.md`에 짧게.
+- 일기 본문·토큰·환경변수 원문 금지.
+
+## 하지 않음 (이 프로젝트)
+
+- kmong식 섹션 shell / full-bleed / fluid `clamp` 전수 QA
+- SEO/AEO(`73`) 강제 — 사용자 요청 시에만
+- `app/` Android UI QA (Compose 규칙·skills 쪽)
