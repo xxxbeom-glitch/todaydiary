@@ -62,6 +62,7 @@
   --color-surface: #ffffff;
   --color-surface-muted: #e8eaed;
   --color-text-primary: #1a1a1a;
+  --color-text-prose: #2e2e32;
   --color-text-secondary: #5c5c60;
   --color-text-muted: #8e8e93;
   --color-border: #e4e6e9;
@@ -105,6 +106,7 @@
   --color-surface: #2c2c2e;
   --color-surface-muted: #3a3a3c;
   --color-text-primary: #f5f5f7;
+  --color-text-prose: #e8e8ec;
   --color-text-secondary: #a1a1a6;
   --color-text-muted: #8e8e93;
   --color-border: #3a3a3c;
@@ -792,11 +794,12 @@
     font-weight: var(--font-weight-regular);
     font-synthesis: none;
     line-height: 2;
-    letter-spacing: 0.01em;
-    color: var(--color-text-primary);
+    letter-spacing: 0.025em;
+    color: var(--color-text-prose);
     outline: none;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: auto;
+    -moz-osx-font-smoothing: auto;
+    text-rendering: auto;
   }
 
   .app-textarea::placeholder {
@@ -1142,6 +1145,10 @@
     padding-top: 36px;
     padding-bottom: 48px;
     font-family: var(--font-prose);
+    /* Windows ClearType 유지 — grayscale AA는 명조·손글씨가 거칠게 보임 */
+    -webkit-font-smoothing: auto;
+    -moz-osx-font-smoothing: auto;
+    text-rendering: auto;
   }
 
   .app-page-prose .app-icon-btn,
@@ -1163,7 +1170,11 @@
     font-weight: var(--font-weight-semibold);
     font-synthesis: none;
     line-height: 1.4;
-    color: var(--color-text-primary);
+    letter-spacing: 0.02em;
+    color: var(--color-text-prose);
+    -webkit-font-smoothing: auto;
+    -moz-osx-font-smoothing: auto;
+    text-rendering: auto;
   }
 
   .app-entry-date-block {
@@ -1192,8 +1203,12 @@
     font-weight: var(--font-weight-semibold);
     font-synthesis: none;
     line-height: 1.4;
-    color: var(--color-text-primary);
+    letter-spacing: 0.02em;
+    color: var(--color-text-prose);
     outline: none;
+    -webkit-font-smoothing: auto;
+    -moz-osx-font-smoothing: auto;
+    text-rendering: auto;
   }
 
   .app-entry-date-input:focus {
@@ -1350,13 +1365,14 @@
     font-weight: var(--font-weight-regular);
     font-synthesis: none;
     line-height: 2;
-    letter-spacing: 0.01em;
-    color: var(--color-text-primary);
+    letter-spacing: 0.025em;
+    color: var(--color-text-prose);
     background: transparent;
     background-image: none;
     padding: 0;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: auto;
+    -moz-osx-font-smoothing: auto;
+    text-rendering: auto;
   }
 
   :root[data-font='kyobo'] .app-entry-date,
