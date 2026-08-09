@@ -218,7 +218,7 @@
       min-height: 0;
       max-height: none;
       margin: 0;
-      border: 0;
+      border: 1px solid color-mix(in srgb, var(--color-border) 65%, transparent);
       border-radius: var(--radius-shell);
       box-shadow: none;
       overflow: hidden;
@@ -279,7 +279,8 @@
       display: flex;
       min-height: 0;
       overflow: hidden;
-      border: 0 !important;
+      border: 0;
+      border-right: 1px solid color-mix(in srgb, var(--color-border) 65%, transparent);
       box-shadow: none;
       background-color: var(--color-bg);
     }
@@ -291,7 +292,7 @@
       min-height: 0;
       flex-direction: column;
       overflow: hidden;
-      border: 0 !important;
+      border: 0;
       box-shadow: none;
       background-color: var(--color-bg);
       padding: 0;
@@ -304,7 +305,7 @@
       align-items: center;
       height: 56px;
       padding: 0 28px;
-      border-bottom: 1px solid color-mix(in srgb, var(--color-border) 55%, transparent);
+      border-bottom: 1px solid color-mix(in srgb, var(--color-border) 65%, transparent);
       background-color: var(--color-bg);
     }
 
@@ -397,7 +398,7 @@
       min-width: 0;
     }
 
-    /* 우측 문서 면 — 선/그림자 없이 면만 (사이 세로선 제거) */
+    /* 우측 문서 면 */
     .app-doc-frame {
       display: flex;
       flex: 1 1 auto;
