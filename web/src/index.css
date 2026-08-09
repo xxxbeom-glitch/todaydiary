@@ -12,7 +12,7 @@
 @font-face {
   font-family: 'BookkGothic';
   src: url('/fonts/BookkGothic_Light.ttf') format('truetype');
-  font-weight: 400;
+  font-weight: 100 400;
   font-style: normal;
   font-display: swap;
 }
@@ -20,7 +20,7 @@
 @font-face {
   font-family: 'BookkGothic';
   src: url('/fonts/BookkGothic_Bold.ttf') format('truetype');
-  font-weight: 600;
+  font-weight: 500 700;
   font-style: normal;
   font-display: swap;
 }
@@ -28,7 +28,7 @@
 @font-face {
   font-family: 'BookkMyungjo';
   src: url('/fonts/BookkMyungjo_Light.ttf') format('truetype');
-  font-weight: 400;
+  font-weight: 100 400;
   font-style: normal;
   font-display: swap;
 }
@@ -36,7 +36,7 @@
 @font-face {
   font-family: 'BookkMyungjo';
   src: url('/fonts/BookkMyungjo_Bold.ttf') format('truetype');
-  font-weight: 600;
+  font-weight: 500 700;
   font-style: normal;
   font-display: swap;
 }
@@ -47,6 +47,7 @@
 
   /* Scribe-like cool light — SoT: agent/design/tokens.md */
   --font-sans: 'BookkGothic', 'Pretendard', system-ui, sans-serif;
+  --font-prose: 'BookkGothic', 'Pretendard', system-ui, sans-serif;
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
@@ -121,6 +122,9 @@
   html {
     color-scheme: light dark;
     -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   body {
@@ -132,6 +136,7 @@
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-regular);
     line-height: 1.55;
+    font-synthesis: none;
   }
 
   #root {
@@ -141,10 +146,13 @@
 
   button,
   input,
-  textarea,
   select {
     color: inherit;
     font: inherit;
+  }
+
+  textarea {
+    color: inherit;
   }
 
   /* PC: 뷰포트에 프레임만 두고 브라우저 스크롤 금지 */
@@ -777,11 +785,16 @@
     background: transparent;
     background-image: none;
     padding: 0;
+    font-family: var(--font-prose);
     font-size: var(--font-size-prose);
     font-weight: var(--font-weight-regular);
+    font-synthesis: none;
     line-height: 1.8;
+    letter-spacing: 0.01em;
     color: var(--color-text-primary);
     outline: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   .app-textarea::placeholder {
@@ -1130,8 +1143,10 @@
 
   .app-entry-date {
     margin: 0;
-    font-size: 15px;
+    font-family: var(--font-prose);
+    font-size: var(--font-size-prose);
     font-weight: var(--font-weight-semibold);
+    font-synthesis: none;
     line-height: 1.4;
     color: var(--color-text-primary);
   }
@@ -1157,8 +1172,10 @@
     border: 0;
     background: transparent;
     padding: 0;
-    font-size: 15px;
+    font-family: var(--font-prose);
+    font-size: var(--font-size-prose);
     font-weight: var(--font-weight-semibold);
+    font-synthesis: none;
     line-height: 1.4;
     color: var(--color-text-primary);
     outline: none;
@@ -1313,12 +1330,23 @@
     flex: 1 1 auto;
     min-height: 0;
     white-space: pre-wrap;
+    font-family: var(--font-prose);
     font-size: var(--font-size-prose);
+    font-weight: var(--font-weight-regular);
+    font-synthesis: none;
     line-height: 1.8;
+    letter-spacing: 0.01em;
     color: var(--color-text-primary);
     background: transparent;
     background-image: none;
     padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  :root[data-font='kyobo'] .app-entry-date,
+  :root[data-font='kyobo'] .app-entry-date-input {
+    font-weight: var(--font-weight-regular);
   }
 
   .app-read-body--editable {

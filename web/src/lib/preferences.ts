@@ -6,6 +6,9 @@ const THEME_KEY = 'todaydiary.theme';
 const FONT_KEY = 'todaydiary.font';
 const FONT_SIZE_KEY = 'todaydiary.fontSize';
 
+/** UI 크롬용 — 설정 폰트와 분리 */
+export const UI_FONT_STACK = "'BookkGothic', 'Pretendard', system-ui, sans-serif";
+
 export const FONT_OPTIONS: { id: AppFont; label: string; sample: string }[] = [
   { id: 'kyobo', label: '교보손글씨', sample: '오늘 하루를 기록해요' },
   { id: 'bookk-gothic', label: '부크크고딕', sample: '오늘 하루를 기록해요' },
@@ -19,9 +22,9 @@ export const FONT_SIZE_OPTIONS: { id: AppFontSize; label: string }[] = [
 ];
 
 const FONT_STACK: Record<AppFont, string> = {
-  kyobo: "'KyoboHandwriting', 'Pretendard', sans-serif",
+  kyobo: "'KyoboHandwriting', 'BookkGothic', sans-serif",
   'bookk-gothic': "'BookkGothic', 'Pretendard', sans-serif",
-  'bookk-myungjo': "'BookkMyungjo', 'Pretendard', serif",
+  'bookk-myungjo': "'BookkMyungjo', 'BookkGothic', serif",
 };
 
 const FONT_SIZE_PX: Record<AppFontSize, { base: string; prose: string }> = {
@@ -59,7 +62,8 @@ export function applyTheme(theme: AppTheme) {
 }
 
 export function applyFont(font: AppFont) {
-  document.documentElement.style.setProperty('--font-sans', FONT_STACK[font]);
+  document.documentElement.dataset.font = font;
+  document.documentElement.style.setProperty('--font-prose', FONT_STACK[font]);
   localStorage.setItem(FONT_KEY, font);
 }
 
@@ -72,6 +76,7 @@ export function applyFontSize(size: AppFontSize) {
 }
 
 export function initPreferences() {
+  document.documentElement.style.setProperty('--font-sans', UI_FONT_STACK);
   applyTheme(readStoredTheme());
   applyFont(readStoredFont());
   applyFontSize(readStoredFontSize());
