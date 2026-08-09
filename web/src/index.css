@@ -1337,11 +1337,112 @@
   }
 
   .app-month-picker__panel {
-    padding: 14px;
+    width: min(100%, 280px);
+    padding: 16px;
     border: 1px solid var(--color-border);
     border-radius: 16px;
     background-color: var(--color-surface);
     box-shadow: var(--shadow-doc);
+    font-family: var(--font-sans);
+  }
+
+  .app-month-picker__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .app-month-picker__year {
+    margin: 0;
+    font-size: 15px;
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+  }
+
+  .app-month-picker__nav {
+    display: flex;
+    height: 32px;
+    width: 32px;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--color-text-secondary);
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .app-month-picker__nav:hover:not(:disabled) {
+    background-color: var(--color-surface-muted);
+    color: var(--color-text-primary);
+  }
+
+  .app-month-picker__nav:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .app-month-picker__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .app-month-picker__month {
+    height: 40px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--color-text-primary);
+    font-size: 14px;
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+  }
+
+  .app-month-picker__month:hover:not(:disabled) {
+    background-color: var(--color-surface-muted);
+  }
+
+  .app-month-picker__month.is-selected {
+    border-color: var(--color-accent);
+    background-color: var(--color-accent-soft);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .app-month-picker__month:disabled {
+    opacity: 0.28;
+    cursor: not-allowed;
+  }
+
+  .app-month-picker__footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .app-month-picker__today {
+    border: 0;
+    background: transparent;
+    padding: 4px 2px;
+    color: var(--color-text-secondary);
+    font-size: 13px;
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+  }
+
+  .app-month-picker__today:hover:not(:disabled) {
+    color: var(--color-text-primary);
+  }
+
+  .app-month-picker__today:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
   }
 
   .sr-only {
