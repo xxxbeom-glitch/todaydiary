@@ -304,7 +304,7 @@
       height: 56px;
       padding: 0 28px;
       border-bottom: 1px solid color-mix(in srgb, var(--color-border) 55%, transparent);
-      background-color: var(--color-surface);
+      background-color: var(--color-bg);
     }
 
     .app-topbar__side {
