@@ -13,7 +13,8 @@ import { LoginPage } from './pages/LoginPage';
 import { DiaryListPage } from './pages/DiaryListPage';
 import { EditorPage } from './pages/EditorPage';
 import { DetailPage } from './pages/DetailPage';
-import { todayISO, yearMonthKey } from './lib/date';
+import { todayISO, yearMonthKey, shiftMonthKey, collectMonthKeys } from './lib/date';
+import { MonthPickerModal } from './components/diary/MonthPickerModal';
 import { useIsDesktopLayout } from './hooks/useMediaQuery';
 
 type Screen = 'list' | 'editor' | 'detail';
@@ -38,6 +39,7 @@ export default function App() {
   const [editorDate, setEditorDate] = useState(todayISO);
   const [forceBlank, setForceBlank] = useState(false);
   const [loginPending, setLoginPending] = useState(false);
+  const [monthPickerOpen, setMonthPickerOpen] = useState(false);
   const flushRef = useRef<FlushFn | null>(null);
 
   const uiError = authError ?? diaryError;
@@ -135,6 +137,11 @@ export default function App() {
     return entries.find((e) => e.id === selected.id) ?? selected;
   }, [entries, selected]);
 
+  const monthOptions = useMemo(
+    () => collectMonthKeys(entries.map((e) => e.date), monthKey),
+    [entries, monthKey],
+  );
+
   const canDelete =
     (screen === 'detail' && Boolean(liveSelected)) ||
     (screen === 'editor' && !forceBlank && Boolean(activeId));
@@ -162,6 +169,7 @@ export default function App() {
       onCreate={openCreate}
       selectedId={forceBlank || screen === 'list' ? undefined : activeId || selected?.id}
       embedded={isDesktop}
+      hideMonthNav={isDesktop}
     />
   );
 
@@ -225,6 +233,10 @@ export default function App() {
       {isDesktop ? (
         <div className="app-desktop">
           <DesktopTopBar
+            monthKey={monthKey}
+            onPrevMonth={() => setMonthKey((k) => shiftMonthKey(k, -1))}
+            onNextMonth={() => setMonthKey((k) => shiftMonthKey(k, 1))}
+            onOpenMonthPicker={() => setMonthPickerOpen(true)}
             canDelete={canDelete}
             canSave={canSave}
             onDelete={() => void handleDelete()}
@@ -236,6 +248,14 @@ export default function App() {
               <div className="app-doc-frame">{mainPane}</div>
             </div>
           </div>
+          {monthPickerOpen && (
+            <MonthPickerModal
+              value={monthKey}
+              months={monthOptions}
+              onChange={setMonthKey}
+              onClose={() => setMonthPickerOpen(false)}
+            />
+          )}
         </div>
       ) : (
         <>

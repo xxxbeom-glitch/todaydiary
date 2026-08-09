@@ -10,7 +10,6 @@ import { IconButton } from '../components/ui/IconButton';
 import {
   collectMonthKeys,
   entryInMonth,
-  formatMonthShort,
   formatMonthTitle,
   shiftMonthKey,
 } from '../lib/date';
@@ -24,6 +23,8 @@ interface DiaryListPageProps {
   onCreate: () => void;
   selectedId?: string;
   embedded?: boolean;
+  /** PC: 월 네비가 상단 헤더로 옮겨졌을 때 사이드 월 UI 숨김 */
+  hideMonthNav?: boolean;
 }
 
 export function DiaryListPage({
@@ -35,6 +36,7 @@ export function DiaryListPage({
   onCreate,
   selectedId,
   embedded = false,
+  hideMonthNav = false,
 }: DiaryListPageProps) {
   const [pickerOpen, setPickerOpen] = useState(false);
 
@@ -54,66 +56,42 @@ export function DiaryListPage({
     [entries, monthKey],
   );
 
+  const showSideMonthNav = !hideMonthNav;
+
   return (
     <div className={embedded ? 'app-list-pane' : 'relative min-h-dvh pb-[var(--page-pad-bottom)]'}>
-      {embedded ? (
-        <div className="app-month-rail">
-          <button
-            type="button"
-            className="app-month-rail__nav"
-            aria-label="이전 달"
-            onClick={() => onMonthChange(shiftMonthKey(monthKey, -1))}
-          >
-            ‹
-          </button>
-          <button
-            type="button"
-            className="app-month-rail__label"
-            aria-label="월 선택"
-            onClick={() => setPickerOpen(true)}
-          >
-            {formatMonthShort(monthKey)}
-          </button>
-          <button
-            type="button"
-            className="app-month-rail__nav"
-            aria-label="다음 달"
-            onClick={() => onMonthChange(shiftMonthKey(monthKey, 1))}
-          >
-            ›
-          </button>
-        </div>
-      ) : (
-        <Header
-          className="app-header--month"
-          left={
-            <IconButton
-              label="이전 달"
-              onClick={() => onMonthChange(shiftMonthKey(monthKey, -1))}
-            >
-              ‹
-            </IconButton>
-          }
-          center={
-            <button
-              type="button"
-              onClick={() => setPickerOpen(true)}
-              className="type-section-title px-2 py-1"
-              aria-label="월 선택"
-            >
-              {formatMonthTitle(monthKey)}
-            </button>
-          }
-          right={
-            <IconButton
-              label="다음 달"
-              onClick={() => onMonthChange(shiftMonthKey(monthKey, 1))}
-            >
-              ›
-            </IconButton>
-          }
-        />
-      )}
+      {showSideMonthNav &&
+        (embedded ? null : (
+          <Header
+            className="app-header--month"
+            left={
+              <IconButton
+                label="이전 달"
+                onClick={() => onMonthChange(shiftMonthKey(monthKey, -1))}
+              >
+                ‹
+              </IconButton>
+            }
+            center={
+              <button
+                type="button"
+                onClick={() => setPickerOpen(true)}
+                className="type-section-title px-2 py-1"
+                aria-label="월 선택"
+              >
+                {formatMonthTitle(monthKey)}
+              </button>
+            }
+            right={
+              <IconButton
+                label="다음 달"
+                onClick={() => onMonthChange(shiftMonthKey(monthKey, 1))}
+              >
+                ›
+              </IconButton>
+            }
+          />
+        ))}
 
       <main className={embedded ? 'app-list-pane__body' : 'app-page app-page-stack'}>
         {loading ? (
@@ -128,7 +106,9 @@ export function DiaryListPage({
             />
           )
         ) : (
-          <ul className={`app-list${embedded ? ' app-list--tiles' : ' app-list--tiles app-list--tiles-mobile'}`}>
+          <ul
+            className={`app-list${embedded ? ' app-list--tiles' : ' app-list--tiles app-list--tiles-mobile'}`}
+          >
             {monthEntries.map((entry) => (
               <li key={entry.id || entry.date}>
                 <DiaryListItem

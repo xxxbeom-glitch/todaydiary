@@ -1,26 +1,53 @@
+import { formatMonthTitle } from '../../lib/date';
+
 interface DesktopTopBarProps {
+  monthKey: string;
+  onPrevMonth: () => void;
+  onNextMonth: () => void;
+  onOpenMonthPicker: () => void;
   canDelete: boolean;
   canSave: boolean;
   onDelete: () => void;
   onSave: () => void;
 }
 
-export function DesktopTopBar({ canDelete, canSave, onDelete, onSave }: DesktopTopBarProps) {
+export function DesktopTopBar({
+  monthKey,
+  onPrevMonth,
+  onNextMonth,
+  onOpenMonthPicker,
+  canDelete,
+  canSave,
+  onDelete,
+  onSave,
+}: DesktopTopBarProps) {
   return (
     <header className="app-topbar">
-      <div className="app-topbar__brand">
-        <span className="app-topbar__mark" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-            <path
-              d="M4 14c2.5-1 4-3.2 4-5.5S7.2 4 5.5 4 3 5.2 3 7c0 2.8 2.2 5.5 5 7 2.8-1.5 5-4.2 5-7 0-1.8-1.2-3-2.5-3S8 5.2 8 7c0 2.3 1.5 4.5 4 5.5"
-              stroke="currentColor"
-              strokeWidth="1.4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </span>
-        <span className="app-topbar__logo">하루기록</span>
+      <div className="app-topbar__month">
+        <button
+          type="button"
+          className="app-topbar__month-nav"
+          aria-label="이전 달"
+          onClick={onPrevMonth}
+        >
+          ‹
+        </button>
+        <button
+          type="button"
+          className="app-topbar__month-label"
+          aria-label="월 선택"
+          onClick={onOpenMonthPicker}
+        >
+          {formatMonthTitle(monthKey)}
+        </button>
+        <button
+          type="button"
+          className="app-topbar__month-nav"
+          aria-label="다음 달"
+          onClick={onNextMonth}
+        >
+          ›
+        </button>
       </div>
 
       <div className="app-topbar__actions">
