@@ -1,8 +1,7 @@
-﻿import { useDiaryEditor } from '../hooks/useDiaryEditor';
-import { AutosaveIndicator } from '../components/diary/AutosaveIndicator';
-import { Header } from '../components/layout/Header';
+﻿import { useRef } from 'react';
+import { useDiaryEditor } from '../hooks/useDiaryEditor';
 import { IconButton } from '../components/ui/IconButton';
-import { formatDetailDate } from '../lib/date';
+import { formatListDateLabel } from '../lib/date';
 
 interface EditorPageProps {
   uid: string;
@@ -25,67 +24,72 @@ export function EditorPage({
   onBack,
   embedded = false,
 }: EditorPageProps) {
-  const { body, setBody, entryDate, setEntryDate, status, error, flush } =
-    useDiaryEditor({
-      uid,
-      entryId,
-      date,
-      initialBody,
-      isNew,
-      photos,
-    });
+  const { body, setBody, entryDate, setEntryDate, error, flush } = useDiaryEditor({
+    uid,
+    entryId,
+    date,
+    initialBody,
+    isNew,
+    photos,
+  });
 
-  const handleBack = () => {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const todayMax = new Date().toISOString().slice(0, 10);
+
+  const finish = () => {
     void flush().finally(() => onBack(entryDate));
   };
 
-  const todayMax = new Date().toISOString().slice(0, 10);
+  /** 텍스트 영역 밖을 클릭하면 즉시 저장 (수정 중이면 뷰로 복귀) */
+  const handlePanePointerDown = (e: React.PointerEvent<HTMLElement>) => {
+    const target = e.target as HTMLElement;
+    if (textareaRef.current?.contains(target)) return;
+    if (target.closest('[data-editor-chrome]')) return;
+
+    void flush().finally(() => {
+      if (!isNew) onBack(entryDate);
+    });
+  };
 
   return (
-    <div className={embedded ? 'app-pane' : 'flex min-h-dvh flex-col'}>
-      <Header
-        left={
-          embedded && isNew ? (
-            <span className="w-10" aria-hidden="true" />
-          ) : (
-            <IconButton label={embedded ? '닫기' : '뒤로'} onClick={handleBack}>
-              {embedded ? '✕' : '←'}
+    <div
+      className={embedded ? 'app-pane' : 'flex min-h-dvh flex-col'}
+      onPointerDown={handlePanePointerDown}
+    >
+      <div className="app-page app-page-prose app-prose-fill">
+        {!embedded && (
+          <div className="mb-2" data-editor-chrome>
+            <IconButton label="뒤로" onClick={finish}>
+              ←
             </IconButton>
-          )
-        }
-        center={
-          <div className="flex flex-col items-center gap-0.5">
-            <span className="type-caption">{isNew ? '새 글' : '수정'}</span>
-            <span className="type-body-strong text-[14px]">{formatDetailDate(entryDate)}</span>
           </div>
-        }
-        right={<AutosaveIndicator status={status} />}
-      />
+        )}
 
-      {isNew && (
-        <div
-          className="border-b border-[var(--color-border)] px-[18px] py-4"
-          style={{ backgroundColor: 'var(--color-surface)' }}
-        >
-          <label htmlFor="diary-date" className="type-caption mb-2 block uppercase tracking-wide">
-            작성일
-          </label>
-          <input
-            id="diary-date"
-            type="date"
-            value={entryDate}
-            max={todayMax}
-            onChange={(e) => setEntryDate(e.target.value)}
-            className="app-input"
-          />
-          <p className="type-caption mt-2">선택한 날짜로 저장됩니다.</p>
+        <div className="app-entry-date-block" data-editor-chrome>
+          {isNew ? (
+            <label className="app-entry-date-field">
+              <span className="sr-only">작성일</span>
+              <input
+                type="date"
+                value={entryDate}
+                max={todayMax}
+                onChange={(e) => setEntryDate(e.target.value)}
+                className="app-entry-date-input"
+              />
+            </label>
+          ) : (
+            <p className="app-entry-date">{formatListDateLabel(entryDate)}</p>
+          )}
         </div>
-      )}
 
-      {error && <p className="app-banner">{error}</p>}
+        {error && (
+          <p className="app-banner mb-3" data-editor-chrome>
+            {error}
+          </p>
+        )}
 
-      <div className="app-page app-page-prose flex-1">
         <textarea
+          ref={textareaRef}
           value={body}
           onChange={(e) => setBody(e.target.value)}
           placeholder="오늘 무엇이 마음에 남았나요…"

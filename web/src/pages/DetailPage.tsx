@@ -1,48 +1,39 @@
 ﻿import type { DiaryEntry } from '../features/diary';
-import { Header } from '../components/layout/Header';
 import { IconButton } from '../components/ui/IconButton';
-import { formatDetailDate } from '../lib/date';
+import { formatListDateLabel } from '../lib/date';
 
 interface DetailPageProps {
   entry: DiaryEntry;
   onBack: () => void;
   onEdit: () => void;
-  /** PC 분할 패널 — 닫기/more 없음, 더블클릭으로 수정 */
   embedded?: boolean;
 }
 
-export function DetailPage({
-  entry,
-  onBack,
-  onEdit,
-  embedded = false,
-}: DetailPageProps) {
+export function DetailPage({ entry, onBack, onEdit, embedded = false }: DetailPageProps) {
+  const dateLabel = formatListDateLabel(entry.date);
+
   return (
     <div className={embedded ? 'app-pane' : 'flex min-h-dvh flex-col'}>
-      <Header
-        left={
-          embedded ? (
-            <span className="w-10" aria-hidden="true" />
-          ) : (
+      <article
+        className="app-page app-page-prose app-prose-fill"
+        onDoubleClick={onEdit}
+        title="더블클릭하여 수정"
+      >
+        {!embedded && (
+          <div className="mb-2">
             <IconButton label="뒤로" onClick={onBack}>
               ←
             </IconButton>
-          )
-        }
-        center={
-          <span className="type-body-strong text-[14px]">{formatDetailDate(entry.date)}</span>
-        }
-        right={<span className="w-10" aria-hidden="true" />}
-      />
+          </div>
+        )}
 
-      <article className="app-page app-page-prose flex-1">
+        <p className="app-entry-date">{dateLabel}</p>
+
         <div
           className="app-read-body app-read-body--editable"
           role="button"
           tabIndex={0}
-          title="더블클릭하여 수정"
-          aria-label="일기 본문, 더블클릭하면 수정"
-          onDoubleClick={onEdit}
+          aria-label={`${dateLabel} 일기 본문, 더블클릭하면 수정`}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault();

@@ -37,6 +37,8 @@ export function useDiaryEditor({
 
   const entryDateRef = useRef(entryDate);
   entryDateRef.current = entryDate;
+  const bodyRef = useRef(body);
+  bodyRef.current = body;
 
   useEffect(() => {
     setBody(initialBody);
@@ -78,6 +80,9 @@ export function useDiaryEditor({
     },
     [uid, entryId, isNew],
   );
+
+  const persistRef = useRef(persist);
+  persistRef.current = persist;
 
   const scheduleSave = useCallback(
     (text: string, saveDate?: string) => {
@@ -121,7 +126,11 @@ export function useDiaryEditor({
 
   useEffect(() => {
     return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+      void persistRef.current(bodyRef.current, entryDateRef.current);
     };
   }, []);
 

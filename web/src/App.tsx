@@ -140,7 +140,15 @@ export default function App() {
           isNew={forceBlank}
           photos={editorPhotos}
           embedded={isDesktop}
-          onBack={closePane}
+          onBack={(savedDate) => {
+            if (savedDate) setMonthKey(savedDate.slice(0, 7));
+            if (!forceBlank && selected) {
+              setForceBlank(false);
+              setScreen('detail');
+              return;
+            }
+            closePane(savedDate);
+          }}
         />
       )}
 
