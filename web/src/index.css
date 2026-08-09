@@ -101,7 +101,7 @@
 
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --color-canvas: #0f0f10;
+  --color-canvas: #2a2a2e;
   --color-bg: #1c1c1e;
   --color-surface: #2c2c2e;
   --color-surface-muted: #3a3a3c;
@@ -118,7 +118,7 @@
   --shadow-card: 0 1px 3px rgb(0 0 0 / 0.35);
   --shadow-fab: 0 4px 14px rgb(0 0 0 / 0.4);
   --shadow-shell: var(--shadow-shell-x) var(--shadow-shell-y) var(--shadow-shell-blur)
-    rgb(0 0 0 / 0.45);
+    rgb(0 0 0 / 0.35);
   --shadow-doc: 0 4px 24px rgb(0 0 0 / 0.35);
 }
 
