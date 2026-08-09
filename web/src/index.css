@@ -101,7 +101,7 @@
 
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --color-canvas: #4a4a50;
+  --color-canvas: color-mix(in srgb, #000 10%, #fff);
   --color-bg: #1c1c1e;
   --color-surface: #2c2c2e;
   --color-surface-muted: #3a3a3c;
