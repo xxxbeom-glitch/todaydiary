@@ -292,7 +292,7 @@
       overflow: hidden;
       border: 0 !important;
       box-shadow: none;
-      background-color: var(--color-surface);
+      background-color: var(--color-bg);
       padding: 0;
     }
 
