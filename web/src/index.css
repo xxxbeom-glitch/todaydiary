@@ -426,6 +426,7 @@
     }
 
     .app-list-pane {
+      --list-pane-pad: 16px;
       position: relative;
       display: flex;
       height: 100%;
@@ -433,8 +434,12 @@
       width: 100%;
       flex-direction: column;
       align-items: center;
-      padding: 12px 0 0;
+      padding: var(--list-pane-pad) 0;
       overflow: hidden;
+    }
+
+    .app-list-pane--create {
+      padding-bottom: 0;
     }
 
     .app-list-pane__body {
@@ -445,7 +450,7 @@
       flex-direction: column;
       align-items: center;
       overflow: auto;
-      padding: 12px 0 16px;
+      padding: 0;
       scrollbar-width: none;
       -ms-overflow-style: none;
     }
@@ -460,7 +465,7 @@
       width: 100%;
       align-items: center;
       justify-content: center;
-      padding: 8px 0 16px;
+      padding: var(--list-pane-pad) 0;
       background-color: var(--color-bg);
     }
 
@@ -469,7 +474,7 @@
       position: absolute;
       left: 0;
       right: 0;
-      bottom: 0;
+      bottom: var(--list-pane-pad);
       height: 56px;
       opacity: 0;
       background: linear-gradient(
@@ -481,7 +486,8 @@
     }
 
     .app-list-pane--create .app-list-pane__fade {
-      bottom: 88px;
+      /* dock: pad + 64px 버튼 + pad */
+      bottom: calc(var(--list-pane-pad) * 2 + 64px);
     }
 
     .app-list-pane--more .app-list-pane__fade {
