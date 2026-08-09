@@ -265,6 +265,37 @@
       min-height: 0;
     }
 
+    .app-desktop-split {
+      display: grid;
+      grid-template-columns: var(--desktop-list-width) minmax(0, 1fr);
+      flex: 1 1 auto;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .app-desktop-split__list {
+      position: relative;
+      display: flex;
+      min-height: 0;
+      overflow: hidden;
+      border: 0 !important;
+      box-shadow: none;
+      background-color: var(--color-bg);
+    }
+
+    .app-desktop-split__main {
+      position: relative;
+      display: flex;
+      min-width: 0;
+      min-height: 0;
+      flex-direction: column;
+      overflow: hidden;
+      border: 0 !important;
+      box-shadow: none;
+      background-color: var(--color-surface);
+      padding: 0;
+    }
+
     .app-topbar {
       display: grid;
       grid-template-columns: 1fr auto 1fr;
@@ -273,7 +304,7 @@
       height: 56px;
       padding: 0 28px;
       border-bottom: 1px solid color-mix(in srgb, var(--color-border) 55%, transparent);
-      background-color: var(--color-bg);
+      background-color: var(--color-surface);
     }
 
     .app-topbar__side {
@@ -363,35 +394,6 @@
       justify-content: flex-end;
       gap: 8px;
       min-width: 0;
-    }
-
-    .app-desktop-split {
-      display: grid;
-      grid-template-columns: var(--desktop-list-width) minmax(0, 1fr);
-      flex: 1 1 auto;
-      height: auto;
-      min-height: 0;
-    }
-
-    .app-desktop-split__list {
-      position: relative;
-      display: flex;
-      min-height: 0;
-      overflow: hidden;
-      border: 0 !important;
-      box-shadow: none;
-      background-color: var(--color-bg);
-    }
-
-    .app-desktop-split__main {
-      position: relative;
-      display: flex;
-      min-width: 0;
-      overflow: hidden;
-      border: 0 !important;
-      box-shadow: none;
-      background-color: var(--color-surface);
-      padding: 0;
     }
 
     /* 우측 문서 면 — 선/그림자 없이 면만 (사이 세로선 제거) */

@@ -229,18 +229,18 @@ export default function App() {
 
       {isDesktop ? (
         <div className="app-desktop">
-          <DesktopTopBar
-            monthKey={monthKey}
-            onPrevMonth={() => setMonthKey((k) => shiftMonthKey(k, -1))}
-            onNextMonth={() => setMonthKey((k) => shiftMonthKey(k, 1))}
-            onOpenMonthPicker={() => setMonthPickerOpen(true)}
-            canGoNextMonth={canGoNextMonth}
-            canDelete={canDelete}
-            onDelete={() => void handleDelete()}
-          />
           <div className="app-desktop-split">
             <div className="app-desktop-split__list">{list}</div>
             <div className="app-desktop-split__main">
+              <DesktopTopBar
+                monthKey={monthKey}
+                onPrevMonth={() => setMonthKey((k) => shiftMonthKey(k, -1))}
+                onNextMonth={() => setMonthKey((k) => shiftMonthKey(k, 1))}
+                onOpenMonthPicker={() => setMonthPickerOpen(true)}
+                canGoNextMonth={canGoNextMonth}
+                canDelete={canDelete}
+                onDelete={() => void handleDelete()}
+              />
               <div className="app-doc-frame">{mainPane}</div>
             </div>
           </div>
