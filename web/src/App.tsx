@@ -141,7 +141,6 @@ export default function App() {
   const canDelete =
     (screen === 'detail' && Boolean(liveSelected)) ||
     (screen === 'editor' && !forceBlank && Boolean(activeId));
-  const canSave = screen === 'editor' && Boolean(activeId);
 
   if (authLoading) {
     return (
