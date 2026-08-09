@@ -6,9 +6,7 @@ interface DesktopTopBarProps {
   onNextMonth: () => void;
   onOpenMonthPicker: () => void;
   canDelete: boolean;
-  canSave: boolean;
   onDelete: () => void;
-  onSave: () => void;
 }
 
 export function DesktopTopBar({
@@ -17,9 +15,7 @@ export function DesktopTopBar({
   onNextMonth,
   onOpenMonthPicker,
   canDelete,
-  canSave,
   onDelete,
-  onSave,
 }: DesktopTopBarProps) {
   return (
     <header className="app-topbar">
@@ -66,24 +62,6 @@ export function DesktopTopBar({
               strokeLinecap="round"
               strokeLinejoin="round"
             />
-          </svg>
-        </button>
-        <button
-          type="button"
-          className="app-topbar__icon-btn"
-          aria-label="저장"
-          disabled={!canSave}
-          onClick={onSave}
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path
-              d="M5 3h11l3 3v15a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"
-              stroke="currentColor"
-              strokeWidth="1.6"
-              strokeLinejoin="round"
-            />
-            <path d="M8 3v6h7V3" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
-            <path d="M8 17h8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
           </svg>
         </button>
       </div>

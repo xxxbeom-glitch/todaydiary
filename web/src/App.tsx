@@ -117,10 +117,6 @@ export default function App() {
     }
   }, [uid, screen, selected, forceBlank, activeId, editorDate, closePane, setDiaryError]);
 
-  const handleSave = useCallback(() => {
-    void flushRef.current?.();
-  }, []);
-
   const registerFlush = useCallback((fn: FlushFn | null) => {
     flushRef.current = fn;
   }, []);
@@ -238,9 +234,7 @@ export default function App() {
             onNextMonth={() => setMonthKey((k) => shiftMonthKey(k, 1))}
             onOpenMonthPicker={() => setMonthPickerOpen(true)}
             canDelete={canDelete}
-            canSave={canSave}
             onDelete={() => void handleDelete()}
-            onSave={handleSave}
           />
           <div className="app-desktop-split">
             <div className="app-desktop-split__list">{list}</div>
