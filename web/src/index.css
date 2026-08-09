@@ -30,6 +30,9 @@
   --shadow-card: 0 1px 3px rgb(26 26 26 / 0.04);
   --shadow-fab: 0 4px 14px rgb(26 26 26 / 0.14);
   --shadow-shell: 0 8px 28px rgb(26 26 26 / 0.08);
+  --shadow-doc: 0 4px 24px rgb(26 26 26 / 0.06);
+  --radius-doc: 18px;
+  --doc-inset: 18px;
   --app-max-width: 430px;
   --app-max-width-desktop: 1024px;
   --app-frame-height-desktop: 768px;
@@ -196,15 +199,37 @@
     .app-desktop-split__list {
       position: relative;
       overflow: auto;
-      border-right: 1px solid var(--color-border);
+      border-right: 0;
       background-color: var(--color-bg);
     }
 
     .app-desktop-split__main {
       position: relative;
-      overflow: auto;
+      display: flex;
       min-width: 0;
+      overflow: hidden;
+      background-color: var(--color-bg);
+      padding: var(--doc-inset);
+      padding-left: 12px;
+    }
+
+    /* 바깥 셸 안의 안쪽 문서 프레임 (레퍼런스 흰 카드) */
+    .app-doc-frame {
+      display: flex;
+      flex: 1 1 auto;
+      min-width: 0;
+      min-height: 0;
+      flex-direction: column;
+      overflow: auto;
+      border: 1px solid color-mix(in srgb, var(--color-border) 85%, transparent);
+      border-radius: var(--radius-doc);
       background-color: var(--color-surface);
+      box-shadow: var(--shadow-doc);
+    }
+
+    .app-doc-frame > .app-pane,
+    .app-doc-frame > .flex {
+      min-height: 100%;
     }
 
     .app-desktop-empty {

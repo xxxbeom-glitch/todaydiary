@@ -11,7 +11,7 @@
 - 웹 테마: **Scribe-like cool light** — `agent/design/tokens.md` · `web/src/index.css` `:root`
 - 쿨 그레이·화이트·뉴트럴 잉크. 웜 크림·살구 액센트·보라 그라데이션 금지
 - 목록 항목(`.app-list-item`)은 보더 없이 선택 시 accent-soft
-- PC(≥1024): 가운데 컨테이너 · 좌 목록 / 우 상세·작성 · canvas/bg/surface 색 단 · 우측 기본은 새 글 작성 준비
+- PC(≥1024): 바깥 셸 + 우측 **안쪽 문서 프레임**(`app-doc-frame`) · 좌 목록 / 우 작성·뷰 · 우측 기본은 새 글 작성 준비
 - 모바일: 기존 단일 화면 전환 + FAB 유지
 - 컴포넌트에 hex 하드코딩 금지 (토큰만)
 

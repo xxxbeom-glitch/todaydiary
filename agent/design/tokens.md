@@ -50,6 +50,9 @@
 | `--frame-inset` | `24px` |
 | `--desktop-list-width` | `340px` |
 | `--shadow-shell` | `0 8px 28px rgb(26 26 26 / 0.08)` |
+| `--shadow-doc` | `0 4px 24px rgb(26 26 26 / 0.06)` — 안쪽 문서 프레임 |
+| `--radius-doc` | `18px` |
+| `--doc-inset` | `18px` — 셸↔문서 카드 간격 |
 | `--shadow-card` | `0 1px 3px rgb(26 26 26 / 0.04)` |
 | `--shadow-fab` | `0 4px 14px rgb(26 26 26 / 0.14)` |
 

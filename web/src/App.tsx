@@ -188,7 +188,9 @@ export default function App() {
       {isDesktop ? (
         <div className="app-desktop-split">
           <div className="app-desktop-split__list">{list}</div>
-          <div className="app-desktop-split__main">{mainPane}</div>
+          <div className="app-desktop-split__main">
+            <div className="app-doc-frame">{mainPane}</div>
+          </div>
         </div>
       ) : (
         <>
