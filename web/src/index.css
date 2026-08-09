@@ -7,6 +7,9 @@
   /* Scribe-like cool light — SoT: agent/design/tokens.md */
   --font-sans: 'Pretendard', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
     sans-serif;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
 
   /* canvas 밖 / 셸·목록 / 에디터 면 */
   --color-canvas: #eceef0;
@@ -63,7 +66,7 @@
     color: var(--color-text-primary);
     font-family: var(--font-sans);
     font-size: 15px;
-    font-weight: 400;
+    font-weight: var(--font-weight-regular);
     line-height: 1.55;
   }
 
@@ -120,42 +123,42 @@
   /* Typography */
   .type-page-title {
     font-size: 22px;
-    font-weight: 700;
+    font-weight: var(--font-weight-semibold);
     line-height: 1.25;
     color: var(--color-text-primary);
   }
 
   .type-section-title {
     font-size: 17px;
-    font-weight: 700;
+    font-weight: var(--font-weight-semibold);
     line-height: 1.35;
     color: var(--color-text-primary);
   }
 
   .type-body {
     font-size: 15px;
-    font-weight: 400;
+    font-weight: var(--font-weight-regular);
     line-height: 1.65;
     color: var(--color-text-primary);
   }
 
   .type-body-strong {
     font-size: 15px;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     line-height: 1.5;
     color: var(--color-text-primary);
   }
 
   .type-caption {
     font-size: 12px;
-    font-weight: 400;
+    font-weight: var(--font-weight-regular);
     line-height: 1.45;
     color: var(--color-text-muted);
   }
 
   .type-button {
     font-size: 14px;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     line-height: 1.2;
   }
 
@@ -305,7 +308,7 @@
       background: transparent;
       padding: 6px 8px;
       font-size: 15px;
-      font-weight: 700;
+      font-weight: var(--font-weight-semibold);
       letter-spacing: -0.02em;
       color: var(--color-text-primary);
       cursor: pointer;
@@ -494,7 +497,7 @@
       background: transparent;
       padding: 4px 0;
       font-size: 13px;
-      font-weight: 700;
+      font-weight: var(--font-weight-semibold);
       color: var(--color-text-primary);
       cursor: pointer;
     }
@@ -584,14 +587,14 @@
 
   .app-list-item__day {
     font-size: 15px;
-    font-weight: 700;
+    font-weight: var(--font-weight-semibold);
     line-height: 1.2;
     letter-spacing: -0.02em;
   }
 
   .app-list-item__weekday {
     font-size: 12px;
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     line-height: 1.2;
     color: var(--color-text-muted);
   }
@@ -624,7 +627,7 @@
 
   .app-header--month .type-section-title {
     font-size: 17px;
-    font-weight: 700;
+    font-weight: var(--font-weight-semibold);
     color: var(--color-text-primary);
   }
 
@@ -657,7 +660,7 @@
     background-image: none;
     padding: 0;
     font-size: 15px;
-    font-weight: 400;
+    font-weight: var(--font-weight-regular);
     line-height: 1.8;
     color: var(--color-text-primary);
     outline: none;
@@ -675,7 +678,7 @@
     border-radius: var(--radius-pill);
     padding: 12px 20px;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     line-height: 1.2;
     transition:
       background-color 0.15s ease,
@@ -795,7 +798,7 @@
   .app-entry-date {
     margin: 0 0 36px;
     font-size: 15px;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     line-height: 1.4;
     color: var(--color-text-primary);
   }
@@ -809,7 +812,7 @@
     background: transparent;
     padding: 0;
     font-size: 15px;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
     line-height: 1.4;
     color: var(--color-text-primary);
     outline: none;

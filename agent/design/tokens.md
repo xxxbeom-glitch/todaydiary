@@ -28,13 +28,20 @@
 
 ## Typography
 
+Weight 토큰은 Regular / Medium / Semibold만 사용한다. Bold(700) 금지.
+
 | Token / class | 값 |
 |---------------|-----|
 | `--font-sans` | Pretendard (+ system fallback) |
-| `.type-page-title` | 22 / 700 |
-| `.type-section-title` | 17 / 700 |
-| `.type-body` | 15 / 400 · lh 1.65 |
-| `.type-caption` | 12 / 400 · muted |
+| `--font-weight-regular` | `400` |
+| `--font-weight-medium` | `500` |
+| `--font-weight-semibold` | `600` |
+| `.type-page-title` | 22 / semibold |
+| `.type-section-title` | 17 / semibold |
+| `.type-body` | 15 / regular · lh 1.65 |
+| `.type-body-strong` | 15 / semibold |
+| `.type-caption` | 12 / regular · muted |
+| `.type-button` | 14 / semibold |
 
 ## Radius / Layout
 
