@@ -27,7 +27,9 @@ export function DetailPage({ entry, onBack, onEdit, embedded = false }: DetailPa
           </div>
         )}
 
-        <p className="app-entry-date">{dateLabel}</p>
+        <div className="app-entry-date-block">
+          <p className="app-entry-date">{dateLabel}</p>
+        </div>
 
         <div
           className="app-read-body app-read-body--editable"

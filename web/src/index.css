@@ -397,6 +397,7 @@
       min-height: 0;
       flex-direction: column;
       overflow: auto;
+      scrollbar-gutter: stable;
       border: 0 !important;
       outline: none;
       border-radius: 0;
@@ -803,7 +804,7 @@
   }
 
   .app-entry-date {
-    margin: 0 0 36px;
+    margin: 0;
     font-size: 15px;
     font-weight: var(--font-weight-semibold);
     line-height: 1.4;
@@ -811,10 +812,23 @@
   }
 
   .app-entry-date-block {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    min-height: calc(15px * 1.4);
     margin: 0 0 36px;
   }
 
+  .app-entry-date-field {
+    display: flex;
+    align-items: center;
+    min-height: calc(15px * 1.4);
+  }
+
   .app-entry-date-input {
+    display: block;
+    box-sizing: border-box;
+    height: calc(15px * 1.4);
     border: 0;
     background: transparent;
     padding: 0;
