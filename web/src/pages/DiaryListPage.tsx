@@ -136,6 +136,21 @@ export function DiaryListPage({
           <LoadingView label="불러오는 중…" />
         ) : embedded ? (
           <ul className="app-list app-list--tiles">
+            {monthEntries.length === 0 && !showCreateTile ? (
+              <li>
+                <p className="app-list-pane__empty type-caption">글 없음</p>
+              </li>
+            ) : (
+              monthEntries.map((entry) => (
+                <li key={entry.id || entry.date}>
+                  <DiaryListItem
+                    entry={entry}
+                    selected={Boolean(selectedId && entry.id === selectedId)}
+                    onClick={() => onSelect(entry)}
+                  />
+                </li>
+              ))
+            )}
             {showCreateTile && (
               <li>
                 <button
@@ -154,21 +169,6 @@ export function DiaryListPage({
                   </svg>
                 </button>
               </li>
-            )}
-            {monthEntries.length === 0 && !showCreateTile ? (
-              <li>
-                <p className="app-list-pane__empty type-caption">글 없음</p>
-              </li>
-            ) : (
-              monthEntries.map((entry) => (
-                <li key={entry.id || entry.date}>
-                  <DiaryListItem
-                    entry={entry}
-                    selected={Boolean(selectedId && entry.id === selectedId)}
-                    onClick={() => onSelect(entry)}
-                  />
-                </li>
-              ))
             )}
           </ul>
         ) : monthEntries.length === 0 ? (
