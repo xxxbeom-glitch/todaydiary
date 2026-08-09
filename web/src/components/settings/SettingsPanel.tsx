@@ -1,12 +1,20 @@
 import type { User } from 'firebase/auth';
-import { FONT_OPTIONS, type AppFont, type AppTheme } from '../../lib/preferences';
+import {
+  FONT_OPTIONS,
+  FONT_SIZE_OPTIONS,
+  type AppFont,
+  type AppFontSize,
+  type AppTheme,
+} from '../../lib/preferences';
 
 interface SettingsPanelProps {
   user: User;
   theme: AppTheme;
   font: AppFont;
+  fontSize: AppFontSize;
   onThemeChange: (theme: AppTheme) => void;
   onFontChange: (font: AppFont) => void;
+  onFontSizeChange: (size: AppFontSize) => void;
   onLogout: () => void;
   onClose: () => void;
 }
@@ -15,8 +23,10 @@ export function SettingsPanel({
   user,
   theme,
   font,
+  fontSize,
   onThemeChange,
   onFontChange,
+  onFontSizeChange,
   onLogout,
   onClose,
 }: SettingsPanelProps) {
@@ -72,6 +82,22 @@ export function SettingsPanel({
             >
               다크
             </button>
+          </div>
+        </section>
+
+        <section className="app-settings__section">
+          <h3 className="app-settings__label">글자 크기</h3>
+          <div className="app-settings__segment app-settings__segment--3" role="group" aria-label="글자 크기">
+            {FONT_SIZE_OPTIONS.map((option) => (
+              <button
+                key={option.id}
+                type="button"
+                className={`app-settings__seg-btn${fontSize === option.id ? ' is-active' : ''}`}
+                onClick={() => onFontSizeChange(option.id)}
+              >
+                {option.label}
+              </button>
+            ))}
           </div>
         </section>
 

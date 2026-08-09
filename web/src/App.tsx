@@ -20,10 +20,13 @@ import { DetailPage } from './pages/DetailPage';
 import { todayISO, yearMonthKey, shiftMonthKey, collectMonthKeys } from './lib/date';
 import {
   applyFont,
+  applyFontSize,
   applyTheme,
   readStoredFont,
+  readStoredFontSize,
   readStoredTheme,
   type AppFont,
+  type AppFontSize,
   type AppTheme,
 } from './lib/preferences';
 import { useIsDesktopLayout } from './hooks/useMediaQuery';
@@ -56,6 +59,7 @@ export default function App() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [theme, setTheme] = useState<AppTheme>(() => readStoredTheme());
   const [font, setFont] = useState<AppFont>(() => readStoredFont());
+  const [fontSize, setFontSize] = useState<AppFontSize>(() => readStoredFontSize());
   const flushRef = useRef<FlushFn | null>(null);
 
   const uiError = authError ?? diaryError;
@@ -83,6 +87,11 @@ export default function App() {
   const handleFontChange = useCallback((next: AppFont) => {
     applyFont(next);
     setFont(next);
+  }, []);
+
+  const handleFontSizeChange = useCallback((next: AppFontSize) => {
+    applyFontSize(next);
+    setFontSize(next);
   }, []);
 
   const openCreate = useCallback(() => {
@@ -280,8 +289,10 @@ export default function App() {
           user={user}
           theme={theme}
           font={font}
+          fontSize={fontSize}
           onThemeChange={handleThemeChange}
           onFontChange={handleFontChange}
+          onFontSizeChange={handleFontSizeChange}
           onLogout={() => void handleLogout()}
           onClose={() => setSettingsOpen(false)}
         />

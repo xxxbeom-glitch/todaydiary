@@ -2,14 +2,6 @@
 @import 'react-day-picker/style.css';
 
 @font-face {
-  font-family: 'GriunXHangeul';
-  src: url('/fonts/GriunXHangeul.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
   font-family: 'KyoboHandwriting';
   src: url('/fonts/KyoboHandwriting.ttf') format('truetype');
   font-weight: 400;
@@ -54,10 +46,12 @@
   color-scheme: light;
 
   /* Scribe-like cool light — SoT: agent/design/tokens.md */
-  --font-sans: 'GriunXHangeul', 'Pretendard', system-ui, sans-serif;
+  --font-sans: 'BookkGothic', 'Pretendard', system-ui, sans-serif;
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
+  --font-size-base: 15px;
+  --font-size-prose: 15px;
 
   /* canvas 밖 / 셸·목록 / 에디터 면 */
   --color-canvas: #eceef0;
@@ -135,7 +129,7 @@
     background-color: var(--color-canvas);
     color: var(--color-text-primary);
     font-family: var(--font-sans);
-    font-size: 15px;
+    font-size: var(--font-size-base);
     font-weight: var(--font-weight-regular);
     line-height: 1.55;
   }
@@ -196,14 +190,14 @@
   }
 
   .type-body {
-    font-size: 15px;
+    font-size: var(--font-size-base);
     font-weight: var(--font-weight-regular);
     line-height: 1.65;
     color: var(--color-text-primary);
   }
 
   .type-body-strong {
-    font-size: 15px;
+    font-size: var(--font-size-base);
     font-weight: var(--font-weight-semibold);
     line-height: 1.5;
     color: var(--color-text-primary);
@@ -783,7 +777,7 @@
     background: transparent;
     background-image: none;
     padding: 0;
-    font-size: 15px;
+    font-size: var(--font-size-prose);
     font-weight: var(--font-weight-regular);
     line-height: 1.8;
     color: var(--color-text-primary);
@@ -1017,6 +1011,10 @@
     gap: 8px;
   }
 
+  .app-settings__segment--3 {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
   .app-settings__seg-btn {
     border: 1px solid var(--color-border);
     border-radius: 12px;
@@ -1072,10 +1070,6 @@
     font-weight: var(--font-weight-regular);
     line-height: 1.4;
     color: var(--color-text-primary);
-  }
-
-  .app-settings__font-btn--griun .app-settings__font-sample {
-    font-family: 'GriunXHangeul', sans-serif;
   }
 
   .app-settings__font-btn--kyobo .app-settings__font-sample {
@@ -1319,7 +1313,7 @@
     flex: 1 1 auto;
     min-height: 0;
     white-space: pre-wrap;
-    font-size: 15px;
+    font-size: var(--font-size-prose);
     line-height: 1.8;
     color: var(--color-text-primary);
     background: transparent;
