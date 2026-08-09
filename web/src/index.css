@@ -237,10 +237,80 @@
       box-shadow: none;
     }
 
+    .app-desktop {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .app-topbar {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: space-between;
+      height: 52px;
+      padding: 0 18px;
+      border-bottom: 1px solid color-mix(in srgb, var(--color-border) 55%, transparent);
+      background-color: var(--color-bg);
+    }
+
+    .app-topbar__brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--color-text-primary);
+    }
+
+    .app-topbar__mark {
+      display: flex;
+      color: var(--color-text-primary);
+    }
+
+    .app-topbar__logo {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .app-topbar__actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .app-topbar__icon-btn {
+      display: flex;
+      height: 36px;
+      width: 36px;
+      align-items: center;
+      justify-content: center;
+      border: 0;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      transition:
+        background-color 0.15s ease,
+        color 0.15s ease,
+        opacity 0.15s ease;
+    }
+
+    .app-topbar__icon-btn:hover:not(:disabled) {
+      background-color: var(--color-surface-muted);
+      color: var(--color-text-primary);
+    }
+
+    .app-topbar__icon-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
     .app-desktop-split {
       display: grid;
       grid-template-columns: var(--desktop-list-width) minmax(0, 1fr);
-      height: 100%;
+      flex: 1 1 auto;
+      height: auto;
       min-height: 0;
     }
 

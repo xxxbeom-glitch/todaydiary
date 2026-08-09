@@ -1,4 +1,4 @@
-﻿import { useRef } from 'react';
+﻿import { useEffect, useRef } from 'react';
 import { useDiaryEditor } from '../hooks/useDiaryEditor';
 import { IconButton } from '../components/ui/IconButton';
 import { formatEntryDateLabel } from '../lib/date';
@@ -12,6 +12,7 @@ interface EditorPageProps {
   photos: string[];
   onBack: (savedDate?: string) => void;
   embedded?: boolean;
+  onRegisterFlush?: (flush: (() => Promise<void>) | null) => void;
 }
 
 export function EditorPage({
@@ -23,6 +24,7 @@ export function EditorPage({
   photos,
   onBack,
   embedded = false,
+  onRegisterFlush,
 }: EditorPageProps) {
   const { body, setBody, entryDate, setEntryDate, error, flush } = useDiaryEditor({
     uid,
@@ -35,6 +37,12 @@ export function EditorPage({
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const todayMax = new Date().toISOString().slice(0, 10);
+
+  useEffect(() => {
+    if (!onRegisterFlush) return;
+    onRegisterFlush(() => flush());
+    return () => onRegisterFlush(null);
+  }, [onRegisterFlush, flush]);
 
   const finish = () => {
     void flush().finally(() => onBack(entryDate));
