@@ -1,11 +1,13 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAuth } from './features/auth';
 import {
+  deleteDiaryEntry,
   newEntryId,
   useDiaries,
   type DiaryEntry,
 } from './features/diary';
 import { AppShell } from './components/layout/AppShell';
+import { DesktopTopBar } from './components/layout/DesktopTopBar';
 import { LoadingView } from './components/ui/LoadingView';
 import { LoginPage } from './pages/LoginPage';
 import { DiaryListPage } from './pages/DiaryListPage';
@@ -15,6 +17,7 @@ import { todayISO, yearMonthKey } from './lib/date';
 import { useIsDesktopLayout } from './hooks/useMediaQuery';
 
 type Screen = 'list' | 'editor' | 'detail';
+type FlushFn = () => Promise<void>;
 
 export default function App() {
   const isDesktop = useIsDesktopLayout();
@@ -35,6 +38,7 @@ export default function App() {
   const [editorDate, setEditorDate] = useState(todayISO);
   const [forceBlank, setForceBlank] = useState(false);
   const [loginPending, setLoginPending] = useState(false);
+  const flushRef = useRef<FlushFn | null>(null);
 
   const uiError = authError ?? diaryError;
 
@@ -86,11 +90,38 @@ export default function App() {
     [isDesktop, openCreate],
   );
 
-  // PC: 우측은 항상 새 글 작성 준비 (목록만 보이는 상태 없음)
   useEffect(() => {
     if (!user || !isDesktop) return;
     if (screen === 'list') openCreate();
   }, [user, isDesktop, screen, openCreate]);
+
+  const handleDelete = useCallback(async () => {
+    if (!uid) return;
+    const target =
+      screen === 'detail' && selected
+        ? selected
+        : screen === 'editor' && !forceBlank && selected
+          ? selected
+          : screen === 'editor' && !forceBlank && activeId
+            ? { id: activeId, date: editorDate }
+            : null;
+    if (!target?.id) return;
+    if (!window.confirm('이 일기를 삭제할까요?')) return;
+    try {
+      await deleteDiaryEntry(uid, target.id, target.date);
+      closePane();
+    } catch (e) {
+      setDiaryError(e instanceof Error ? e.message : '삭제에 실패했습니다.');
+    }
+  }, [uid, screen, selected, forceBlank, activeId, editorDate, closePane, setDiaryError]);
+
+  const handleSave = useCallback(() => {
+    void flushRef.current?.();
+  }, []);
+
+  const registerFlush = useCallback((fn: FlushFn | null) => {
+    flushRef.current = fn;
+  }, []);
 
   const editorInitialBody = useMemo(() => {
     if (forceBlank) return '';
@@ -103,6 +134,11 @@ export default function App() {
     if (!selected) return null;
     return entries.find((e) => e.id === selected.id) ?? selected;
   }, [entries, selected]);
+
+  const canDelete =
+    (screen === 'detail' && Boolean(liveSelected)) ||
+    (screen === 'editor' && !forceBlank && Boolean(activeId));
+  const canSave = screen === 'editor' && Boolean(activeId);
 
   if (authLoading) {
     return (
@@ -140,6 +176,7 @@ export default function App() {
           isNew={forceBlank}
           photos={editorPhotos}
           embedded={isDesktop}
+          onRegisterFlush={registerFlush}
           onBack={(savedDate) => {
             if (savedDate) setMonthKey(savedDate.slice(0, 7));
             if (!forceBlank && selected) {
@@ -186,10 +223,18 @@ export default function App() {
       )}
 
       {isDesktop ? (
-        <div className="app-desktop-split">
-          <div className="app-desktop-split__list">{list}</div>
-          <div className="app-desktop-split__main">
-            <div className="app-doc-frame">{mainPane}</div>
+        <div className="app-desktop">
+          <DesktopTopBar
+            canDelete={canDelete}
+            canSave={canSave}
+            onDelete={() => void handleDelete()}
+            onSave={handleSave}
+          />
+          <div className="app-desktop-split">
+            <div className="app-desktop-split__list">{list}</div>
+            <div className="app-desktop-split__main">
+              <div className="app-doc-frame">{mainPane}</div>
+            </div>
           </div>
         </div>
       ) : (
