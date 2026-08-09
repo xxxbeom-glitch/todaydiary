@@ -1,13 +1,60 @@
 @import 'tailwindcss';
 @import 'react-day-picker/style.css';
 
+@font-face {
+  font-family: 'GriunXHangeul';
+  src: url('/fonts/GriunXHangeul.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'KyoboHandwriting';
+  src: url('/fonts/KyoboHandwriting.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BookkGothic';
+  src: url('/fonts/BookkGothic_Light.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BookkGothic';
+  src: url('/fonts/BookkGothic_Bold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BookkMyungjo';
+  src: url('/fonts/BookkMyungjo_Light.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BookkMyungjo';
+  src: url('/fonts/BookkMyungjo_Bold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ── Design tokens ───────────────────────────────────────────── */
 :root {
   color-scheme: light;
 
   /* Scribe-like cool light — SoT: agent/design/tokens.md */
-  --font-sans: 'Pretendard', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    sans-serif;
+  --font-sans: 'GriunXHangeul', 'Pretendard', system-ui, sans-serif;
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
@@ -986,6 +1033,61 @@
     background: var(--color-accent-soft);
     color: var(--color-text-primary);
     font-weight: var(--font-weight-semibold);
+  }
+
+  .app-settings__font-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .app-settings__font-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    width: 100%;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    background: var(--color-bg);
+    padding: 12px 14px;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .app-settings__font-btn.is-active {
+    border-color: var(--color-accent);
+    background: var(--color-accent-soft);
+  }
+
+  .app-settings__font-name {
+    font-size: 12px;
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-muted);
+    font-family: var(--font-sans);
+  }
+
+  .app-settings__font-sample {
+    font-size: 16px;
+    font-weight: var(--font-weight-regular);
+    line-height: 1.4;
+    color: var(--color-text-primary);
+  }
+
+  .app-settings__font-btn--griun .app-settings__font-sample {
+    font-family: 'GriunXHangeul', sans-serif;
+  }
+
+  .app-settings__font-btn--kyobo .app-settings__font-sample {
+    font-family: 'KyoboHandwriting', sans-serif;
+  }
+
+  .app-settings__font-btn--bookk-gothic .app-settings__font-sample {
+    font-family: 'BookkGothic', sans-serif;
+  }
+
+  .app-settings__font-btn--bookk-myungjo .app-settings__font-sample {
+    font-family: 'BookkMyungjo', serif;
   }
 
   /* Alerts */

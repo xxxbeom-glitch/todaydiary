@@ -1,5 +1,5 @@
 import type { User } from 'firebase/auth';
-import type { AppFont, AppTheme } from '../../lib/preferences';
+import { FONT_OPTIONS, type AppFont, type AppTheme } from '../../lib/preferences';
 
 interface SettingsPanelProps {
   user: User;
@@ -77,21 +77,18 @@ export function SettingsPanel({
 
         <section className="app-settings__section">
           <h3 className="app-settings__label">폰트</h3>
-          <div className="app-settings__segment" role="group" aria-label="폰트">
-            <button
-              type="button"
-              className={`app-settings__seg-btn${font === 'pretendard' ? ' is-active' : ''}`}
-              onClick={() => onFontChange('pretendard')}
-            >
-              Pretendard
-            </button>
-            <button
-              type="button"
-              className={`app-settings__seg-btn${font === 'system' ? ' is-active' : ''}`}
-              onClick={() => onFontChange('system')}
-            >
-              시스템
-            </button>
+          <div className="app-settings__font-list" role="group" aria-label="폰트">
+            {FONT_OPTIONS.map((option) => (
+              <button
+                key={option.id}
+                type="button"
+                className={`app-settings__font-btn app-settings__font-btn--${option.id}${font === option.id ? ' is-active' : ''}`}
+                onClick={() => onFontChange(option.id)}
+              >
+                <span className="app-settings__font-name">{option.label}</span>
+                <span className="app-settings__font-sample">{option.sample}</span>
+              </button>
+            ))}
           </div>
         </section>
       </aside>
