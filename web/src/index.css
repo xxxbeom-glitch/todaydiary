@@ -1247,17 +1247,6 @@
   }
 
   .app-date-picker .rdp-root {
-    --rdp-accent-color: var(--color-accent);
-    --rdp-accent-background-color: var(--color-accent-soft);
-    --rdp-day-height: 36px;
-    --rdp-day-width: 36px;
-    --rdp-day_button-height: 34px;
-    --rdp-day_button-width: 34px;
-    --rdp-day_button-border-radius: 10px;
-    --rdp-selected-border: 1px solid var(--color-accent);
-    --rdp-today-color: var(--color-text-primary);
-    --rdp-outside-opacity: 0.4;
-    --rdp-disabled-opacity: 0.28;
     margin: 0;
     color: var(--color-text-primary);
     font-family: var(--font-sans);
@@ -1274,17 +1263,6 @@
     font-size: 12px;
     font-weight: var(--font-weight-medium);
     color: var(--color-text-muted);
-  }
-
-  .app-date-picker .rdp-selected .rdp-day_button {
-    background-color: var(--color-accent);
-    color: var(--color-surface);
-    font-weight: var(--font-weight-semibold);
-  }
-
-  .app-date-picker .rdp-today:not(.rdp-selected) .rdp-day_button {
-    font-weight: var(--font-weight-semibold);
-    background-color: var(--color-accent-soft);
   }
 
   .app-date-picker .rdp-button_previous,
@@ -1506,4 +1484,41 @@
       transform: rotate(360deg);
     }
   }
+}
+
+/* unlayered: react-day-picker/style.css(기본 blue)보다 우선 */
+.app-date-picker .rdp-root {
+  --rdp-accent-color: var(--color-text-primary);
+  --rdp-accent-background-color: color-mix(in srgb, var(--color-text-primary) 12%, transparent);
+  --rdp-day-height: 36px;
+  --rdp-day-width: 36px;
+  --rdp-day_button-height: 34px;
+  --rdp-day_button-width: 34px;
+  --rdp-day_button-border-radius: 999px;
+  --rdp-day_button-border: 2px solid transparent;
+  --rdp-selected-border: 2px solid transparent;
+  --rdp-today-color: var(--color-text-primary);
+  --rdp-outside-opacity: 0.4;
+  --rdp-disabled-opacity: 0.28;
+}
+
+.app-date-picker .rdp-selected .rdp-day_button {
+  border: 2px solid transparent;
+  background-color: color-mix(in srgb, var(--color-text-primary) 14%, transparent);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+.app-date-picker .rdp-today:not(.rdp-selected) .rdp-day_button {
+  font-weight: var(--font-weight-semibold);
+  background-color: color-mix(in srgb, var(--color-text-primary) 8%, transparent);
+}
+
+.app-date-picker .rdp-button_previous,
+.app-date-picker .rdp-button_next {
+  color: var(--color-text-secondary);
+}
+
+.app-date-picker .rdp-chevron {
+  fill: var(--color-text-secondary);
 }
