@@ -1,6 +1,6 @@
 ﻿import type { DiaryEntry } from '../features/diary';
 import { IconButton } from '../components/ui/IconButton';
-import { formatListDateLabel } from '../lib/date';
+import { formatEntryDateLabel } from '../lib/date';
 
 interface DetailPageProps {
   entry: DiaryEntry;
@@ -10,7 +10,7 @@ interface DetailPageProps {
 }
 
 export function DetailPage({ entry, onBack, onEdit, embedded = false }: DetailPageProps) {
-  const dateLabel = formatListDateLabel(entry.date);
+  const dateLabel = formatEntryDateLabel(entry.date);
 
   return (
     <div className={embedded ? 'app-pane' : 'flex min-h-dvh flex-col'}>

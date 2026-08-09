@@ -37,6 +37,13 @@ export function formatCardDate(dateStr: string): string {
   return `${m}월 ${d}일`;
 }
 
+/** 본문 상단 날짜 — "2026년 8월 9일 (일)" */
+export function formatEntryDateLabel(dateStr: string): string {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const dt = new Date(y, m - 1, d);
+  return `${y}년 ${m}월 ${d}일 (${WEEKDAYS[dt.getDay()]})`;
+}
+
 /** 목록 행 — "8월 9일 (일)" */
 export function formatListDateLabel(dateStr: string): string {
   const [, m, d] = dateStr.split('-').map(Number);

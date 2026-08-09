@@ -1,7 +1,7 @@
 ﻿import { useRef } from 'react';
 import { useDiaryEditor } from '../hooks/useDiaryEditor';
 import { IconButton } from '../components/ui/IconButton';
-import { formatListDateLabel } from '../lib/date';
+import { formatEntryDateLabel } from '../lib/date';
 
 interface EditorPageProps {
   uid: string;
@@ -78,7 +78,7 @@ export function EditorPage({
               />
             </label>
           ) : (
-            <p className="app-entry-date">{formatListDateLabel(entryDate)}</p>
+            <p className="app-entry-date">{formatEntryDateLabel(entryDate)}</p>
           )}
         </div>
 
