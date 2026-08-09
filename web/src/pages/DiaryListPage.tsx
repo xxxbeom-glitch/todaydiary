@@ -132,19 +132,42 @@ export function DiaryListPage({
       >
         {loading ? (
           <LoadingView label="불러오는 중…" />
+        ) : embedded ? (
+          <ul className="app-list app-list--tiles">
+            <li>
+              <button
+                type="button"
+                className="app-list-item app-list-item--create"
+                aria-label="새 글 작성"
+                onClick={onCreate}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path
+                    d="M12 5v14M5 12h14"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </button>
+            </li>
+            {monthEntries.map((entry) => (
+              <li key={entry.id || entry.date}>
+                <DiaryListItem
+                  entry={entry}
+                  selected={Boolean(selectedId && entry.id === selectedId)}
+                  onClick={() => onSelect(entry)}
+                />
+              </li>
+            ))}
+          </ul>
         ) : monthEntries.length === 0 ? (
-          embedded ? (
-            <p className="app-list-pane__empty type-caption">글 없음</p>
-          ) : (
-            <EmptyState
-              title="이 달에는 아직 글이 없어요"
-              description="오른쪽 아래 버튼으로 오늘의 한 페이지를 채워 보세요."
-            />
-          )
+          <EmptyState
+            title="이 달에는 아직 글이 없어요"
+            description="오른쪽 아래 버튼으로 오늘의 한 페이지를 채워 보세요."
+          />
         ) : (
-          <ul
-            className={`app-list${embedded ? ' app-list--tiles' : ' app-list--tiles app-list--tiles-mobile'}`}
-          >
+          <ul className="app-list app-list--tiles app-list--tiles-mobile">
             {monthEntries.map((entry) => (
               <li key={entry.id || entry.date}>
                 <DiaryListItem

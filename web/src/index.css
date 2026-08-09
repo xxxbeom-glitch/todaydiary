@@ -624,6 +624,22 @@
     color: var(--color-text-secondary);
   }
 
+  .app-list-item--create {
+    border: 1.5px dashed color-mix(in srgb, var(--color-border) 80%, var(--color-text-muted));
+    background: transparent;
+    color: var(--color-text-muted);
+  }
+
+  .app-list-item--create:hover {
+    border-color: var(--color-text-secondary);
+    color: var(--color-text-primary);
+    background-color: color-mix(in srgb, var(--color-surface) 70%, transparent);
+  }
+
+  .app-list-item--create:active {
+    background-color: var(--color-surface-muted);
+  }
+
   /* Header */
   .app-header {
     position: sticky;
