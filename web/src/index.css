@@ -206,9 +206,15 @@
       bottom: 20px;
     }
 
+    .app-list-item {
+      padding-left: 10px;
+      padding-right: 10px;
+      border-radius: 10px;
+      border-bottom: 0;
+    }
+
     .app-list-item--selected {
       background-color: var(--color-accent-soft);
-      box-shadow: none;
     }
 
     .app-pane .app-textarea {
@@ -240,58 +246,49 @@
     border: 1px solid var(--color-border);
   }
 
-  /* Diary list (no body preview) */
+  /* Diary list — simple date rows (not cards) */
   .app-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 0;
   }
 
   .app-list-item {
     display: flex;
     align-items: center;
-    gap: 12px;
-    min-height: 76px;
-    max-height: 84px;
-    padding: 14px 16px;
+    min-height: 44px;
+    padding: 12px 4px;
     border: 0;
-    border-radius: 20px;
-    background-color: var(--color-surface);
-    box-shadow: var(--shadow-card);
+    border-radius: 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent);
+    background: transparent;
+    box-shadow: none;
     color: var(--color-text-primary);
-    transition: background-color 0.15s ease;
+    text-align: left;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .app-list-item:last-child {
+    border-bottom: 0;
   }
 
   .app-list-item:active {
     background-color: var(--color-surface-muted);
   }
 
-  .app-list-item__day {
-    flex-shrink: 0;
-    width: 40px;
-    font-size: 28px;
-    font-weight: 700;
-    line-height: 1;
-    letter-spacing: -0.02em;
-    color: var(--color-text-primary);
-    font-variant-numeric: tabular-nums;
-    text-align: center;
-  }
-
-  .app-list-item__meta {
-    min-width: 0;
-    color: var(--color-text-secondary);
+  .app-list-item__label {
+    font-size: 15px;
     font-weight: 500;
+    line-height: 1.4;
+    color: var(--color-text-primary);
   }
 
-  .app-list-item__status {
-    color: var(--color-text-muted);
+  .app-list-item--selected {
+    background-color: var(--color-accent-soft);
   }
 
-  .app-list-item__chevron {
-    display: flex;
-    align-items: center;
-    color: var(--color-text-muted);
+  .app-list-item--selected .app-list-item__label {
+    font-weight: 600;
   }
 
   /* Header */

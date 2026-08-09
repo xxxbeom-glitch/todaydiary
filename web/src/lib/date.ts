@@ -37,18 +37,11 @@ export function formatCardDate(dateStr: string): string {
   return `${m}월 ${d}일`;
 }
 
-/** 목록 행 — 날짜 숫자 + "5월 · 일요일" */
-export function formatListRowDate(dateStr: string): { day: number; sublabel: string } {
+/** 목록 행 — "8월 9일 (일)" */
+export function formatListDateLabel(dateStr: string): string {
   const [, m, d] = dateStr.split('-').map(Number);
-  const dt = new Date(
-    Number(dateStr.slice(0, 4)),
-    m - 1,
-    d,
-  );
-  return {
-    day: d,
-    sublabel: `${m}월 · ${WEEKDAYS[dt.getDay()]}요일`,
-  };
+  const dt = new Date(Number(dateStr.slice(0, 4)), m - 1, d);
+  return `${m}월 ${d}일 (${WEEKDAYS[dt.getDay()]})`;
 }
 
 export function formatDetailDate(dateStr: string): string {
