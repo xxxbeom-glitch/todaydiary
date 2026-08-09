@@ -1,4 +1,7 @@
-﻿import { formatMonthTitle } from '../../lib/date';
+﻿import { useMemo } from 'react';
+import { DayPicker } from 'react-day-picker';
+import { ko } from 'react-day-picker/locale';
+import { parseYearMonth, todayISO, yearMonthKey } from '../../lib/date';
 
 interface MonthPickerModalProps {
   value: string;
@@ -8,40 +11,48 @@ interface MonthPickerModalProps {
 }
 
 export function MonthPickerModal({ value, months, onChange, onClose }: MonthPickerModalProps) {
+  const available = useMemo(() => new Set(months), [months]);
+  const { year, month } = parseYearMonth(value);
+  const selected = new Date(year, month - 1, 1);
+  const today = todayISO();
+
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-end justify-center backdrop-blur-[2px]"
-      style={{ backgroundColor: 'var(--color-overlay)' }}
-      role="presentation"
-      onClick={onClose}
-    >
+    <div className="app-month-picker" role="presentation" onClick={onClose}>
       <div
         role="dialog"
-        aria-labelledby="month-picker-title"
-        className="w-full max-w-[var(--app-max-width)] rounded-t-[22px] border border-b-0 border-[var(--color-border)] bg-[var(--color-surface)] px-[18px] pb-8 pt-5"
+        aria-modal="true"
+        aria-label="월 선택"
+        className="app-month-picker__panel app-date-picker"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-[var(--color-border)]" />
-        <h2 id="month-picker-title" className="type-section-title">
-          월 선택
-        </h2>
-        <select
-          value={value}
-          onChange={(e) => {
-            onChange(e.target.value);
+        <DayPicker
+          mode="single"
+          locale={ko}
+          weekStartsOn={0}
+          selected={selected}
+          defaultMonth={selected}
+          disabled={(date) => !available.has(yearMonthKey(date))}
+          onSelect={(day) => {
+            if (!day) return;
+            onChange(yearMonthKey(day));
             onClose();
           }}
-          className="app-input mt-4"
-        >
-          {months.map((m) => (
-            <option key={m} value={m}>
-              {formatMonthTitle(m)}
-            </option>
-          ))}
-        </select>
-        <button type="button" onClick={onClose} className="app-btn app-btn-primary mt-3 w-full">
-          닫기
-        </button>
+          footer={
+            <div className="app-date-picker__footer">
+              <button
+                type="button"
+                className="app-date-picker__today"
+                disabled={!available.has(today.slice(0, 7))}
+                onClick={() => {
+                  onChange(today.slice(0, 7));
+                  onClose();
+                }}
+              >
+                이번 달
+              </button>
+            </div>
+          }
+        />
       </div>
     </div>
   );
