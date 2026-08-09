@@ -692,7 +692,7 @@
 
   .app-list--tiles-mobile {
     flex-direction: row;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     justify-content: flex-start;
     gap: 12px;
     padding: 0 4px;
@@ -937,7 +937,7 @@
     position: fixed;
     z-index: 40;
     bottom: calc(24px + env(safe-area-inset-bottom, 0px));
-    right: max(18px, calc(50% - var(--app-max-width) / 2 + 18px));
+    right: calc(18px + env(safe-area-inset-right, 0px));
     display: flex;
     height: 56px;
     width: 56px;
@@ -955,10 +955,88 @@
     transform: scale(0.96);
   }
 
-  .app-mobile-pane {
+  /* Mobile: 상단 가로 날짜 레일 + 하단 뷰/작성 */
+  .app-mobile {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    height: 100svh;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .app-mobile__rail {
+    flex-shrink: 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-border) 55%, transparent);
+    background-color: var(--color-bg);
+  }
+
+  .app-mobile__main {
     position: relative;
-    min-height: 100dvh;
-    min-height: 100svh;
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
+    flex-direction: column;
+    overflow: auto;
+    background-color: var(--color-surface);
+  }
+
+  .app-list-rail__header-right {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .app-list-rail__scroller {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 8px 16px 14px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .app-list-rail__scroller::-webkit-scrollbar {
+    display: none;
+  }
+
+  .app-list--rail {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 10px;
+    width: max-content;
+    min-width: 100%;
+    padding: 0;
+  }
+
+  .app-list-rail__empty {
+    margin: 8px 4px 4px;
+    color: var(--color-text-muted);
+  }
+
+  .app-mobile__main .app-pane,
+  .app-mobile__main .app-page {
+    flex: 1 1 auto;
+    min-height: 100%;
+  }
+
+  .app-pane {
+    display: flex;
+    min-height: 100%;
+    height: 100%;
+    flex-direction: column;
+  }
+
+  .app-mobile__main .app-desktop-empty {
+    display: flex;
+    min-height: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 40px 28px;
+    text-align: center;
   }
 
   .app-fab-delete {

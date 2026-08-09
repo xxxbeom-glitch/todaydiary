@@ -120,22 +120,15 @@ export default function App() {
   const closePane = useCallback(
     (savedDate?: string) => {
       if (savedDate) setMonthKey(savedDate.slice(0, 7));
-      if (isDesktop) {
-        openCreate();
-        return;
-      }
-      setForceBlank(false);
-      setSelected(null);
-      setActiveId('');
-      setScreen('list');
+      openCreate();
     },
-    [isDesktop, openCreate],
+    [openCreate],
   );
 
   useEffect(() => {
-    if (!user || !isDesktop) return;
+    if (!user) return;
     if (screen === 'list') openCreate();
-  }, [user, isDesktop, screen, openCreate]);
+  }, [user, screen, openCreate]);
 
   const requestDelete = useCallback(() => {
     if (!uid) return;
@@ -220,7 +213,9 @@ export default function App() {
       onCreate={openCreate}
       selectedId={forceBlank || screen === 'list' ? undefined : activeId || selected?.id}
       embedded={isDesktop}
+      rail={!isDesktop}
       hideMonthNav={isDesktop}
+      onOpenSettings={() => setSettingsOpen(true)}
     />
   );
 
@@ -234,7 +229,7 @@ export default function App() {
           initialBody={editorInitialBody}
           isNew={forceBlank}
           photos={editorPhotos}
-          embedded={isDesktop}
+          embedded
           onRegisterFlush={registerFlush}
           onBack={(savedDate) => {
             if (savedDate) setMonthKey(savedDate.slice(0, 7));
@@ -251,7 +246,7 @@ export default function App() {
       {screen === 'detail' && liveSelected && (
         <DetailPage
           entry={liveSelected}
-          embedded={isDesktop}
+          embedded
           onBack={() => closePane()}
           onEdit={() => openEdit(liveSelected)}
         />
@@ -259,6 +254,13 @@ export default function App() {
 
       {screen === 'editor' && (!uid || !activeId) && (
         <p className="app-page type-caption text-center">작성 정보를 불러오지 못했습니다.</p>
+      )}
+
+      {screen !== 'editor' && screen !== 'detail' && (
+        <div className="app-desktop-empty">
+          <p className="type-section-title">오늘의 기록을 남겨 보세요</p>
+          <p className="type-caption">위에서 날짜를 고르거나 새 글을 작성할 수 있어요.</p>
+        </div>
       )}
     </>
   );
@@ -302,7 +304,7 @@ export default function App() {
 
   return (
     <AppShell framed={isDesktop} className={isDesktop ? 'app-shell--fill' : undefined}>
-      {uiError && (screen === 'list' || isDesktop) && (
+      {uiError && (
         <div className="app-banner">
           {uiError}
           <button
@@ -340,14 +342,14 @@ export default function App() {
           {dialogs}
         </div>
       ) : (
-        <>
-          {screen === 'list' && list}
-          <div className="app-mobile-pane">
+        <div className="app-mobile">
+          <div className="app-mobile__rail">{list}</div>
+          <div className="app-mobile__main">
             {mainPane}
             {canDelete && <FloatingDeleteButton onClick={requestDelete} />}
           </div>
           {dialogs}
-        </>
+        </div>
       )}
     </AppShell>
   );

@@ -21,7 +21,7 @@ SoT: `agent/design/tokens.md` · `agent/design/rules.md` · `web/src/index.css`
 ## 레이아웃
 
 - PC ≥1024: 셸 프레임 + 좌 날짜 레일(104px) + 우 작성/뷰
-- 모바일 `<1024`: 풀스크린 (`max-width`·canvas 띠·림 없음), 목록↔작성/뷰 단화면
+- 모바일 `<1024`: 풀스크린. **상단 가로 날짜 레일** + **하단 뷰/작성** 동시 표시
 - 작성/뷰 PC 좌우 패딩 `--page-pad-x: 88px`
 - 삭제: 우측 하단 투명 아이콘 (카드·그림자·큰 inset 금지)
 - 새 글 `+`: 좌측 하단 dock, 이번 달만
