@@ -1,4 +1,4 @@
-﻿import { useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useRef, useState } from 'react';
 import type { DiaryEntry } from '../features/diary';
 import { DiaryListItem } from '../components/diary/DiaryListItem';
 import { FloatingWriteButton } from '../components/diary/FloatingWriteButton';
@@ -39,6 +39,8 @@ export function DiaryListPage({
   hideMonthNav = false,
 }: DiaryListPageProps) {
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [canScrollMore, setCanScrollMore] = useState(false);
+  const bodyRef = useRef<HTMLElement>(null);
 
   const monthEntries = useMemo(
     () =>
@@ -56,10 +58,38 @@ export function DiaryListPage({
     [entries, monthKey],
   );
 
+  useEffect(() => {
+    if (!embedded) {
+      setCanScrollMore(false);
+      return;
+    }
+    const el = bodyRef.current;
+    if (!el) return;
+
+    const update = () => {
+      setCanScrollMore(el.scrollHeight - el.scrollTop - el.clientHeight > 4);
+    };
+
+    update();
+    el.addEventListener('scroll', update, { passive: true });
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => {
+      el.removeEventListener('scroll', update);
+      ro.disconnect();
+    };
+  }, [embedded, monthEntries.length, loading, monthKey]);
+
   const showSideMonthNav = !hideMonthNav;
 
   return (
-    <div className={embedded ? 'app-list-pane' : 'relative min-h-dvh pb-[var(--page-pad-bottom)]'}>
+    <div
+      className={
+        embedded
+          ? `app-list-pane${canScrollMore ? ' app-list-pane--more' : ''}`
+          : 'relative min-h-dvh pb-[var(--page-pad-bottom)]'
+      }
+    >
       {showSideMonthNav &&
         (embedded ? null : (
           <Header
@@ -93,7 +123,10 @@ export function DiaryListPage({
           />
         ))}
 
-      <main className={embedded ? 'app-list-pane__body' : 'app-page app-page-stack'}>
+      <main
+        ref={embedded ? bodyRef : undefined}
+        className={embedded ? 'app-list-pane__body' : 'app-page app-page-stack'}
+      >
         {loading ? (
           <LoadingView label="불러오는 중…" />
         ) : monthEntries.length === 0 ? (
@@ -121,6 +154,8 @@ export function DiaryListPage({
           </ul>
         )}
       </main>
+
+      {embedded && <div className="app-list-pane__fade" aria-hidden="true" />}
 
       {!embedded && <FloatingWriteButton onClick={onCreate} />}
 
