@@ -30,7 +30,7 @@
 
 | Token / class | 값 |
 |---------------|-----|
-| `--font-sans` | system-ui stack (당분간) |
+| `--font-sans` | Pretendard (+ system fallback) |
 | `.type-page-title` | 22 / 700 |
 | `.type-section-title` | 17 / 700 |
 | `.type-body` | 15 / 400 · lh 1.65 |
