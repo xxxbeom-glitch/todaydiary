@@ -1,24 +1,28 @@
-# Design Tokens — Clean Day (web)
+# Design Tokens — Clean Day · cozy (web)
 
 웹 SoT: `web/src/index.css` `:root`와 동기화한다.  
-방향: **클린 데이** — 거의 흰 배경, 중립 그레이 텍스트, 얇은 보더, 액센트 최소.
+방향: **클린 + 포근** — 밝은 따뜻한 오프화이트, 부드러운 웜 그레이 텍스트, 살구빛 액센트. 무거운 세피아·밤 톤은 쓰지 않는다.
 
 ## Color
 
 | Token | Value | 용도 |
 |-------|-------|------|
-| `--color-bg` | `#f6f6f5` | 앱 셸·페이지 배경 |
+| `--color-bg` | `#faf7f4` | 앱 셸·페이지 배경 |
 | `--color-surface` | `#ffffff` | 카드·입력·리스트 행 |
-| `--color-surface-muted` | `#efefed` | press/hover 배경 |
-| `--color-text-primary` | `#171717` | 본문·제목 |
-| `--color-text-secondary` | `#5c5c5c` | 보조 메타 |
-| `--color-text-muted` | `#8a8a8a` | caption·placeholder |
-| `--color-border` | `#e4e4e2` | 얇은 구분선 |
-| `--color-accent` | `#3a4a52` | FAB·포커스·강조 (슬레이트 잉크) |
-| `--color-accent-soft` | `#eef1f2` | 약한 강조 배경 |
+| `--color-surface-muted` | `#f3ebe4` | press/hover 배경 |
+| `--color-text-primary` | `#2a2623` | 본문·제목 |
+| `--color-text-secondary` | `#6e6560` | 보조 메타 |
+| `--color-text-muted` | `#9a9088` | caption·placeholder |
+| `--color-border` | `#ebe4dc` | 입력·헤더 등 얇은 선 |
+| `--color-accent` | `#c68b6d` | FAB·포커스·강조 (살구 클레이) |
+| `--color-accent-soft` | `#f7ebe4` | 약한 강조 배경 |
 | `--color-danger` | `#c0392b` | 삭제·오류 |
 | `--color-danger-soft` | `#f8ecea` | 오류 배경 |
-| `--color-overlay` | `rgb(23 23 23 / 0.18)` | 모달 딤 |
+| `--color-overlay` | `rgb(42 38 35 / 0.16)` | 모달 딤 |
+
+## List item
+
+- `.app-list-item`: **보더 없음**, `surface` + `--shadow-card`만으로 구분
 
 ## Typography
 
@@ -41,11 +45,12 @@
 | `--page-pad-x` | `18px` |
 | `--page-pad-top` | `20px` |
 | `--page-pad-bottom` | `96px` |
-| `--shadow-card` | `0 1px 2px rgb(23 23 23 / 0.04)` |
-| `--shadow-fab` | `0 4px 14px rgb(58 74 82 / 0.2)` |
+| `--shadow-card` | `0 1px 3px rgb(42 38 35 / 0.05)` |
+| `--shadow-fab` | `0 4px 14px rgb(198 139 109 / 0.28)` |
 
 ## Do not
 
-- 크림·세피아·테라코타 팔레트로 되돌리지 않는다
+- 무거운 크림·세피아·밤색 브라운으로 되돌리지 않는다
 - 보라/인디고 그라데이션 테마를 쓰지 않는다
+- 목록 항목에 보더를 다시 넣지 않는다
 - hex를 컴포넌트에 하드코딩하지 않는다 (토큰만)
