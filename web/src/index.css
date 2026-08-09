@@ -176,7 +176,7 @@
   @media (min-width: 1024px) {
     /* 바깥 프레임(뒤) + 안쪽 셸 — 이중 테두리 */
     :root {
-      --page-pad-x: 40px;
+      --page-pad-x: 64px;
       --page-pad-top: 36px;
       --page-pad-bottom: 48px;
     }
