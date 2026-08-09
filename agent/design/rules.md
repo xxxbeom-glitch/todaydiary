@@ -11,6 +11,8 @@
 - 웹 테마: **Clean Day · cozy** — `agent/design/tokens.md` · `web/src/index.css` `:root`
 - 포근하되 무거운 세피아·밤 톤·보라 그라데이션은 쓰지 않는다
 - 목록 항목(`.app-list-item`)은 보더 없이 surface + soft shadow
+- PC(≥1024): 가운데 컨테이너(`--app-max-width-desktop`) · 좌 목록 / 우 상세·작성 · `--color-canvas`와 `--color-bg` 색 차
+- 모바일: 기존 단일 화면 전환 유지
 - 컴포넌트에 hex 하드코딩 금지 (토큰만)
 
 ## Navigation / Scroll

@@ -21,6 +21,9 @@ interface DiaryListPageProps {
   onMonthChange: (key: string) => void;
   onSelect: (entry: DiaryEntry) => void;
   onCreate: () => void;
+  selectedId?: string;
+  /** PC 분할 패널 안 — 전체 화면 min-height/FAB 고정 대신 패널용 */
+  embedded?: boolean;
 }
 
 export function DiaryListPage({
@@ -30,6 +33,8 @@ export function DiaryListPage({
   onMonthChange,
   onSelect,
   onCreate,
+  selectedId,
+  embedded = false,
 }: DiaryListPageProps) {
   const [pickerOpen, setPickerOpen] = useState(false);
 
@@ -50,7 +55,7 @@ export function DiaryListPage({
   );
 
   return (
-    <div className="relative min-h-dvh pb-[var(--page-pad-bottom)]">
+    <div className={embedded ? 'app-list-pane' : 'relative min-h-dvh pb-[var(--page-pad-bottom)]'}>
       <Header
         className="app-header--month"
         left={
@@ -87,20 +92,28 @@ export function DiaryListPage({
         ) : monthEntries.length === 0 ? (
           <EmptyState
             title="이 달에는 아직 글이 없어요"
-            description="오른쪽 아래 버튼으로 오늘의 한 페이지를 채워 보세요."
+            description={
+              embedded
+                ? '아래 버튼으로 오늘의 한 페이지를 채워 보세요.'
+                : '오른쪽 아래 버튼으로 오늘의 한 페이지를 채워 보세요.'
+            }
           />
         ) : (
           <ul className="app-list">
             {monthEntries.map((entry) => (
               <li key={entry.id || entry.date}>
-                <DiaryListItem entry={entry} onClick={() => onSelect(entry)} />
+                <DiaryListItem
+                  entry={entry}
+                  selected={Boolean(selectedId && entry.id === selectedId)}
+                  onClick={() => onSelect(entry)}
+                />
               </li>
             ))}
           </ul>
         )}
       </main>
 
-      <FloatingWriteButton onClick={onCreate} />
+      <FloatingWriteButton onClick={onCreate} pane={embedded} />
 
       {pickerOpen && (
         <MonthPickerModal

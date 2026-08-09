@@ -7,7 +7,8 @@
 
 | Token | Value | 용도 |
 |-------|-------|------|
-| `--color-bg` | `#faf7f4` | 앱 셸·페이지 배경 |
+| `--color-canvas` | `#efe6dc` | 브라우저 뒤 배경 (컨테이너 밖) |
+| `--color-bg` | `#faf7f4` | 콘텐츠 컨테이너·목록 패널 |
 | `--color-surface` | `#ffffff` | 카드·입력·리스트 행 |
 | `--color-surface-muted` | `#f3ebe4` | press/hover 배경 |
 | `--color-text-primary` | `#2a2623` | 본문·제목 |
@@ -41,7 +42,10 @@
 | `--radius-card` | `22px` |
 | `--radius-input` | `18px` |
 | `--radius-pill` | `999px` |
-| `--app-max-width` | `430px` |
+| `--app-max-width` | `430px` (모바일) |
+| `--app-max-width-desktop` | `1080px` (≥1024) |
+| `--desktop-list-width` | `340px` |
+| `--shadow-shell` | PC 컨테이너 띄움 |
 | `--page-pad-x` | `18px` |
 | `--page-pad-top` | `20px` |
 | `--page-pad-bottom` | `96px` |

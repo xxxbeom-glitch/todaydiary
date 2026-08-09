@@ -12,6 +12,7 @@ interface EditorPageProps {
   isNew: boolean;
   photos: string[];
   onBack: (savedDate?: string) => void;
+  embedded?: boolean;
 }
 
 export function EditorPage({
@@ -22,6 +23,7 @@ export function EditorPage({
   isNew,
   photos,
   onBack,
+  embedded = false,
 }: EditorPageProps) {
   const { body, setBody, entryDate, setEntryDate, status, error, flush } =
     useDiaryEditor({
@@ -40,11 +42,11 @@ export function EditorPage({
   const todayMax = new Date().toISOString().slice(0, 10);
 
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className={embedded ? 'app-pane' : 'flex min-h-dvh flex-col'}>
       <Header
         left={
-          <IconButton label="뒤로" onClick={handleBack}>
-            ←
+          <IconButton label={embedded ? '닫기' : '뒤로'} onClick={handleBack}>
+            {embedded ? '✕' : '←'}
           </IconButton>
         }
         center={

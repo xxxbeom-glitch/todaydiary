@@ -4,6 +4,7 @@ import { formatListRowDate } from '../../lib/date';
 interface DiaryListItemProps {
   entry: DiaryEntry;
   onClick: () => void;
+  selected?: boolean;
 }
 
 function listStatusLabel(entry: DiaryEntry): string {
@@ -13,7 +14,7 @@ function listStatusLabel(entry: DiaryEntry): string {
   return '빈 페이지';
 }
 
-export function DiaryListItem({ entry, onClick }: DiaryListItemProps) {
+export function DiaryListItem({ entry, onClick, selected = false }: DiaryListItemProps) {
   const { day, sublabel } = formatListRowDate(entry.date);
   const status = listStatusLabel(entry);
 
@@ -21,7 +22,8 @@ export function DiaryListItem({ entry, onClick }: DiaryListItemProps) {
     <button
       type="button"
       onClick={onClick}
-      className="app-list-item w-full"
+      className={`app-list-item w-full${selected ? ' app-list-item--selected' : ''}`}
+      aria-current={selected ? 'true' : undefined}
       aria-label={`${sublabel} 일기 보기`}
     >
       <span className="app-list-item__day" aria-hidden="true">

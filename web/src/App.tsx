@@ -13,10 +13,12 @@ import { DiaryListPage } from './pages/DiaryListPage';
 import { EditorPage } from './pages/EditorPage';
 import { DetailPage } from './pages/DetailPage';
 import { todayISO, yearMonthKey } from './lib/date';
+import { useIsDesktopLayout } from './hooks/useMediaQuery';
 
 type Screen = 'list' | 'editor' | 'detail';
 
 export default function App() {
+  const isDesktop = useIsDesktopLayout();
   const {
     user,
     loading: authLoading,
@@ -66,19 +68,27 @@ export default function App() {
   const openView = useCallback((entry: DiaryEntry) => {
     setSelected(entry);
     setActiveId(entry.id);
+    setForceBlank(false);
     setScreen('detail');
+  }, []);
+
+  const closePane = useCallback((savedDate?: string) => {
+    setForceBlank(false);
+    setSelected(null);
+    setActiveId('');
+    setScreen('list');
+    if (savedDate) setMonthKey(savedDate.slice(0, 7));
   }, []);
 
   const handleDelete = useCallback(async () => {
     if (!uid || !selected) return;
     try {
       await deleteDiaryEntry(uid, selected.id, selected.date);
-      setSelected(null);
-      setScreen('list');
+      closePane();
     } catch (e) {
-      setDiaryError(e instanceof Error ? e.message : '??? ??????.');
+      setDiaryError(e instanceof Error ? e.message : '삭제에 실패했습니다.');
     }
-  }, [uid, selected, setDiaryError]);
+  }, [uid, selected, setDiaryError, closePane]);
 
   const editorInitialBody = useMemo(() => {
     if (forceBlank) return '';
@@ -87,9 +97,14 @@ export default function App() {
 
   const editorPhotos = selected?.photos ?? [];
 
+  const liveSelected = useMemo(() => {
+    if (!selected) return null;
+    return entries.find((e) => e.id === selected.id) ?? selected;
+  }, [entries, selected]);
+
   if (authLoading) {
     return (
-      <AppShell>
+      <AppShell className={isDesktop ? 'app-shell--fill' : undefined}>
         <LoadingView />
       </AppShell>
     );
@@ -99,9 +114,65 @@ export default function App() {
     return <LoginPage onLogin={() => void handleLogin()} loading={loginPending} error={uiError} />;
   }
 
+  const list = (
+    <DiaryListPage
+      entries={entries}
+      loading={!ready}
+      monthKey={monthKey}
+      onMonthChange={setMonthKey}
+      onSelect={openView}
+      onCreate={openCreate}
+      selectedId={screen === 'list' ? undefined : activeId || selected?.id}
+      embedded={isDesktop}
+    />
+  );
+
+  const mainPane = (
+    <>
+      {screen === 'editor' && uid && activeId && (
+        <EditorPage
+          uid={uid}
+          entryId={activeId}
+          date={editorDate}
+          initialBody={editorInitialBody}
+          isNew={forceBlank}
+          photos={editorPhotos}
+          embedded={isDesktop}
+          onBack={closePane}
+        />
+      )}
+
+      {screen === 'detail' && liveSelected && (
+        <DetailPage
+          entry={liveSelected}
+          embedded={isDesktop}
+          onBack={() => closePane()}
+          onEdit={() => openEdit(liveSelected)}
+          onDelete={() => void handleDelete()}
+        />
+      )}
+
+      {screen === 'list' && isDesktop && (
+        <div className="app-desktop-empty">
+          <p className="type-section-title">일기를 선택하세요</p>
+          <p className="type-body" style={{ color: 'var(--color-text-secondary)' }}>
+            왼쪽 목록에서 글을 고르거나, 새 글을 작성해 보세요.
+          </p>
+          <button type="button" className="app-btn app-btn-primary mt-2" onClick={openCreate}>
+            새 글 쓰기
+          </button>
+        </div>
+      )}
+
+      {screen === 'editor' && (!uid || !activeId) && (
+        <p className="app-page type-caption text-center">작성 정보를 불러오지 못했습니다.</p>
+      )}
+    </>
+  );
+
   return (
-    <AppShell>
-      {uiError && screen === 'list' && (
+    <AppShell className={isDesktop ? 'app-shell--fill' : undefined}>
+      {uiError && (screen === 'list' || isDesktop) && (
         <div className="app-banner">
           {uiError}
           <button
@@ -112,51 +183,21 @@ export default function App() {
               setDiaryError(null);
             }}
           >
-            ??
+            닫기
           </button>
         </div>
       )}
 
-      {screen === 'list' && (
-        <DiaryListPage
-          entries={entries}
-          loading={!ready}
-          monthKey={monthKey}
-          onMonthChange={setMonthKey}
-          onSelect={openView}
-          onCreate={openCreate}
-        />
-      )}
-
-      {screen === 'editor' && uid && activeId && (
-        <EditorPage
-          uid={uid}
-          entryId={activeId}
-          date={editorDate}
-          initialBody={editorInitialBody}
-          isNew={forceBlank}
-          photos={editorPhotos}
-          onBack={(savedDate) => {
-            setForceBlank(false);
-            setScreen('list');
-            if (savedDate) setMonthKey(savedDate.slice(0, 7));
-          }}
-        />
-      )}
-
-      {screen === 'detail' && selected && (
-        <DetailPage
-          entry={selected}
-          onBack={() => setScreen('list')}
-          onEdit={() => openEdit(selected)}
-          onDelete={() => void handleDelete()}
-        />
-      )}
-
-      {screen === 'editor' && (!uid || !activeId) && (
-        <p className="app-page type-caption text-center">
-          ??? ?????. ?? ?? ?? ?????.
-        </p>
+      {isDesktop ? (
+        <div className="app-desktop-split">
+          <div className="app-desktop-split__list">{list}</div>
+          <div className="app-desktop-split__main">{mainPane}</div>
+        </div>
+      ) : (
+        <>
+          {screen === 'list' && list}
+          {mainPane}
+        </>
       )}
     </AppShell>
   );

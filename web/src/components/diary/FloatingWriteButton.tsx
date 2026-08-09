@@ -1,10 +1,17 @@
 ﻿interface FloatingWriteButtonProps {
   onClick: () => void;
+  /** PC 목록 패널 안 absolute 배치 */
+  pane?: boolean;
 }
 
-export function FloatingWriteButton({ onClick }: FloatingWriteButtonProps) {
+export function FloatingWriteButton({ onClick, pane = false }: FloatingWriteButtonProps) {
   return (
-    <button type="button" onClick={onClick} aria-label="일기 쓰기" className="app-fab">
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label="일기 쓰기"
+      className={pane ? 'app-fab app-fab--pane' : 'app-fab'}
+    >
       <svg
         width="22"
         height="22"

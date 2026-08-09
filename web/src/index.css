@@ -7,6 +7,8 @@
   /* Clean Day · cozy — SoT: agent/design/tokens.md */
   --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
+  /* canvas = 브라우저 뒤 배경, bg = 콘텐츠 컨테이너 (살짝 밝게) */
+  --color-canvas: #efe6dc;
   --color-bg: #faf7f4;
   --color-surface: #ffffff;
   --color-surface-muted: #f3ebe4;
@@ -23,10 +25,14 @@
   --radius-card: 22px;
   --radius-input: 18px;
   --radius-pill: 999px;
+  --radius-shell: 20px;
 
   --shadow-card: 0 1px 3px rgb(42 38 35 / 0.05);
   --shadow-fab: 0 4px 14px rgb(198 139 109 / 0.28);
+  --shadow-shell: 0 8px 28px rgb(42 38 35 / 0.08);
   --app-max-width: 430px;
+  --app-max-width-desktop: 1080px;
+  --desktop-list-width: 340px;
   --page-pad-x: 18px;
   --page-pad-top: 20px;
   --page-pad-bottom: 96px;
@@ -41,7 +47,7 @@
   body {
     margin: 0;
     min-height: 100dvh;
-    background-color: var(--color-bg);
+    background-color: var(--color-canvas);
     color: var(--color-text-primary);
     font-family: var(--font-sans);
     font-size: 15px;
@@ -67,7 +73,7 @@
     body,
     #root {
       color-scheme: light;
-      background-color: var(--color-bg);
+      background-color: var(--color-canvas);
       color: var(--color-text-primary);
     }
   }
@@ -116,7 +122,7 @@
     line-height: 1.2;
   }
 
-  /* Shell */
+  /* Shell — mobile: full phone column; desktop: elevated panel on canvas */
   .app-shell {
     margin-left: auto;
     margin-right: auto;
@@ -125,6 +131,89 @@
     min-height: 100dvh;
     background-color: var(--color-bg);
     color: var(--color-text-primary);
+  }
+
+  @media (min-width: 1024px) {
+    .app-shell {
+      max-width: var(--app-max-width-desktop);
+      min-height: calc(100dvh - 48px);
+      margin-top: 24px;
+      margin-bottom: 24px;
+      border-radius: var(--radius-shell);
+      box-shadow: var(--shadow-shell);
+      overflow: hidden;
+    }
+
+    .app-shell--fill {
+      min-height: calc(100dvh - 48px);
+    }
+
+    .app-desktop-split {
+      display: grid;
+      grid-template-columns: var(--desktop-list-width) minmax(0, 1fr);
+      height: calc(100dvh - 48px);
+      min-height: calc(100dvh - 48px);
+    }
+
+    .app-desktop-split__list {
+      position: relative;
+      overflow: auto;
+      border-right: 1px solid var(--color-border);
+      background-color: var(--color-bg);
+    }
+
+    .app-desktop-split__main {
+      position: relative;
+      overflow: auto;
+      min-width: 0;
+      background-color: var(--color-surface);
+    }
+
+    .app-desktop-empty {
+      display: flex;
+      min-height: 100%;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 40px 32px;
+      text-align: center;
+    }
+
+    .app-list-pane {
+      min-height: 100%;
+      padding-bottom: 96px;
+    }
+
+    .app-list-pane .app-page {
+      padding-bottom: 24px;
+    }
+
+    .app-pane {
+      display: flex;
+      min-height: 100%;
+      flex-direction: column;
+    }
+
+    .app-pane .app-header {
+      position: sticky;
+      top: 0;
+    }
+
+    .app-fab--pane {
+      position: absolute;
+      right: 18px;
+      bottom: 20px;
+    }
+
+    .app-list-item--selected {
+      background-color: var(--color-accent-soft);
+      box-shadow: none;
+    }
+
+    .app-pane .app-textarea {
+      min-height: min(52vh, 480px);
+    }
   }
 
   .app-page {

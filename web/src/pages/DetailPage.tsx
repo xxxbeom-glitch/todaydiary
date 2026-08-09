@@ -9,9 +9,16 @@ interface DetailPageProps {
   onBack: () => void;
   onEdit: () => void;
   onDelete: () => void;
+  embedded?: boolean;
 }
 
-export function DetailPage({ entry, onBack, onEdit, onDelete }: DetailPageProps) {
+export function DetailPage({
+  entry,
+  onBack,
+  onEdit,
+  onDelete,
+  embedded = false,
+}: DetailPageProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
@@ -25,11 +32,11 @@ export function DetailPage({ entry, onBack, onEdit, onDelete }: DetailPageProps)
   };
 
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className={embedded ? 'app-pane' : 'flex min-h-dvh flex-col'}>
       <Header
         left={
-          <IconButton label="뒤로" onClick={onBack}>
-            ←
+          <IconButton label={embedded ? '선택 해제' : '뒤로'} onClick={onBack}>
+            {embedded ? '✕' : '←'}
           </IconButton>
         }
         center={
@@ -54,7 +61,7 @@ export function DetailPage({ entry, onBack, onEdit, onDelete }: DetailPageProps)
         <>
           <button
             type="button"
-            className="fixed inset-0 z-40"
+            className={embedded ? 'absolute inset-0 z-40' : 'fixed inset-0 z-40'}
             style={{ backgroundColor: 'var(--color-overlay)' }}
             aria-label="메뉴 닫기"
             onClick={() => {
@@ -63,7 +70,11 @@ export function DetailPage({ entry, onBack, onEdit, onDelete }: DetailPageProps)
             }}
           />
           <div
-            className="fixed right-[max(18px,calc(50%-215px))] top-14 z-50 w-44 overflow-hidden border border-[var(--color-border)]"
+            className={
+              embedded
+                ? 'absolute right-4 top-14 z-50 w-44 overflow-hidden border border-[var(--color-border)]'
+                : 'fixed right-[max(18px,calc(50%-215px))] top-14 z-50 w-44 overflow-hidden border border-[var(--color-border)]'
+            }
             style={{
               borderRadius: 'var(--radius-card)',
               backgroundColor: 'var(--color-surface)',
