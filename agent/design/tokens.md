@@ -55,7 +55,7 @@ Weight 토큰은 Regular / Medium / Semibold만 사용한다. Bold(700) 금지.
 | `--app-frame-height-desktop` | `768px` 상한 |
 | `--app-frame-ratio` | `1024 / 768` — 뷰포트에 맞게 축소 |
 | `--frame-inset` | `24px` |
-| `--desktop-list-width` | `88px` — 날짜 타일 레일 |
+| `--desktop-list-width` | `104px` — 날짜 타일 레일 |
 | `--shadow-shell` | `var(--shadow-shell-x) var(--shadow-shell-y) 28px …` — 기본 `0 8px`, PC에서 커서 추적 |
 | `--shadow-doc` | `0 4px 24px rgb(26 26 26 / 0.06)` — 안쪽 문서 프레임 |
 | `--radius-doc` | `18px` |
