@@ -31,9 +31,9 @@
   --shadow-fab: 0 4px 14px rgb(198 139 109 / 0.28);
   --shadow-shell: 0 8px 28px rgb(42 38 35 / 0.08);
   --app-max-width: 430px;
-  --app-max-width-desktop: 960px;
-  --app-frame-height-desktop: 640px;
-  --app-frame-ratio: 960 / 640;
+  --app-max-width-desktop: 1024px;
+  --app-frame-height-desktop: 768px;
+  --app-frame-ratio: 1024 / 768;
   --frame-inset: 24px;
   --desktop-list-width: 340px;
   --page-pad-x: 18px;
@@ -163,11 +163,11 @@
 
   @media (min-width: 1024px) {
     .app-shell {
-      /* 상한 960×640, 뷰포트에 맞춰 3:2 비율 유지하며 축소 */
+      /* 상한 1024×768, 뷰포트에 맞춰 4:3 비율 유지하며 축소 */
       width: min(
         var(--app-max-width-desktop),
         calc(100vw - 2 * var(--frame-inset)),
-        calc((100dvh - 2 * var(--frame-inset)) * 960 / 640)
+        calc((100dvh - 2 * var(--frame-inset)) * 1024 / 768)
       );
       max-width: var(--app-max-width-desktop);
       aspect-ratio: var(--app-frame-ratio);
