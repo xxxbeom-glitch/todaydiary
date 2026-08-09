@@ -58,6 +58,8 @@ export function DiaryListPage({
     [entries, monthKey],
   );
 
+  const canGoNextMonth = monthOptions.includes(shiftMonthKey(monthKey, 1));
+
   useEffect(() => {
     if (!embedded) {
       setCanScrollMore(false);
@@ -115,6 +117,7 @@ export function DiaryListPage({
             right={
               <IconButton
                 label="다음 달"
+                disabled={!canGoNextMonth}
                 onClick={() => onMonthChange(shiftMonthKey(monthKey, 1))}
               >
                 ›

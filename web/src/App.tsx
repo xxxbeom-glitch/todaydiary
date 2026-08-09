@@ -138,6 +138,8 @@ export default function App() {
     [entries, monthKey],
   );
 
+  const canGoNextMonth = monthOptions.includes(shiftMonthKey(monthKey, 1));
+
   const canDelete =
     (screen === 'detail' && Boolean(liveSelected)) ||
     (screen === 'editor' && !forceBlank && Boolean(activeId));
@@ -232,6 +234,7 @@ export default function App() {
             onPrevMonth={() => setMonthKey((k) => shiftMonthKey(k, -1))}
             onNextMonth={() => setMonthKey((k) => shiftMonthKey(k, 1))}
             onOpenMonthPicker={() => setMonthPickerOpen(true)}
+            canGoNextMonth={canGoNextMonth}
             canDelete={canDelete}
             onDelete={() => void handleDelete()}
           />

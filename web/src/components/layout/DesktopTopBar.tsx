@@ -5,6 +5,7 @@ interface DesktopTopBarProps {
   onPrevMonth: () => void;
   onNextMonth: () => void;
   onOpenMonthPicker: () => void;
+  canGoNextMonth: boolean;
   canDelete: boolean;
   onDelete: () => void;
 }
@@ -14,6 +15,7 @@ export function DesktopTopBar({
   onPrevMonth,
   onNextMonth,
   onOpenMonthPicker,
+  canGoNextMonth,
   canDelete,
   onDelete,
 }: DesktopTopBarProps) {
@@ -42,6 +44,7 @@ export function DesktopTopBar({
           type="button"
           className="app-topbar__month-nav"
           aria-label="다음 달"
+          disabled={!canGoNextMonth}
           onClick={onNextMonth}
         >
           ›

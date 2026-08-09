@@ -303,9 +303,14 @@
       cursor: pointer;
     }
 
-    .app-topbar__month-nav:hover {
+    .app-topbar__month-nav:hover:not(:disabled) {
       background-color: var(--color-surface-muted);
       color: var(--color-text-primary);
+    }
+
+    .app-topbar__month-nav:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
     }
 
     .app-topbar__month-label {
@@ -730,6 +735,11 @@
     color: var(--color-text-secondary);
     font-size: 18px;
     transition: background-color 0.15s ease;
+  }
+
+  .app-icon-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
   }
 
   .app-icon-btn:active {
