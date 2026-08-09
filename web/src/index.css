@@ -273,12 +273,6 @@
       letter-spacing: -0.02em;
     }
 
-    .app-topbar__actions {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
     .app-topbar__icon-btn {
       display: flex;
       height: 36px;
@@ -287,23 +281,33 @@
       justify-content: center;
       border: 0;
       border-radius: 10px;
-      background: transparent;
-      color: var(--color-text-secondary);
+      background-color: var(--color-surface);
+      color: var(--color-text-primary);
+      box-shadow: 0 1px 2px rgb(26 26 26 / 0.04);
       cursor: pointer;
       transition:
         background-color 0.15s ease,
         color 0.15s ease,
-        opacity 0.15s ease;
+        opacity 0.15s ease,
+        box-shadow 0.15s ease;
     }
 
     .app-topbar__icon-btn:hover:not(:disabled) {
-      background-color: var(--color-surface-muted);
+      background-color: var(--color-surface);
       color: var(--color-text-primary);
+      box-shadow: 0 2px 6px rgb(26 26 26 / 0.08);
     }
 
     .app-topbar__icon-btn:disabled {
-      opacity: 0.35;
+      opacity: 0.4;
       cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .app-topbar__actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .app-desktop-split {
