@@ -317,8 +317,8 @@
     .app-desktop-split__list {
       position: relative;
       overflow: auto;
-      border: 0;
-      border-right: 0;
+      border: 0 !important;
+      box-shadow: none;
       background-color: var(--color-bg);
     }
 
@@ -327,14 +327,13 @@
       display: flex;
       min-width: 0;
       overflow: hidden;
-      border: 0;
-      border-left: 0;
-      background-color: var(--color-bg);
-      padding: var(--doc-inset);
-      padding-left: 12px;
+      border: 0 !important;
+      box-shadow: none;
+      background-color: var(--color-surface);
+      padding: 0;
     }
 
-    /* 바깥 셸 안의 안쪽 문서 프레임 (레퍼런스 흰 카드) */
+    /* 우측 문서 면 — 선/그림자 없이 면만 (사이 세로선 제거) */
     .app-doc-frame {
       display: flex;
       flex: 1 1 auto;
@@ -342,15 +341,15 @@
       min-height: 0;
       flex-direction: column;
       overflow: auto;
-      border: 0;
-      border-radius: var(--radius-doc);
+      border: 0 !important;
+      outline: none;
+      border-radius: 0;
       background-color: var(--color-surface);
-      box-shadow: var(--shadow-doc);
+      box-shadow: none !important;
     }
 
-    .app-doc-frame > .app-pane,
-    .app-doc-frame > .flex {
-      min-height: 100%;
+    .app-list-pane .app-header {
+      border-bottom: 0;
     }
 
     .app-desktop-empty {
