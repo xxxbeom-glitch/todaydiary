@@ -89,6 +89,8 @@
   --doc-inset: 24px;
   --shell-outer-pad: 12px;
   --shell-outer-bg: rgb(255 255 255 / 0.55);
+  --shell-outer-border: color-mix(in srgb, var(--color-border) 50%, transparent);
+  --shell-inner-border: color-mix(in srgb, var(--color-border) 65%, transparent);
   --app-max-width: 430px;
   --app-max-width-desktop: 1024px;
   --app-frame-height-desktop: 768px;
@@ -116,7 +118,9 @@
   --color-danger: #ff6b5c;
   --color-danger-soft: #3b2422;
   --color-overlay: rgb(0 0 0 / 0.45);
-  --shell-outer-bg: rgb(255 255 255 / 0.1);
+  --shell-outer-bg: rgb(255 255 255 / 0.06);
+  --shell-outer-border: color-mix(in srgb, #fff 8%, transparent);
+  --shell-inner-border: color-mix(in srgb, #fff 6%, transparent);
   --shadow-card: 0 1px 3px rgb(0 0 0 / 0.35);
   --shadow-fab: 0 4px 14px rgb(0 0 0 / 0.4);
   --shadow-shell: var(--shadow-shell-x) var(--shadow-shell-y) var(--shadow-shell-blur)
@@ -264,7 +268,7 @@
         calc(100dvh - 2 * var(--frame-inset))
       );
       padding: var(--shell-outer-pad);
-      border: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
+      border: 1px solid var(--shell-outer-border);
       border-radius: calc(var(--radius-shell) + var(--shell-outer-pad));
       background-color: var(--shell-outer-bg);
       box-shadow: var(--shadow-shell);
@@ -285,7 +289,7 @@
       min-height: 0;
       max-height: none;
       margin: 0;
-      border: 1px solid color-mix(in srgb, var(--color-border) 65%, transparent);
+      border: 1px solid var(--shell-inner-border);
       border-radius: var(--radius-shell);
       box-shadow: none;
       overflow: hidden;

@@ -27,7 +27,9 @@
 | Token | Value | 용도 |
 |-------|-------|------|
 | `--color-canvas` | `#2a2a2e` | 바깥 배경 |
-| `--shell-outer-bg` | `rgb(255 255 255 / 0.1)` | 셸 겉 프레임 (10% 화이트) |
+| `--shell-outer-bg` | `rgb(255 255 255 / 0.06)` | 셸 겉 림 |
+| `--shell-outer-border` | `#fff 8%` | 겉 테두리 (희미) |
+| `--shell-inner-border` | `#fff 6%` | 안쪽 셸 테두리 (희미) |
 | `--color-bg` | `#1c1c1e` | 셸·목록·헤더 |
 | `--color-surface` | `#2c2c2e` | 작성·뷰 면 |
 | `--color-surface-muted` | `#3a3a3c` | press/hover |
