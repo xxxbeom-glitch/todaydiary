@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAuth } from './features/auth';
 import {
   deleteDiaryEntry,
@@ -72,13 +72,26 @@ export default function App() {
     setScreen('detail');
   }, []);
 
-  const closePane = useCallback((savedDate?: string) => {
-    setForceBlank(false);
-    setSelected(null);
-    setActiveId('');
-    setScreen('list');
-    if (savedDate) setMonthKey(savedDate.slice(0, 7));
-  }, []);
+  const closePane = useCallback(
+    (savedDate?: string) => {
+      if (savedDate) setMonthKey(savedDate.slice(0, 7));
+      if (isDesktop) {
+        openCreate();
+        return;
+      }
+      setForceBlank(false);
+      setSelected(null);
+      setActiveId('');
+      setScreen('list');
+    },
+    [isDesktop, openCreate],
+  );
+
+  // PC: 우측은 항상 새 글 작성 준비 (목록만 보이는 상태 없음)
+  useEffect(() => {
+    if (!user || !isDesktop) return;
+    if (screen === 'list') openCreate();
+  }, [user, isDesktop, screen, openCreate]);
 
   const handleDelete = useCallback(async () => {
     if (!uid || !selected) return;
@@ -122,7 +135,7 @@ export default function App() {
       onMonthChange={setMonthKey}
       onSelect={openView}
       onCreate={openCreate}
-      selectedId={screen === 'list' ? undefined : activeId || selected?.id}
+      selectedId={forceBlank || screen === 'list' ? undefined : activeId || selected?.id}
       embedded={isDesktop}
     />
   );
@@ -150,18 +163,6 @@ export default function App() {
           onEdit={() => openEdit(liveSelected)}
           onDelete={() => void handleDelete()}
         />
-      )}
-
-      {screen === 'list' && isDesktop && (
-        <div className="app-desktop-empty">
-          <p className="type-section-title">일기를 선택하세요</p>
-          <p className="type-body" style={{ color: 'var(--color-text-secondary)' }}>
-            왼쪽 목록에서 글을 고르거나, 새 글을 작성해 보세요.
-          </p>
-          <button type="button" className="app-btn app-btn-primary mt-2" onClick={openCreate}>
-            새 글 쓰기
-          </button>
-        </div>
       )}
 
       {screen === 'editor' && (!uid || !activeId) && (

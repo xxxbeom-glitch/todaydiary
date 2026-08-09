@@ -45,9 +45,13 @@ export function EditorPage({
     <div className={embedded ? 'app-pane' : 'flex min-h-dvh flex-col'}>
       <Header
         left={
-          <IconButton label={embedded ? '닫기' : '뒤로'} onClick={handleBack}>
-            {embedded ? '✕' : '←'}
-          </IconButton>
+          embedded && isNew ? (
+            <span className="w-10" aria-hidden="true" />
+          ) : (
+            <IconButton label={embedded ? '닫기' : '뒤로'} onClick={handleBack}>
+              {embedded ? '✕' : '←'}
+            </IconButton>
+          )
         }
         center={
           <div className="flex flex-col items-center gap-0.5">
@@ -85,7 +89,7 @@ export function EditorPage({
           value={body}
           onChange={(e) => setBody(e.target.value)}
           placeholder="오늘 무엇이 마음에 남았나요…"
-          autoFocus={!isNew}
+          autoFocus={embedded || !isNew}
           className="app-textarea"
         />
       </div>

@@ -94,7 +94,7 @@ export function DiaryListPage({
             title="이 달에는 아직 글이 없어요"
             description={
               embedded
-                ? '아래 버튼으로 오늘의 한 페이지를 채워 보세요.'
+                ? '오른쪽 작성 칸에 오늘의 한 페이지를 적어 보세요.'
                 : '오른쪽 아래 버튼으로 오늘의 한 페이지를 채워 보세요.'
             }
           />
@@ -113,7 +113,7 @@ export function DiaryListPage({
         )}
       </main>
 
-      <FloatingWriteButton onClick={onCreate} pane={embedded} />
+      {!embedded && <FloatingWriteButton onClick={onCreate} />}
 
       {pickerOpen && (
         <MonthPickerModal
