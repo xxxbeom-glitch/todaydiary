@@ -33,6 +33,7 @@
   --shadow-doc: 0 4px 24px rgb(26 26 26 / 0.06);
   --radius-doc: 18px;
   --doc-inset: 18px;
+  --shell-outer-pad: 12px;
   --app-max-width: 430px;
   --app-max-width-desktop: 1024px;
   --app-frame-height-desktop: 768px;
@@ -165,8 +166,50 @@
   }
 
   @media (min-width: 1024px) {
+    /* 바깥 프레임(뒤) + 안쪽 셸 — 이중 테두리 */
+    .app-shell-outer {
+      box-sizing: border-box;
+      width: min(
+        calc(var(--app-max-width-desktop) + 2 * var(--shell-outer-pad)),
+        calc(100vw - 2 * var(--frame-inset)),
+        calc((100dvh - 2 * var(--frame-inset)) * 1024 / 768)
+      );
+      max-width: calc(var(--app-max-width-desktop) + 2 * var(--shell-outer-pad));
+      aspect-ratio: var(--app-frame-ratio);
+      height: auto;
+      max-height: min(
+        calc(var(--app-frame-height-desktop) + 2 * var(--shell-outer-pad)),
+        calc(100dvh - 2 * var(--frame-inset))
+      );
+      padding: var(--shell-outer-pad);
+      border: 1px solid color-mix(in srgb, var(--color-border) 90%, #fff);
+      border-radius: calc(var(--radius-shell) + var(--shell-outer-pad));
+      background-color: #e8eaed;
+      box-shadow: var(--shadow-shell);
+    }
+
+    .app-shell-outer .app-shell {
+      width: 100%;
+      max-width: none;
+      aspect-ratio: auto;
+      height: 100%;
+      min-height: 0;
+      max-height: none;
+      margin: 0;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-shell);
+      box-shadow: none;
+      overflow: hidden;
+    }
+
+    .app-shell-outer .app-shell--fill {
+      height: 100%;
+      min-height: 0;
+      max-height: none;
+    }
+
+    /* 단독 셸 (로그인 등, outer 없음) */
     .app-shell {
-      /* 상한 1024×768, 뷰포트에 맞춰 4:3 비율 유지하며 축소 */
       width: min(
         var(--app-max-width-desktop),
         calc(100vw - 2 * var(--frame-inset)),
@@ -183,10 +226,15 @@
       overflow: hidden;
     }
 
-    .app-shell--fill {
-      height: auto;
+    /* outer 안쪽 셸은 위 단독 규칙을 덮어씀 */
+    .app-shell-outer > .app-shell {
+      width: 100%;
+      max-width: none;
+      aspect-ratio: auto;
+      height: 100%;
       min-height: 0;
-      max-height: min(var(--app-frame-height-desktop), calc(100dvh - 2 * var(--frame-inset)));
+      max-height: none;
+      box-shadow: none;
     }
 
     .app-desktop-split {

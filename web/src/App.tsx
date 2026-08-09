@@ -106,7 +106,7 @@ export default function App() {
 
   if (authLoading) {
     return (
-      <AppShell className={isDesktop ? 'app-shell--fill' : undefined}>
+      <AppShell framed={isDesktop} className={isDesktop ? 'app-shell--fill' : undefined}>
         <LoadingView />
       </AppShell>
     );
@@ -168,7 +168,7 @@ export default function App() {
   );
 
   return (
-    <AppShell className={isDesktop ? 'app-shell--fill' : undefined}>
+    <AppShell framed={isDesktop} className={isDesktop ? 'app-shell--fill' : undefined}>
       {uiError && (screen === 'list' || isDesktop) && (
         <div className="app-banner">
           {uiError}
