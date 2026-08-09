@@ -78,12 +78,12 @@ export function readStoredTheme(layout: PrefLayout = layoutFromViewport()): AppT
 }
 
 export function readStoredFont(layout: PrefLayout = layoutFromViewport()): AppFont {
-  const v = readLegacyOrDefault(FONT_KEY, layout, (x) => x);
+  const v = readLegacyOrDefault(FONT_KEY, layout, (x) => x ?? '');
   return isAppFont(v) ? v : 'pretendard';
 }
 
 export function readStoredFontSize(layout: PrefLayout = layoutFromViewport()): AppFontSize {
-  const v = readLegacyOrDefault(FONT_SIZE_KEY, layout, (x) => x);
+  const v = readLegacyOrDefault(FONT_SIZE_KEY, layout, (x) => x ?? '');
   return isAppFontSize(v) ? v : 'md';
 }
 
