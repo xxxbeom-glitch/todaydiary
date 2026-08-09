@@ -29,7 +29,11 @@
 
   --shadow-card: 0 1px 3px rgb(26 26 26 / 0.04);
   --shadow-fab: 0 4px 14px rgb(26 26 26 / 0.14);
-  --shadow-shell: 0 8px 28px rgb(26 26 26 / 0.08);
+  --shadow-shell-x: 0px;
+  --shadow-shell-y: 8px;
+  --shadow-shell-blur: 28px;
+  --shadow-shell: var(--shadow-shell-x) var(--shadow-shell-y) var(--shadow-shell-blur)
+    rgb(26 26 26 / 0.08);
   --shadow-doc: 0 4px 24px rgb(26 26 26 / 0.06);
   --radius-doc: 18px;
   --doc-inset: 18px;
@@ -186,6 +190,13 @@
       border-radius: calc(var(--radius-shell) + var(--shell-outer-pad));
       background-color: rgb(255 255 255 / 0.55);
       box-shadow: var(--shadow-shell);
+      transition: box-shadow 120ms ease-out;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .app-shell-outer {
+        transition: none;
+      }
     }
 
     .app-shell-outer .app-shell {
