@@ -43,7 +43,8 @@
 | `--radius-input` | `18px` |
 | `--radius-pill` | `999px` |
 | `--app-max-width` | `430px` (모바일) |
-| `--app-max-width-desktop` | `1080px` (≥1024) |
+| `--app-max-width-desktop` | `960px` (≥1024) |
+| `--app-frame-height-desktop` | `640px` |
 | `--desktop-list-width` | `340px` |
 | `--shadow-shell` | PC 컨테이너 띄움 |
 | `--page-pad-x` | `18px` |

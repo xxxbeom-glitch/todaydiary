@@ -31,7 +31,8 @@
   --shadow-fab: 0 4px 14px rgb(198 139 109 / 0.28);
   --shadow-shell: 0 8px 28px rgb(42 38 35 / 0.08);
   --app-max-width: 430px;
-  --app-max-width-desktop: 1080px;
+  --app-max-width-desktop: 960px;
+  --app-frame-height-desktop: 640px;
   --desktop-list-width: 340px;
   --page-pad-x: 18px;
   --page-pad-top: 20px;
@@ -135,24 +136,28 @@
 
   @media (min-width: 1024px) {
     .app-shell {
+      width: var(--app-max-width-desktop);
       max-width: var(--app-max-width-desktop);
-      min-height: calc(100dvh - 48px);
-      margin-top: 24px;
-      margin-bottom: 24px;
+      height: var(--app-frame-height-desktop);
+      min-height: var(--app-frame-height-desktop);
+      max-height: var(--app-frame-height-desktop);
+      margin-top: max(24px, calc((100dvh - var(--app-frame-height-desktop)) / 2));
+      margin-bottom: max(24px, calc((100dvh - var(--app-frame-height-desktop)) / 2));
       border-radius: var(--radius-shell);
       box-shadow: var(--shadow-shell);
       overflow: hidden;
     }
 
     .app-shell--fill {
-      min-height: calc(100dvh - 48px);
+      height: var(--app-frame-height-desktop);
+      min-height: var(--app-frame-height-desktop);
     }
 
     .app-desktop-split {
       display: grid;
       grid-template-columns: var(--desktop-list-width) minmax(0, 1fr);
-      height: calc(100dvh - 48px);
-      min-height: calc(100dvh - 48px);
+      height: 100%;
+      min-height: 0;
     }
 
     .app-desktop-split__list {
