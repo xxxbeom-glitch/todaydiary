@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import 'react-day-picker/style.css';
 
 /* ── Design tokens ───────────────────────────────────────────── */
 :root {
@@ -853,6 +854,110 @@
 
   .app-entry-date-input:focus {
     color: var(--color-accent);
+  }
+
+  /* Custom date picker (react-day-picker) */
+  .app-date-picker {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .app-date-picker__trigger {
+    border: 0;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .app-date-picker__trigger:hover {
+    color: var(--color-accent);
+  }
+
+  .app-date-picker__popover {
+    position: absolute;
+    z-index: 40;
+    top: calc(100% + 10px);
+    left: 0;
+    padding: 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    background-color: var(--color-surface);
+    box-shadow: var(--shadow-doc);
+  }
+
+  .app-date-picker .rdp-root {
+    --rdp-accent-color: var(--color-accent);
+    --rdp-accent-background-color: var(--color-accent-soft);
+    --rdp-day-height: 36px;
+    --rdp-day-width: 36px;
+    --rdp-day_button-height: 34px;
+    --rdp-day_button-width: 34px;
+    --rdp-day_button-border-radius: 10px;
+    --rdp-selected-border: 1px solid var(--color-accent);
+    --rdp-today-color: var(--color-text-primary);
+    --rdp-outside-opacity: 0.4;
+    --rdp-disabled-opacity: 0.28;
+    margin: 0;
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: var(--font-weight-regular);
+  }
+
+  .app-date-picker .rdp-month_caption {
+    font-size: 14px;
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .app-date-picker .rdp-weekday {
+    font-size: 12px;
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-muted);
+  }
+
+  .app-date-picker .rdp-selected .rdp-day_button {
+    background-color: var(--color-accent);
+    color: var(--color-surface);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .app-date-picker .rdp-today:not(.rdp-selected) .rdp-day_button {
+    font-weight: var(--font-weight-semibold);
+    background-color: var(--color-accent-soft);
+  }
+
+  .app-date-picker .rdp-button_previous,
+  .app-date-picker .rdp-button_next {
+    border-radius: 8px;
+  }
+
+  .app-date-picker .rdp-button_previous:hover:not(:disabled),
+  .app-date-picker .rdp-button_next:hover:not(:disabled) {
+    background-color: var(--color-surface-muted);
+  }
+
+  .app-date-picker__footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .app-date-picker__today {
+    border: 0;
+    background: transparent;
+    padding: 4px 2px;
+    font-size: 13px;
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+  }
+
+  .app-date-picker__today:hover {
+    color: var(--color-text-primary);
   }
 
   .sr-only {

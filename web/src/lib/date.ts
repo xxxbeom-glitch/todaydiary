@@ -12,6 +12,12 @@ export function toISO(d: Date): string {
   return `${y}-${m}-${day}`;
 }
 
+/** `YYYY-MM-DD` → 로컬 Date (UTC 파싱 시차 방지) */
+export function parseISODate(iso: string): Date {
+  const [y, m, d] = iso.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
 export function yearMonthKey(d: Date = new Date()): string {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, '0');

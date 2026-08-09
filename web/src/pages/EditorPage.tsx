@@ -1,7 +1,8 @@
 ﻿import { useEffect, useRef } from 'react';
 import { useDiaryEditor } from '../hooks/useDiaryEditor';
+import { DatePickerField } from '../components/diary/DatePickerField';
 import { IconButton } from '../components/ui/IconButton';
-import { formatEntryDateLabel } from '../lib/date';
+import { formatEntryDateLabel, todayISO } from '../lib/date';
 
 interface EditorPageProps {
   uid: string;
@@ -36,7 +37,6 @@ export function EditorPage({
   });
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const todayMax = new Date().toISOString().slice(0, 10);
 
   useEffect(() => {
     if (!onRegisterFlush) return;
@@ -75,16 +75,11 @@ export function EditorPage({
 
         <div className="app-entry-date-block" data-editor-chrome>
           {isNew ? (
-            <label className="app-entry-date-field">
-              <span className="sr-only">작성일</span>
-              <input
-                type="date"
-                value={entryDate}
-                max={todayMax}
-                onChange={(e) => setEntryDate(e.target.value)}
-                className="app-entry-date-input"
-              />
-            </label>
+            <DatePickerField
+              value={entryDate}
+              max={todayISO()}
+              onChange={setEntryDate}
+            />
           ) : (
             <p className="app-entry-date">{formatEntryDateLabel(entryDate)}</p>
           )}
