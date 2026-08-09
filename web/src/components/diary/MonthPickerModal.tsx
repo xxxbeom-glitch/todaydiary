@@ -10,7 +10,8 @@ interface MonthPickerModalProps {
 export function MonthPickerModal({ value, months, onChange, onClose }: MonthPickerModalProps) {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-[#2b2721]/20 backdrop-blur-[2px]"
+      className="fixed inset-0 z-50 flex items-end justify-center backdrop-blur-[2px]"
+      style={{ backgroundColor: 'var(--color-overlay)' }}
       role="presentation"
       onClick={onClose}
     >

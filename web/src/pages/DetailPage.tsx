@@ -54,7 +54,8 @@ export function DetailPage({ entry, onBack, onEdit, onDelete }: DetailPageProps)
         <>
           <button
             type="button"
-            className="fixed inset-0 z-40 bg-[#2b2721]/15"
+            className="fixed inset-0 z-40"
+            style={{ backgroundColor: 'var(--color-overlay)' }}
             aria-label="메뉴 닫기"
             onClick={() => {
               setMenuOpen(false);

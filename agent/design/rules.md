@@ -8,8 +8,9 @@
 ## Product / Interaction
 
 - 1차 범위: 텍스트 일기 (웹 사진 업로드 UI 없음) — `agent/PROJECT_SPEC.md`
-- 테마·토큰: TBD (`tokens.md` 작성 시 확정)
-- TBD
+- 웹 테마: **Clean Day** — `agent/design/tokens.md` · `web/src/index.css` `:root`
+- 크림/세피아/테라코타·보라 그라데이션으로 되돌리지 않는다
+- 컴포넌트에 hex 하드코딩 금지 (토큰만)
 
 ## Navigation / Scroll
 

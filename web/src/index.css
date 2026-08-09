@@ -4,25 +4,28 @@
 :root {
   color-scheme: light only;
 
+  /* Clean Day — SoT: agent/design/tokens.md */
   --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
-  --color-bg: #f7f3ea;
-  --color-surface: #fffdf8;
-  --color-surface-muted: #f1e9dc;
-  --color-text-primary: #2b2721;
-  --color-text-secondary: #7a7064;
-  --color-text-muted: #a69b8e;
-  --color-border: #e6dccc;
-  --color-accent: #8b6f47;
-  --color-accent-soft: #efe4d2;
-  --color-danger: #b65a4b;
-  --color-danger-soft: #f8ebe8;
+  --color-bg: #f6f6f5;
+  --color-surface: #ffffff;
+  --color-surface-muted: #efefed;
+  --color-text-primary: #171717;
+  --color-text-secondary: #5c5c5c;
+  --color-text-muted: #8a8a8a;
+  --color-border: #e4e4e2;
+  --color-accent: #3a4a52;
+  --color-accent-soft: #eef1f2;
+  --color-danger: #c0392b;
+  --color-danger-soft: #f8ecea;
+  --color-overlay: rgb(23 23 23 / 0.18);
 
   --radius-card: 22px;
   --radius-input: 18px;
   --radius-pill: 999px;
 
-  --shadow-card: 0 1px 2px rgb(43 39 33 / 0.04);
+  --shadow-card: 0 1px 2px rgb(23 23 23 / 0.04);
+  --shadow-fab: 0 4px 14px rgb(58 74 82 / 0.2);
   --app-max-width: 430px;
   --page-pad-x: 18px;
   --page-pad-top: 20px;
@@ -335,7 +338,7 @@
     border-radius: var(--radius-pill);
     background-color: var(--color-accent);
     color: var(--color-surface);
-    box-shadow: 0 4px 14px rgb(139 111 71 / 0.22);
+    box-shadow: var(--shadow-fab);
     transition: transform 0.15s ease;
   }
 
