@@ -52,7 +52,7 @@
 | `--shadow-shell` | `var(--shadow-shell-x) var(--shadow-shell-y) 28px …` — 기본 `0 8px`, PC에서 커서 추적 |
 | `--shadow-doc` | `0 4px 24px rgb(26 26 26 / 0.06)` — 안쪽 문서 프레임 |
 | `--radius-doc` | `18px` |
-| `--doc-inset` | `18px` — 셸↔문서 카드 간격 |
+| `--doc-inset` | `24px` — 셸↔문서 카드 간격 |
 | `--shadow-card` | `0 1px 3px rgb(26 26 26 / 0.04)` |
 | `--shadow-fab` | `0 4px 14px rgb(26 26 26 / 0.14)` |
 
