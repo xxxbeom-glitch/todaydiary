@@ -33,7 +33,7 @@
   --shadow-doc: 0 4px 24px rgb(26 26 26 / 0.06);
   --radius-doc: 18px;
   --doc-inset: 18px;
-  --shell-outer-pad: 6px;
+  --shell-outer-pad: 12px;
   --app-max-width: 430px;
   --app-max-width-desktop: 1024px;
   --app-frame-height-desktop: 768px;
