@@ -255,22 +255,47 @@
       background-color: var(--color-bg);
     }
 
-    .app-topbar__brand {
+    .app-topbar__month {
       display: flex;
       align-items: center;
-      gap: 8px;
-      color: var(--color-text-primary);
+      gap: 4px;
+      min-width: 0;
     }
 
-    .app-topbar__mark {
+    .app-topbar__month-nav {
       display: flex;
+      height: 32px;
+      width: 32px;
+      align-items: center;
+      justify-content: center;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--color-text-secondary);
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .app-topbar__month-nav:hover {
+      background-color: var(--color-surface-muted);
       color: var(--color-text-primary);
     }
 
-    .app-topbar__logo {
+    .app-topbar__month-label {
+      border: 0;
+      background: transparent;
+      padding: 6px 8px;
       font-size: 15px;
       font-weight: 700;
       letter-spacing: -0.02em;
+      color: var(--color-text-primary);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .app-topbar__month-label:hover {
+      color: var(--color-accent);
     }
 
     .app-topbar__icon-btn {
