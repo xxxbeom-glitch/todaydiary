@@ -21,13 +21,16 @@ import { todayISO, yearMonthKey, shiftMonthKey, collectMonthKeys } from './lib/d
 import {
   applyFont,
   applyFontSize,
+  applyPreferences,
   applyTheme,
+  layoutFromViewport,
   readStoredFont,
   readStoredFontSize,
   readStoredTheme,
   type AppFont,
   type AppFontSize,
   type AppTheme,
+  type PrefLayout,
 } from './lib/preferences';
 import { useIsDesktopLayout } from './hooks/useMediaQuery';
 
@@ -36,6 +39,7 @@ type FlushFn = () => Promise<void>;
 
 export default function App() {
   const isDesktop = useIsDesktopLayout();
+  const prefLayout: PrefLayout = isDesktop ? 'desktop' : 'mobile';
   const {
     user,
     loading: authLoading,
@@ -57,12 +61,21 @@ export default function App() {
   const [monthPickerOpen, setMonthPickerOpen] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [theme, setTheme] = useState<AppTheme>(() => readStoredTheme());
-  const [font, setFont] = useState<AppFont>(() => readStoredFont());
-  const [fontSize, setFontSize] = useState<AppFontSize>(() => readStoredFontSize());
+  const [theme, setTheme] = useState<AppTheme>(() => readStoredTheme(layoutFromViewport()));
+  const [font, setFont] = useState<AppFont>(() => readStoredFont(layoutFromViewport()));
+  const [fontSize, setFontSize] = useState<AppFontSize>(() =>
+    readStoredFontSize(layoutFromViewport()),
+  );
   const flushRef = useRef<FlushFn | null>(null);
 
   const uiError = authError ?? diaryError;
+
+  useEffect(() => {
+    applyPreferences(prefLayout);
+    setTheme(readStoredTheme(prefLayout));
+    setFont(readStoredFont(prefLayout));
+    setFontSize(readStoredFontSize(prefLayout));
+  }, [prefLayout]);
 
   const handleLogin = useCallback(async () => {
     setLoginPending(true);
@@ -79,20 +92,29 @@ export default function App() {
     await logout();
   }, [logout]);
 
-  const handleThemeChange = useCallback((next: AppTheme) => {
-    applyTheme(next);
-    setTheme(next);
-  }, []);
+  const handleThemeChange = useCallback(
+    (next: AppTheme) => {
+      applyTheme(next, prefLayout);
+      setTheme(next);
+    },
+    [prefLayout],
+  );
 
-  const handleFontChange = useCallback((next: AppFont) => {
-    applyFont(next);
-    setFont(next);
-  }, []);
+  const handleFontChange = useCallback(
+    (next: AppFont) => {
+      applyFont(next, prefLayout);
+      setFont(next);
+    },
+    [prefLayout],
+  );
 
-  const handleFontSizeChange = useCallback((next: AppFontSize) => {
-    applyFontSize(next);
-    setFontSize(next);
-  }, []);
+  const handleFontSizeChange = useCallback(
+    (next: AppFontSize) => {
+      applyFontSize(next, prefLayout);
+      setFontSize(next);
+    },
+    [prefLayout],
+  );
 
   const openCreate = useCallback(() => {
     setSelected(null);

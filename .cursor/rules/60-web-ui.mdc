@@ -34,7 +34,9 @@ SoT: `agent/design/tokens.md` · `agent/design/rules.md` · `web/src/index.css`
 
 ## 설정 저장
 
-- `web/src/lib/preferences.ts` → `localStorage` (`todaydiary.theme|font|fontSize`)
+- `web/src/lib/preferences.ts` → `localStorage`
+- 키: `todaydiary.theme|font|fontSize`.`desktop|mobile` (레이아웃별 분리)
+- 창 폭 ≥1024 = desktop, 미만 = mobile. 전환 시 해당 값 재적용
 - Firebase 동기화 없음
 
 ## 하지 말 것

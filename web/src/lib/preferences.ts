@@ -1,10 +1,13 @@
 export type AppTheme = 'light' | 'dark';
 export type AppFont = 'pretendard' | 'kyobo' | 'bookk-gothic' | 'bookk-myungjo';
 export type AppFontSize = 'sm' | 'md' | 'lg';
+/** 뷰포트 레이아웃별 설정 저장 키 */
+export type PrefLayout = 'desktop' | 'mobile';
 
 const THEME_KEY = 'todaydiary.theme';
 const FONT_KEY = 'todaydiary.font';
 const FONT_SIZE_KEY = 'todaydiary.fontSize';
+const DESKTOP_MQ = '(min-width: 1024px)';
 
 /** UI 크롬용 — 항상 Pretendard */
 export const UI_FONT_STACK =
@@ -44,42 +47,71 @@ function isAppFontSize(v: string | null): v is AppFontSize {
   return FONT_SIZE_OPTIONS.some((o) => o.id === v);
 }
 
-export function readStoredTheme(): AppTheme {
-  const v = localStorage.getItem(THEME_KEY);
+export function layoutFromViewport(): PrefLayout {
+  if (typeof window === 'undefined') return 'mobile';
+  return window.matchMedia(DESKTOP_MQ).matches ? 'desktop' : 'mobile';
+}
+
+function scopedKey(base: string, layout: PrefLayout): string {
+  return `${base}.${layout}`;
+}
+
+/** 레이아웃 키 없으면 예전 공통 키 → 없으면 기본값 */
+function readLegacyOrDefault(
+  base: string,
+  layout: PrefLayout,
+  parse: (v: string | null) => string,
+): string {
+  const scoped = localStorage.getItem(scopedKey(base, layout));
+  if (scoped != null) return parse(scoped);
+  const legacy = localStorage.getItem(base);
+  if (legacy != null) {
+    localStorage.setItem(scopedKey(base, layout), legacy);
+    return parse(legacy);
+  }
+  return parse(null);
+}
+
+export function readStoredTheme(layout: PrefLayout = layoutFromViewport()): AppTheme {
+  const v = readLegacyOrDefault(THEME_KEY, layout, (x) => x ?? '');
   return v === 'dark' ? 'dark' : 'light';
 }
 
-export function readStoredFont(): AppFont {
-  const v = localStorage.getItem(FONT_KEY);
+export function readStoredFont(layout: PrefLayout = layoutFromViewport()): AppFont {
+  const v = readLegacyOrDefault(FONT_KEY, layout, (x) => x);
   return isAppFont(v) ? v : 'pretendard';
 }
 
-export function readStoredFontSize(): AppFontSize {
-  const v = localStorage.getItem(FONT_SIZE_KEY);
+export function readStoredFontSize(layout: PrefLayout = layoutFromViewport()): AppFontSize {
+  const v = readLegacyOrDefault(FONT_SIZE_KEY, layout, (x) => x);
   return isAppFontSize(v) ? v : 'md';
 }
 
-export function applyTheme(theme: AppTheme) {
+export function applyTheme(theme: AppTheme, layout: PrefLayout = layoutFromViewport()) {
   document.documentElement.dataset.theme = theme;
-  localStorage.setItem(THEME_KEY, theme);
+  localStorage.setItem(scopedKey(THEME_KEY, layout), theme);
 }
 
-export function applyFont(font: AppFont) {
+export function applyFont(font: AppFont, layout: PrefLayout = layoutFromViewport()) {
   document.documentElement.dataset.font = font;
   document.documentElement.style.setProperty('--font-sans', UI_FONT_STACK);
   document.documentElement.style.setProperty('--font-prose', FONT_STACK[font]);
-  localStorage.setItem(FONT_KEY, font);
+  localStorage.setItem(scopedKey(FONT_KEY, layout), font);
 }
 
-export function applyFontSize(size: AppFontSize) {
+export function applyFontSize(size: AppFontSize, layout: PrefLayout = layoutFromViewport()) {
   document.documentElement.dataset.fontSize = size;
   document.documentElement.style.setProperty('--font-size-prose', FONT_SIZE_PX[size]);
-  localStorage.setItem(FONT_SIZE_KEY, size);
+  localStorage.setItem(scopedKey(FONT_SIZE_KEY, layout), size);
+}
+
+export function applyPreferences(layout: PrefLayout) {
+  document.documentElement.style.setProperty('--font-sans', UI_FONT_STACK);
+  applyTheme(readStoredTheme(layout), layout);
+  applyFont(readStoredFont(layout), layout);
+  applyFontSize(readStoredFontSize(layout), layout);
 }
 
 export function initPreferences() {
-  document.documentElement.style.setProperty('--font-sans', UI_FONT_STACK);
-  applyTheme(readStoredTheme());
-  applyFont(readStoredFont());
-  applyFontSize(readStoredFontSize());
+  applyPreferences(layoutFromViewport());
 }

@@ -6,7 +6,8 @@
 
 - 1차 범위: 텍스트 일기 (웹 사진 업로드 UI 없음) — `agent/PROJECT_SPEC.md`
 - 테마: cool light + dark. 웜 크림·살구·보라 그라데이션 금지
-- 설정(테마·폰트·글자 크기)은 `localStorage`에 즉시 저장 (`web/src/lib/preferences.ts`). 계정 동기화 없음
+- 설정(테마·폰트·글자 크기)은 레이아웃별 `localStorage`에 즉시 저장 (`desktop` / `mobile` 키 분리). 계정 동기화 없음
+- PC(≥1024)와 모바일(<1024) 설정을 서로 덮어쓰지 않음. 창 크기 전환 시 해당 레이아웃 설정을 다시 적용
 - 컴포넌트 hex 하드코딩 금지 (토큰만)
 
 ## Typography split
