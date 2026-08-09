@@ -30,10 +30,10 @@ const FONT_STACK: Record<AppFont, string> = {
   'bookk-myungjo': "'BookkMyungjo', 'Pretendard', serif",
 };
 
-const FONT_SIZE_PX: Record<AppFontSize, { base: string; prose: string }> = {
-  sm: { base: '14px', prose: '14px' },
-  md: { base: '15px', prose: '15px' },
-  lg: { base: '17px', prose: '18px' },
+const FONT_SIZE_PX: Record<AppFontSize, string> = {
+  sm: '14px',
+  md: '15px',
+  lg: '18px',
 };
 
 function isAppFont(v: string | null): v is AppFont {
@@ -66,15 +66,14 @@ export function applyTheme(theme: AppTheme) {
 
 export function applyFont(font: AppFont) {
   document.documentElement.dataset.font = font;
+  document.documentElement.style.setProperty('--font-sans', UI_FONT_STACK);
   document.documentElement.style.setProperty('--font-prose', FONT_STACK[font]);
   localStorage.setItem(FONT_KEY, font);
 }
 
 export function applyFontSize(size: AppFontSize) {
-  const px = FONT_SIZE_PX[size];
   document.documentElement.dataset.fontSize = size;
-  document.documentElement.style.setProperty('--font-size-base', px.base);
-  document.documentElement.style.setProperty('--font-size-prose', px.prose);
+  document.documentElement.style.setProperty('--font-size-prose', FONT_SIZE_PX[size]);
   localStorage.setItem(FONT_SIZE_KEY, size);
 }
 

@@ -51,7 +51,6 @@
   --font-prose: 'Pretendard', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
     sans-serif;
   --font-weight-regular: 400;
-  --font-weight-prose: 300;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-size-base: 15px;
@@ -790,7 +789,7 @@
     padding: 0;
     font-family: var(--font-prose);
     font-size: var(--font-size-prose);
-    font-weight: var(--font-weight-prose);
+    font-weight: var(--font-weight-regular);
     font-synthesis: none;
     line-height: 2;
     letter-spacing: 0.01em;
@@ -1093,7 +1092,6 @@
 
   .app-settings__font-btn--pretendard .app-settings__font-sample {
     font-family: 'Pretendard', sans-serif;
-    font-weight: var(--font-weight-prose);
   }
 
   .app-settings__font-btn--kyobo .app-settings__font-sample {
@@ -1139,10 +1137,16 @@
     color: var(--color-danger);
   }
 
-  /* Write / read prose */
+  /* Write / read prose — 선택 폰트는 작성·뷰에만 */
   .app-page-prose {
     padding-top: 36px;
     padding-bottom: 48px;
+    font-family: var(--font-prose);
+  }
+
+  .app-page-prose .app-icon-btn,
+  .app-page-prose .app-btn {
+    font-family: var(--font-sans);
   }
 
   .app-prose-fill {
@@ -1343,7 +1347,7 @@
     white-space: pre-wrap;
     font-family: var(--font-prose);
     font-size: var(--font-size-prose);
-    font-weight: var(--font-weight-prose);
+    font-weight: var(--font-weight-regular);
     font-synthesis: none;
     line-height: 2;
     letter-spacing: 0.01em;
