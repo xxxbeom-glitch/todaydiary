@@ -1,15 +1,17 @@
 export type AppTheme = 'light' | 'dark';
-export type AppFont = 'kyobo' | 'bookk-gothic' | 'bookk-myungjo';
+export type AppFont = 'pretendard' | 'kyobo' | 'bookk-gothic' | 'bookk-myungjo';
 export type AppFontSize = 'sm' | 'md' | 'lg';
 
 const THEME_KEY = 'todaydiary.theme';
 const FONT_KEY = 'todaydiary.font';
 const FONT_SIZE_KEY = 'todaydiary.fontSize';
 
-/** UI 크롬용 — 설정 폰트와 분리 */
-export const UI_FONT_STACK = "'BookkGothic', 'Pretendard', system-ui, sans-serif";
+/** UI 크롬용 — 항상 Pretendard */
+export const UI_FONT_STACK =
+  "'Pretendard', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
 
 export const FONT_OPTIONS: { id: AppFont; label: string; sample: string }[] = [
+  { id: 'pretendard', label: 'Pretendard', sample: '오늘 하루를 기록해요' },
   { id: 'kyobo', label: '교보손글씨', sample: '오늘 하루를 기록해요' },
   { id: 'bookk-gothic', label: '부크크고딕', sample: '오늘 하루를 기록해요' },
   { id: 'bookk-myungjo', label: '부크크명조', sample: '오늘 하루를 기록해요' },
@@ -22,9 +24,10 @@ export const FONT_SIZE_OPTIONS: { id: AppFontSize; label: string }[] = [
 ];
 
 const FONT_STACK: Record<AppFont, string> = {
-  kyobo: "'KyoboHandwriting', 'BookkGothic', sans-serif",
+  pretendard: UI_FONT_STACK,
+  kyobo: "'KyoboHandwriting', 'Pretendard', sans-serif",
   'bookk-gothic': "'BookkGothic', 'Pretendard', sans-serif",
-  'bookk-myungjo': "'BookkMyungjo', 'BookkGothic', serif",
+  'bookk-myungjo': "'BookkMyungjo', 'Pretendard', serif",
 };
 
 const FONT_SIZE_PX: Record<AppFontSize, { base: string; prose: string }> = {
@@ -48,7 +51,7 @@ export function readStoredTheme(): AppTheme {
 
 export function readStoredFont(): AppFont {
   const v = localStorage.getItem(FONT_KEY);
-  return isAppFont(v) ? v : 'bookk-gothic';
+  return isAppFont(v) ? v : 'pretendard';
 }
 
 export function readStoredFontSize(): AppFontSize {

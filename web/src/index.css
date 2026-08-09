@@ -46,8 +46,10 @@
   color-scheme: light;
 
   /* Scribe-like cool light — SoT: agent/design/tokens.md */
-  --font-sans: 'BookkGothic', 'Pretendard', system-ui, sans-serif;
-  --font-prose: 'BookkGothic', 'Pretendard', system-ui, sans-serif;
+  --font-sans: 'Pretendard', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
+  --font-prose: 'Pretendard', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
@@ -1083,6 +1085,10 @@
     font-weight: var(--font-weight-regular);
     line-height: 1.4;
     color: var(--color-text-primary);
+  }
+
+  .app-settings__font-btn--pretendard .app-settings__font-sample {
+    font-family: 'Pretendard', sans-serif;
   }
 
   .app-settings__font-btn--kyobo .app-settings__font-sample {
