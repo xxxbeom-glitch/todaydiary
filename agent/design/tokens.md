@@ -1,29 +1,30 @@
-# Design Tokens — Clean Day · cozy (web)
+# Design Tokens — Scribe-like cool light (web)
 
 웹 SoT: `web/src/index.css` `:root`와 동기화한다.  
-방향: **클린 + 포근** — 밝은 따뜻한 오프화이트, 부드러운 웜 그레이 텍스트, 살구빛 액센트. 무거운 세피아·밤 톤은 쓰지 않는다.
+방향: **쿨 라이트** — 바깥 쿨 그레이, 흰 에디터 면, 뉴트럴 잉크. 웜 크림·살구 액센트는 쓰지 않는다.  
+레퍼런스: Scribe형 노트 UI 스크린샷 컬러 샘플.
 
 ## Color
 
 | Token | Value | 용도 |
 |-------|-------|------|
-| `--color-canvas` | `#efe6dc` | 브라우저 뒤 배경 (컨테이너 밖) |
-| `--color-bg` | `#faf7f4` | 콘텐츠 컨테이너·목록 패널 |
-| `--color-surface` | `#ffffff` | 카드·입력·리스트 행 |
-| `--color-surface-muted` | `#f3ebe4` | press/hover 배경 |
-| `--color-text-primary` | `#2a2623` | 본문·제목 |
-| `--color-text-secondary` | `#6e6560` | 보조 메타 |
-| `--color-text-muted` | `#9a9088` | caption·placeholder |
-| `--color-border` | `#ebe4dc` | 입력·헤더 등 얇은 선 |
-| `--color-accent` | `#c68b6d` | FAB·포커스·강조 (살구 클레이) |
-| `--color-accent-soft` | `#f7ebe4` | 약한 강조 배경 |
-| `--color-danger` | `#c0392b` | 삭제·오류 |
+| `--color-canvas` | `#eceef0` | 브라우저 뒤 배경 |
+| `--color-bg` | `#f4f5f7` | 셸·좌측 목록 |
+| `--color-surface` | `#ffffff` | 우측 에디터·카드 |
+| `--color-surface-muted` | `#e8eaed` | press/hover |
+| `--color-text-primary` | `#1a1a1a` | 제목·본문 강조 |
+| `--color-text-secondary` | `#5c5c60` | 보조 메타 |
+| `--color-text-muted` | `#8e8e93` | caption·placeholder·비활성 |
+| `--color-border` | `#e4e6e9` | 얇은 구분선 |
+| `--color-accent` | `#2c2c2e` | FAB·포커스 (거의 블랙) |
+| `--color-accent-soft` | `#eef0f3` | 선택·약한 강조 |
+| `--color-danger` | `#c0392b` | 오류 |
 | `--color-danger-soft` | `#f8ecea` | 오류 배경 |
-| `--color-overlay` | `rgb(42 38 35 / 0.16)` | 모달 딤 |
+| `--color-overlay` | `rgb(26 26 26 / 0.14)` | 모달 딤 |
 
 ## List item
 
-- `.app-list-item`: **보더 없음**, `surface` + `--shadow-card`만으로 구분
+- `.app-list-item`: 보더 없음, 선택 시 `--color-accent-soft`
 
 ## Typography
 
@@ -45,19 +46,15 @@
 | `--app-max-width` | `430px` (모바일) |
 | `--app-max-width-desktop` | `1024px` 상한 (≥1024) |
 | `--app-frame-height-desktop` | `768px` 상한 |
-| `--app-frame-ratio` | `1024 / 768` (4:3) — 뷰포트에 맞게 축소 |
-| `--frame-inset` | `24px` — 브라우저 가장자리 여백 |
+| `--app-frame-ratio` | `1024 / 768` — 뷰포트에 맞게 축소 |
+| `--frame-inset` | `24px` |
 | `--desktop-list-width` | `340px` |
-| `--shadow-shell` | PC 컨테이너 띄움 |
-| `--page-pad-x` | `18px` |
-| `--page-pad-top` | `20px` |
-| `--page-pad-bottom` | `96px` |
-| `--shadow-card` | `0 1px 3px rgb(42 38 35 / 0.05)` |
-| `--shadow-fab` | `0 4px 14px rgb(198 139 109 / 0.28)` |
+| `--shadow-shell` | `0 8px 28px rgb(26 26 26 / 0.08)` |
+| `--shadow-card` | `0 1px 3px rgb(26 26 26 / 0.04)` |
+| `--shadow-fab` | `0 4px 14px rgb(26 26 26 / 0.14)` |
 
 ## Do not
 
-- 무거운 크림·세피아·밤색 브라운으로 되돌리지 않는다
+- 웜 크림·세피아·살구 클레이로 되돌리지 않는다
 - 보라/인디고 그라데이션 테마를 쓰지 않는다
-- 목록 항목에 보더를 다시 넣지 않는다
 - hex를 컴포넌트에 하드코딩하지 않는다 (토큰만)
