@@ -317,23 +317,29 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 4px;
+      gap: 2px;
       min-width: 0;
+      height: 32px;
     }
 
     .app-topbar__month-nav {
-      display: flex;
+      display: inline-flex;
       height: 32px;
       width: 32px;
+      flex-shrink: 0;
       align-items: center;
       justify-content: center;
       border: 0;
       border-radius: 8px;
       background: transparent;
       color: var(--color-text-secondary);
-      font-size: 18px;
-      line-height: 1;
+      padding: 0;
+      line-height: 0;
       cursor: pointer;
+    }
+
+    .app-topbar__month-nav svg {
+      display: block;
     }
 
     .app-topbar__month-nav:hover:not(:disabled) {
@@ -347,12 +353,17 @@
     }
 
     .app-topbar__month-label {
+      display: inline-flex;
+      height: 32px;
+      align-items: center;
+      justify-content: center;
       border: 0;
       background: transparent;
-      padding: 6px 8px;
+      padding: 0 10px;
       font-size: 15px;
       font-weight: var(--font-weight-semibold);
       letter-spacing: -0.02em;
+      line-height: 1;
       color: var(--color-text-primary);
       cursor: pointer;
       white-space: nowrap;

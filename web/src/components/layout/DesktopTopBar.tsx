@@ -30,7 +30,15 @@ export function DesktopTopBar({
           aria-label="이전 달"
           onClick={onPrevMonth}
         >
-          ‹
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path
+              d="M10 3.5 5.5 8 10 12.5"
+              stroke="currentColor"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
         </button>
         <button
           type="button"
@@ -47,7 +55,15 @@ export function DesktopTopBar({
           disabled={!canGoNextMonth}
           onClick={onNextMonth}
         >
-          ›
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path
+              d="M6 3.5 10.5 8 6 12.5"
+              stroke="currentColor"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
         </button>
       </div>
 
