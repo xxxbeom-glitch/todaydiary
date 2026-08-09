@@ -19,6 +19,8 @@ export function DesktopTopBar({
 }: DesktopTopBarProps) {
   return (
     <header className="app-topbar">
+      <div className="app-topbar__side" aria-hidden="true" />
+
       <div className="app-topbar__month">
         <button
           type="button"
