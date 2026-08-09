@@ -43,8 +43,10 @@
 | `--radius-input` | `18px` |
 | `--radius-pill` | `999px` |
 | `--app-max-width` | `430px` (모바일) |
-| `--app-max-width-desktop` | `960px` (≥1024) |
-| `--app-frame-height-desktop` | `640px` |
+| `--app-max-width-desktop` | `960px` 상한 (≥1024) |
+| `--app-frame-height-desktop` | `640px` 상한 |
+| `--app-frame-ratio` | `960 / 640` (3:2) — 뷰포트에 맞게 축소 |
+| `--frame-inset` | `24px` — 브라우저 가장자리 여백 |
 | `--desktop-list-width` | `340px` |
 | `--shadow-shell` | PC 컨테이너 띄움 |
 | `--page-pad-x` | `18px` |
