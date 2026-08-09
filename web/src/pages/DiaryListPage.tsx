@@ -12,6 +12,7 @@ import {
   entryInMonth,
   formatMonthTitle,
   shiftMonthKey,
+  yearMonthKey,
 } from '../lib/date';
 
 interface DiaryListPageProps {
@@ -59,6 +60,7 @@ export function DiaryListPage({
   );
 
   const canGoNextMonth = monthOptions.includes(shiftMonthKey(monthKey, 1));
+  const showCreateTile = embedded && monthKey === yearMonthKey();
 
   useEffect(() => {
     if (!embedded) {
@@ -134,32 +136,40 @@ export function DiaryListPage({
           <LoadingView label="불러오는 중…" />
         ) : embedded ? (
           <ul className="app-list app-list--tiles">
-            <li>
-              <button
-                type="button"
-                className="app-list-item app-list-item--create"
-                aria-label="새 글 작성"
-                onClick={onCreate}
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path
-                    d="M12 5v14M5 12h14"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </button>
-            </li>
-            {monthEntries.map((entry) => (
-              <li key={entry.id || entry.date}>
-                <DiaryListItem
-                  entry={entry}
-                  selected={Boolean(selectedId && entry.id === selectedId)}
-                  onClick={() => onSelect(entry)}
-                />
+            {showCreateTile && (
+              <li>
+                <button
+                  type="button"
+                  className="app-list-item app-list-item--create"
+                  aria-label="새 글 작성"
+                  onClick={onCreate}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path
+                      d="M12 5v14M5 12h14"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </button>
               </li>
-            ))}
+            )}
+            {monthEntries.length === 0 && !showCreateTile ? (
+              <li>
+                <p className="app-list-pane__empty type-caption">글 없음</p>
+              </li>
+            ) : (
+              monthEntries.map((entry) => (
+                <li key={entry.id || entry.date}>
+                  <DiaryListItem
+                    entry={entry}
+                    selected={Boolean(selectedId && entry.id === selectedId)}
+                    onClick={() => onSelect(entry)}
+                  />
+                </li>
+              ))
+            )}
           </ul>
         ) : monthEntries.length === 0 ? (
           <EmptyState
