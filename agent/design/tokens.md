@@ -1,70 +1,84 @@
 # Design Tokens — Scribe-like cool light (web)
 
-웹 SoT: `web/src/index.css` `:root`와 동기화한다.  
-방향: **쿨 라이트** — 바깥 쿨 그레이, 흰 에디터 면, 뉴트럴 잉크. 웜 크림·살구 액센트는 쓰지 않는다.  
-레퍼런스: Scribe형 노트 UI 스크린샷 컬러 샘플.
+웹 SoT: `web/src/index.css` `:root` / `:root[data-theme='dark']`와 동기화한다.  
+방향: **쿨 라이트** — 바깥 쿨 그레이, 흰 에디터 면, 뉴트럴 잉크. 웜 크림·살구 액센트는 쓰지 않는다.
 
-## Color
+## Color — Light
 
 | Token | Value | 용도 |
 |-------|-------|------|
 | `--color-canvas` | `#eceef0` | 브라우저 뒤 배경 |
-| `--color-bg` | `#f4f5f7` | 셸·좌측 목록 |
-| `--color-surface` | `#ffffff` | 우측 에디터·카드 |
+| `--color-bg` | `#f4f5f7` | 셸·좌측 목록·헤더 |
+| `--color-surface` | `#ffffff` | 우측 작성·뷰 면 |
 | `--color-surface-muted` | `#e8eaed` | press/hover |
-| `--color-text-primary` | `#1a1a1a` | 제목·본문 강조 |
+| `--color-text-primary` | `#1a1a1a` | UI 텍스트 |
+| `--color-text-prose` | `#2e2e32` | 작성·뷰 본문 (살짝 연한 잉크) |
 | `--color-text-secondary` | `#5c5c60` | 보조 메타 |
-| `--color-text-muted` | `#8e8e93` | caption·placeholder·비활성 |
+| `--color-text-muted` | `#8e8e93` | caption·placeholder |
 | `--color-border` | `#e4e6e9` | 얇은 구분선 |
-| `--color-accent` | `#2c2c2e` | FAB·포커스 (거의 블랙) |
+| `--color-accent` | `#2c2c2e` | 포커스·강조 (거의 블랙) |
 | `--color-accent-soft` | `#eef0f3` | 선택·약한 강조 |
-| `--color-danger` | `#c0392b` | 오류 |
-| `--color-danger-soft` | `#f8ecea` | 오류 배경 |
+| `--color-danger` | `#c0392b` | 삭제·오류 |
+| `--color-danger-soft` | `#f8ecea` | 오류/삭제 hover 배경 |
 | `--color-overlay` | `rgb(26 26 26 / 0.14)` | 모달 딤 |
 
-## List item
+## Color — Dark (`data-theme="dark"`)
 
-- `.app-list-item`: 보더 없음, 선택 시 `--color-accent-soft`
+| Token | Value | 용도 |
+|-------|-------|------|
+| `--color-canvas` | `#2a2a2e` | 바깥 배경 (순검정 금지 — 연한 차콜) |
+| `--color-bg` | `#1c1c1e` | 셸·목록·헤더 |
+| `--color-surface` | `#2c2c2e` | 작성·뷰 면 |
+| `--color-surface-muted` | `#3a3a3c` | press/hover |
+| `--color-text-primary` | `#f5f5f7` | UI 텍스트 |
+| `--color-text-prose` | `#e8e8ec` | 작성·뷰 본문 |
+| `--color-text-secondary` | `#a1a1a6` | 보조 |
+| `--color-text-muted` | `#8e8e93` | caption |
+| `--color-border` | `#3a3a3c` | 구분선 |
+| `--color-accent` | `#f5f5f7` | 강조 |
+| `--color-accent-soft` | `#3a3a3c` | 약한 강조 |
+| `--color-danger` | `#ff6b5c` | 삭제·오류 |
+| `--color-danger-soft` | `#3b2422` | 삭제 hover |
+| `--color-overlay` | `rgb(0 0 0 / 0.45)` | 모달 딤 |
 
 ## Typography
 
-Weight 토큰은 Regular / Medium / Semibold만 사용한다. Bold(700) 금지.
+Weight는 Regular / Medium / Semibold만. Bold(700+) 금지.
 
-| Token / class | 값 |
-|---------------|-----|
-| `--font-sans` | Pretendard (+ system fallback) |
-| `--font-weight-regular` | `400` |
-| `--font-weight-medium` | `500` |
-| `--font-weight-semibold` | `600` |
-| `.type-page-title` | 22 / semibold |
-| `.type-section-title` | 17 / semibold |
-| `.type-body` | 15 / regular · lh 1.65 |
-| `.type-body-strong` | 15 / semibold |
-| `.type-caption` | 12 / regular · muted |
-| `.type-button` | 14 / semibold |
+| Token | 값 | 용도 |
+|-------|-----|------|
+| `--font-sans` | Pretendard (+ system) | UI 크롬 고정 |
+| `--font-prose` | 설정 선택 폰트 | 작성·뷰(날짜·본문)만 |
+| `--font-weight-regular` | `400` | |
+| `--font-weight-medium` | `500` | |
+| `--font-weight-semibold` | `600` | |
+| `--font-size-base` | `15px` | UI (글자 크기 설정과 무관) |
+| `--font-size-prose` | `14` / `15` / `18` | 작성·뷰 (설정: 작게·중간·크게) |
 
-## Radius / Layout
+본문 선택 폰트: Pretendard · 교보손글씨 · 부크크고딕 · 부크크명조  
+파일: `web/public/fonts/` · CDN Pretendard는 `web/index.html`
+
+작성·뷰 본문: `line-height: 2`, `letter-spacing: ~0.025em`, ClearType(`font-smoothing: auto`)
+
+## Layout
 
 | Token | Value |
 |-------|-------|
-| `--radius-card` | `22px` |
-| `--radius-input` | `18px` |
-| `--radius-pill` | `999px` |
 | `--app-max-width` | `430px` (모바일) |
-| `--app-max-width-desktop` | `1024px` 상한 (≥1024) |
-| `--app-frame-height-desktop` | `768px` 상한 |
-| `--app-frame-ratio` | `1024 / 768` — 뷰포트에 맞게 축소 |
-| `--frame-inset` | `24px` |
-| `--desktop-list-width` | `104px` — 날짜 타일 레일 |
-| `--shadow-shell` | `var(--shadow-shell-x) var(--shadow-shell-y) 28px …` — 기본 `0 8px`, PC에서 커서 추적 |
-| `--shadow-doc` | `0 4px 24px rgb(26 26 26 / 0.06)` — 안쪽 문서 프레임 |
-| `--radius-doc` | `18px` |
-| `--doc-inset` | `24px` — 셸↔문서 카드 간격 |
-| `--shadow-card` | `0 1px 3px rgb(26 26 26 / 0.04)` |
-| `--shadow-fab` | `0 4px 14px rgb(26 26 26 / 0.14)` |
+| `--app-max-width-desktop` | `1024px` |
+| `--app-frame-height-desktop` | `768px` |
+| `--shell-outer-pad` | `12px` |
+| `--desktop-list-width` | `104px` |
+| `--page-pad-x` | 모바일 `28px` / PC `88px` |
+| `--page-pad-top` | PC `36px` |
+| `--page-pad-bottom` | 모바일 `96px` / PC `48px` |
+| `--radius-shell` | `20px` |
+| `--radius-card` | `22px` |
+| `--radius-pill` | `999px` |
 
 ## Do not
 
-- 웜 크림·세피아·살구 클레이로 되돌리지 않는다
-- 보라/인디고 그라데이션 테마를 쓰지 않는다
-- hex를 컴포넌트에 하드코딩하지 않는다 (토큰만)
+- 웜 크림·세피아·살구·보라/인디고 그라데이션
+- `react-day-picker` 기본 파란 액센트 방치 (unlayered 오버라이드 필수)
+- 컴포넌트 hex 하드코딩 (토큰만)
+- UI 크롬에 `--font-prose` 적용

@@ -52,9 +52,6 @@ export function subscribeDiaryEntries(
   );
 }
 
-/** @deprecated `subscribeDiaryEntries` 사용 */
-export const listenDiaryEntries = subscribeDiaryEntries;
-
 /** Android `saveEntry` — merge set (공통 저장 로직) */
 async function writeDiaryEntry(
   uid: string,

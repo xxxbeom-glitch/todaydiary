@@ -52,3 +52,9 @@ service-account*.json
 *.swo
 .idea/
 *.zip
+
+# 루트에 드롭된 폰트 원본 (배포본은 web/public/fonts/)
+/*.ttf
+/*.otf
+/*.woff
+/*.woff2

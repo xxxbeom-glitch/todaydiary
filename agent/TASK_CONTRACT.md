@@ -4,40 +4,38 @@
 
 ## Task
 
-- Task ID: TBD
-- Screen ID: TBD
-- Figma reference: TBD
+- Task ID: (idle)
+- Screen ID: —
+- Figma reference: —
 
 ## Goal
 
-TBD
+활성 작업 없음. 다음 요청 시 이 파일을 교체한다.
 
 ## Required
 
-- TBD
+- —
 
 ## Allowed Scope
 
-- TBD
+- —
 
 ## Forbidden
 
 - 관련 없는 기능, 파일, 아키텍처 변경
-- TBD
 
 ## Verification
 
 - [ ] Compile 또는 Build
 - [ ] Lint
 - [ ] Required tests
-- [ ] Preview 또는 Debug 확인
-- [ ] Figma 차이 확인
+- [ ] Preview 확인
 
 ## Done When
 
-- TBD
+- —
 
 ## Result
 
-- Status: NOT_STARTED
-- Notes: TBD
+- Status: IDLE
+- Notes: 웹 UI 폴리시 배치 완료. SoT는 `agent/design/` · `60-web-ui.mdc`.

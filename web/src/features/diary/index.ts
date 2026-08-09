@@ -2,7 +2,6 @@ export type { DiaryEntry, DiarySavePayload } from './types';
 export {
   newEntryId,
   subscribeDiaryEntries,
-  listenDiaryEntries,
   createDiaryEntry,
   updateDiaryEntry,
   saveDiaryEntry,

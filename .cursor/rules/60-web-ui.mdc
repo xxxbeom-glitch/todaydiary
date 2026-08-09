@@ -1,0 +1,43 @@
+---
+description: 웹 UI 레이아웃·타이포·설정 규칙 (하루기록)
+alwaysApply: false
+globs:
+  - web/src/**/*
+  - web/index.html
+  - agent/design/**/*
+---
+
+# Web UI (todaydiary)
+
+SoT: `agent/design/tokens.md` · `agent/design/rules.md` · `web/src/index.css`
+
+## 폰트
+
+- UI = Pretendard (`--font-sans`) 고정
+- 작성·뷰 본문·날짜 = `--font-prose` (설정값)
+- 글자 크기 설정 → `--font-size-prose`만. UI base size 건드리지 않음
+- 본문에 없는 font-weight 쓰지 말 것 (`font-synthesis: none`이면 폴백으로 Pretendard가 보임)
+
+## 레이아웃
+
+- PC ≥1024: 셸 프레임 + 좌 날짜 레일(104px) + 우 작성/뷰
+- 작성/뷰 PC 좌우 패딩 `--page-pad-x: 88px`
+- 삭제: 우측 하단 투명 아이콘 (카드·그림자·큰 inset 금지)
+- 새 글 `+`: 좌측 하단 dock, 이번 달만
+
+## 피커
+
+- 헤더 월: `MonthPickerModal` — 년·월만
+- 작성일: `DatePickerField` — 일 선택. 선택 = 연한 원형 fill
+- day-picker 오버라이드는 **파일 하단 unlayered** 블록 유지 (기본 blue 방지)
+
+## 설정 저장
+
+- `web/src/lib/preferences.ts` → `localStorage` (`todaydiary.theme|font|fontSize`)
+- Firebase 동기화 없음
+
+## 하지 말 것
+
+- UI에 선택 폰트 적용 / 본문에만 Pretendard 강제
+- 웜 크림·보라 테마 / day-picker 기본 파란 액센트
+- 요청 없는 새 폰트·dependency·추상화

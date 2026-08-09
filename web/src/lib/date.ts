@@ -38,11 +38,6 @@ export function entryInMonth(date: string, monthKey: string): boolean {
   return date.startsWith(`${monthKey}-`);
 }
 
-export function formatCardDate(dateStr: string): string {
-  const [, m, d] = dateStr.split('-').map(Number);
-  return `${m}월 ${d}일`;
-}
-
 /** 본문 상단 날짜 — "2026년 8월 9일 (일)" */
 export function formatEntryDateLabel(dateStr: string): string {
   const [y, m, d] = dateStr.split('-').map(Number);
@@ -60,25 +55,6 @@ export function formatListTileDate(dateStr: string): { dayLabel: string; weekday
   };
 }
 
-/** 좁은 사이드 — "8월" */
-export function formatMonthShort(key: string): string {
-  const { month } = parseYearMonth(key);
-  return `${month}월`;
-}
-
-/** 목록 행 — "8월 9일 (일)" */
-export function formatListDateLabel(dateStr: string): string {
-  const [, m, d] = dateStr.split('-').map(Number);
-  const dt = new Date(Number(dateStr.slice(0, 4)), m - 1, d);
-  return `${m}월 ${d}일 (${WEEKDAYS[dt.getDay()]})`;
-}
-
-export function formatDetailDate(dateStr: string): string {
-  const [y, m, d] = dateStr.split('-').map(Number);
-  const dt = new Date(y, m - 1, d);
-  return `${y}년 ${m}월 ${d}일 ${WEEKDAYS[dt.getDay()]}요일`;
-}
-
 export function shiftMonthKey(key: string, delta: number): string {
   const { year, month } = parseYearMonth(key);
   const d = new Date(year, month - 1 + delta, 1);
@@ -91,11 +67,4 @@ export function collectMonthKeys(dates: string[], current: string): string[] {
   set.add(current);
   set.add(yearMonthKey());
   return [...set].sort();
-}
-
-export function previewBody(body: string, max = 120): string {
-  const t = body.replace(/\s+/g, ' ').trim();
-  if (!t) return '';
-  if (t.length <= max) return t;
-  return `${t.slice(0, max)}…`;
 }
