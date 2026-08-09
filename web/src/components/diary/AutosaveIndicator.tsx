@@ -3,9 +3,9 @@ import { cn } from '../../lib/cn';
 
 const LABEL: Record<AutosaveStatus, string | null> = {
   idle: null,
-  saving: '?? ?',
-  saved: '???',
-  error: '?? ??',
+  saving: '저장 중…',
+  saved: '저장됨',
+  error: '저장 실패',
 };
 
 interface AutosaveIndicatorProps {
