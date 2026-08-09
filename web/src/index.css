@@ -88,6 +88,7 @@
   --radius-doc: 18px;
   --doc-inset: 24px;
   --shell-outer-pad: 12px;
+  --shell-outer-bg: rgb(255 255 255 / 0.55);
   --app-max-width: 430px;
   --app-max-width-desktop: 1024px;
   --app-frame-height-desktop: 768px;
@@ -101,7 +102,7 @@
 
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --color-canvas: color-mix(in srgb, #000 10%, #fff);
+  --color-canvas: #2a2a2e;
   --color-bg: #1c1c1e;
   --color-surface: #2c2c2e;
   --color-surface-muted: #3a3a3c;
@@ -115,6 +116,7 @@
   --color-danger: #ff6b5c;
   --color-danger-soft: #3b2422;
   --color-overlay: rgb(0 0 0 / 0.45);
+  --shell-outer-bg: rgb(255 255 255 / 0.1);
   --shadow-card: 0 1px 3px rgb(0 0 0 / 0.35);
   --shadow-fab: 0 4px 14px rgb(0 0 0 / 0.4);
   --shadow-shell: var(--shadow-shell-x) var(--shadow-shell-y) var(--shadow-shell-blur)
@@ -264,7 +266,7 @@
       padding: var(--shell-outer-pad);
       border: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
       border-radius: calc(var(--radius-shell) + var(--shell-outer-pad));
-      background-color: rgb(255 255 255 / 0.55);
+      background-color: var(--shell-outer-bg);
       box-shadow: var(--shadow-shell);
       transition: box-shadow 120ms ease-out;
     }
