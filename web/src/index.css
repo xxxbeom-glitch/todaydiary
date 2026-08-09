@@ -981,12 +981,6 @@
     background-color: var(--color-surface);
   }
 
-  .app-list-rail__header-right {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-  }
-
   .app-list-rail__scroller {
     overflow-x: auto;
     overflow-y: hidden;

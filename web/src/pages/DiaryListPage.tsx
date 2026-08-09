@@ -1,7 +1,6 @@
 ﻿import { useEffect, useMemo, useRef, useState } from 'react';
 import type { DiaryEntry } from '../features/diary';
 import { DiaryListItem } from '../components/diary/DiaryListItem';
-import { FloatingWriteButton } from '../components/diary/FloatingWriteButton';
 import { MonthPickerModal } from '../components/diary/MonthPickerModal';
 import { LoadingView } from '../components/ui/LoadingView';
 import { Header } from '../components/layout/Header';
@@ -11,7 +10,6 @@ import {
   collectMonthKeys,
   entryInMonth,
   formatMonthTitle,
-  shiftMonthKey,
   yearMonthKey,
 } from '../lib/date';
 
@@ -65,9 +63,7 @@ export function DiaryListPage({
     [entries, monthKey],
   );
 
-  const canGoNextMonth = monthOptions.includes(shiftMonthKey(monthKey, 1));
   const showCreateTile = embedded && monthKey === yearMonthKey();
-  const showCreateFab = rail && monthKey === yearMonthKey();
 
   useEffect(() => {
     if (!embedded) {
@@ -119,11 +115,20 @@ export function DiaryListPage({
           <Header
             className="app-header--month"
             left={
-              <IconButton
-                label="이전 달"
-                onClick={() => onMonthChange(shiftMonthKey(monthKey, -1))}
-              >
-                ‹
+              <IconButton label="새 글 작성" onClick={onCreate}>
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M14.5 2.5a2.121 2.121 0 0 1 3 3L6 17l-4 1 1-4L14.5 2.5z" />
+                </svg>
               </IconButton>
             }
             center={
@@ -137,20 +142,11 @@ export function DiaryListPage({
               </button>
             }
             right={
-              <div className="app-list-rail__header-right">
-                <IconButton
-                  label="다음 달"
-                  disabled={!canGoNextMonth}
-                  onClick={() => onMonthChange(shiftMonthKey(monthKey, 1))}
-                >
-                  ›
+              onOpenSettings ? (
+                <IconButton label="설정" onClick={onOpenSettings}>
+                  <SettingsIcon />
                 </IconButton>
-                {onOpenSettings && (
-                  <IconButton label="설정" onClick={onOpenSettings}>
-                    <SettingsIcon />
-                  </IconButton>
-                )}
-              </div>
+              ) : undefined
             }
           />
         )}
@@ -158,8 +154,6 @@ export function DiaryListPage({
         <div className="app-list-rail__scroller">
           {loading ? <LoadingView label="불러오는 중…" /> : listItems}
         </div>
-
-        {showCreateFab && <FloatingWriteButton onClick={onCreate} />}
 
         {pickerOpen && (
           <MonthPickerModal
