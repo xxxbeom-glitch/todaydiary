@@ -3,6 +3,9 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.tsx';
 import { ErrorBoundary } from './components/ErrorBoundary.tsx';
+import { initPreferences } from './lib/preferences';
+
+initPreferences();
 
 const rootEl = document.getElementById('root');
 if (!rootEl) {

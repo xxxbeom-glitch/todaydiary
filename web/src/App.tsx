@@ -8,6 +8,9 @@ import {
 } from './features/diary';
 import { AppShell } from './components/layout/AppShell';
 import { DesktopTopBar } from './components/layout/DesktopTopBar';
+import { FloatingDeleteButton } from './components/diary/FloatingDeleteButton';
+import { MonthPickerModal } from './components/diary/MonthPickerModal';
+import { SettingsPanel } from './components/settings/SettingsPanel';
 import { ConfirmDialog } from './components/ui/ConfirmDialog';
 import { LoadingView } from './components/ui/LoadingView';
 import { LoginPage } from './pages/LoginPage';
@@ -15,7 +18,14 @@ import { DiaryListPage } from './pages/DiaryListPage';
 import { EditorPage } from './pages/EditorPage';
 import { DetailPage } from './pages/DetailPage';
 import { todayISO, yearMonthKey, shiftMonthKey, collectMonthKeys } from './lib/date';
-import { MonthPickerModal } from './components/diary/MonthPickerModal';
+import {
+  applyFont,
+  applyTheme,
+  readStoredFont,
+  readStoredTheme,
+  type AppFont,
+  type AppTheme,
+} from './lib/preferences';
 import { useIsDesktopLayout } from './hooks/useMediaQuery';
 
 type Screen = 'list' | 'editor' | 'detail';
@@ -29,6 +39,7 @@ export default function App() {
     error: authError,
     setError: setAuthError,
     loginWithGoogle,
+    logout,
   } = useAuth();
   const uid = user?.uid;
   const { entries, ready, error: diaryError, setError: setDiaryError } = useDiaries(uid);
@@ -42,6 +53,9 @@ export default function App() {
   const [loginPending, setLoginPending] = useState(false);
   const [monthPickerOpen, setMonthPickerOpen] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [theme, setTheme] = useState<AppTheme>(() => readStoredTheme());
+  const [font, setFont] = useState<AppFont>(() => readStoredFont());
   const flushRef = useRef<FlushFn | null>(null);
 
   const uiError = authError ?? diaryError;
@@ -55,6 +69,21 @@ export default function App() {
       setLoginPending(false);
     }
   }, [loginWithGoogle, setAuthError]);
+
+  const handleLogout = useCallback(async () => {
+    setSettingsOpen(false);
+    await logout();
+  }, [logout]);
+
+  const handleThemeChange = useCallback((next: AppTheme) => {
+    applyTheme(next);
+    setTheme(next);
+  }, []);
+
+  const handleFontChange = useCallback((next: AppFont) => {
+    applyFont(next);
+    setFont(next);
+  }, []);
 
   const openCreate = useCallback(() => {
     setSelected(null);
@@ -225,6 +254,41 @@ export default function App() {
     </>
   );
 
+  const dialogs = (
+    <>
+      {monthPickerOpen && (
+        <MonthPickerModal
+          value={monthKey}
+          months={monthOptions}
+          onChange={setMonthKey}
+          onClose={() => setMonthPickerOpen(false)}
+        />
+      )}
+      {deleteConfirmOpen && (
+        <ConfirmDialog
+          title="이 일기를 삭제할까요?"
+          description="삭제하면 되돌릴 수 없습니다."
+          confirmLabel="삭제"
+          cancelLabel="취소"
+          danger
+          onConfirm={() => void confirmDelete()}
+          onCancel={() => setDeleteConfirmOpen(false)}
+        />
+      )}
+      {settingsOpen && (
+        <SettingsPanel
+          user={user}
+          theme={theme}
+          font={font}
+          onThemeChange={handleThemeChange}
+          onFontChange={handleFontChange}
+          onLogout={() => void handleLogout()}
+          onClose={() => setSettingsOpen(false)}
+        />
+      )}
+    </>
+  );
+
   return (
     <AppShell framed={isDesktop} className={isDesktop ? 'app-shell--fill' : undefined}>
       {uiError && (screen === 'list' || isDesktop) && (
@@ -254,47 +318,24 @@ export default function App() {
                 onNextMonth={() => setMonthKey((k) => shiftMonthKey(k, 1))}
                 onOpenMonthPicker={() => setMonthPickerOpen(true)}
                 canGoNextMonth={canGoNextMonth}
-                canDelete={canDelete}
-                onDelete={requestDelete}
+                onOpenSettings={() => setSettingsOpen(true)}
               />
-              <div className="app-doc-frame">{mainPane}</div>
+              <div className="app-doc-frame">
+                {mainPane}
+                {canDelete && <FloatingDeleteButton onClick={requestDelete} />}
+              </div>
             </div>
           </div>
-          {monthPickerOpen && (
-            <MonthPickerModal
-              value={monthKey}
-              months={monthOptions}
-              onChange={setMonthKey}
-              onClose={() => setMonthPickerOpen(false)}
-            />
-          )}
-          {deleteConfirmOpen && (
-            <ConfirmDialog
-              title="이 일기를 삭제할까요?"
-              description="삭제하면 되돌릴 수 없습니다."
-              confirmLabel="삭제"
-              cancelLabel="취소"
-              danger
-              onConfirm={() => void confirmDelete()}
-              onCancel={() => setDeleteConfirmOpen(false)}
-            />
-          )}
+          {dialogs}
         </div>
       ) : (
         <>
           {screen === 'list' && list}
-          {mainPane}
-          {deleteConfirmOpen && (
-            <ConfirmDialog
-              title="이 일기를 삭제할까요?"
-              description="삭제하면 되돌릴 수 없습니다."
-              confirmLabel="삭제"
-              cancelLabel="취소"
-              danger
-              onConfirm={() => void confirmDelete()}
-              onCancel={() => setDeleteConfirmOpen(false)}
-            />
-          )}
+          <div className="app-mobile-pane">
+            {mainPane}
+            {canDelete && <FloatingDeleteButton onClick={requestDelete} />}
+          </div>
+          {dialogs}
         </>
       )}
     </AppShell>
