@@ -90,7 +90,7 @@ export function DiaryListPage({
     <div
       className={
         embedded
-          ? `app-list-pane${canScrollMore ? ' app-list-pane--more' : ''}`
+          ? `app-list-pane${canScrollMore ? ' app-list-pane--more' : ''}${showCreateTile ? ' app-list-pane--create' : ''}`
           : 'relative min-h-dvh pb-[var(--page-pad-bottom)]'
       }
     >
@@ -135,13 +135,11 @@ export function DiaryListPage({
         {loading ? (
           <LoadingView label="불러오는 중…" />
         ) : embedded ? (
-          <ul className="app-list app-list--tiles">
-            {monthEntries.length === 0 && !showCreateTile ? (
-              <li>
-                <p className="app-list-pane__empty type-caption">글 없음</p>
-              </li>
-            ) : (
-              monthEntries.map((entry) => (
+          monthEntries.length === 0 ? (
+            <p className="app-list-pane__empty type-caption">글 없음</p>
+          ) : (
+            <ul className="app-list app-list--tiles">
+              {monthEntries.map((entry) => (
                 <li key={entry.id || entry.date}>
                   <DiaryListItem
                     entry={entry}
@@ -149,28 +147,9 @@ export function DiaryListPage({
                     onClick={() => onSelect(entry)}
                   />
                 </li>
-              ))
-            )}
-            {showCreateTile && (
-              <li>
-                <button
-                  type="button"
-                  className="app-list-item app-list-item--create"
-                  aria-label="새 글 작성"
-                  onClick={onCreate}
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <path
-                      d="M12 5v14M5 12h14"
-                      stroke="currentColor"
-                      strokeWidth="1.8"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                </button>
-              </li>
-            )}
-          </ul>
+              ))}
+            </ul>
+          )
         ) : monthEntries.length === 0 ? (
           <EmptyState
             title="이 달에는 아직 글이 없어요"
@@ -192,6 +171,26 @@ export function DiaryListPage({
       </main>
 
       {embedded && <div className="app-list-pane__fade" aria-hidden="true" />}
+
+      {showCreateTile && (
+        <div className="app-list-pane__dock">
+          <button
+            type="button"
+            className="app-list-item app-list-item--create"
+            aria-label="새 글 작성"
+            onClick={onCreate}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M12 5v14M5 12h14"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+              />
+            </svg>
+          </button>
+        </div>
+      )}
 
       {!embedded && <FloatingWriteButton onClick={onCreate} />}
 

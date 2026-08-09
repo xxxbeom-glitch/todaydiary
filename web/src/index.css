@@ -445,13 +445,23 @@
       flex-direction: column;
       align-items: center;
       overflow: auto;
-      padding: 12px 0 24px;
+      padding: 12px 0 16px;
       scrollbar-width: none;
       -ms-overflow-style: none;
     }
 
     .app-list-pane__body::-webkit-scrollbar {
       display: none;
+    }
+
+    .app-list-pane__dock {
+      display: flex;
+      flex-shrink: 0;
+      width: 100%;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 0 16px;
+      background-color: var(--color-bg);
     }
 
     .app-list-pane__fade {
@@ -468,6 +478,10 @@
         var(--color-bg)
       );
       transition: opacity 160ms ease;
+    }
+
+    .app-list-pane--create .app-list-pane__fade {
+      bottom: 88px;
     }
 
     .app-list-pane--more .app-list-pane__fade {
