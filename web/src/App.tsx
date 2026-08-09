@@ -8,6 +8,7 @@ import {
 } from './features/diary';
 import { AppShell } from './components/layout/AppShell';
 import { DesktopTopBar } from './components/layout/DesktopTopBar';
+import { ConfirmDialog } from './components/ui/ConfirmDialog';
 import { LoadingView } from './components/ui/LoadingView';
 import { LoginPage } from './pages/LoginPage';
 import { DiaryListPage } from './pages/DiaryListPage';
@@ -40,6 +41,7 @@ export default function App() {
   const [forceBlank, setForceBlank] = useState(false);
   const [loginPending, setLoginPending] = useState(false);
   const [monthPickerOpen, setMonthPickerOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const flushRef = useRef<FlushFn | null>(null);
 
   const uiError = authError ?? diaryError;
@@ -97,7 +99,7 @@ export default function App() {
     if (screen === 'list') openCreate();
   }, [user, isDesktop, screen, openCreate]);
 
-  const handleDelete = useCallback(async () => {
+  const requestDelete = useCallback(() => {
     if (!uid) return;
     const target =
       screen === 'detail' && selected
@@ -108,7 +110,21 @@ export default function App() {
             ? { id: activeId, date: editorDate }
             : null;
     if (!target?.id) return;
-    if (!window.confirm('이 일기를 삭제할까요?')) return;
+    setDeleteConfirmOpen(true);
+  }, [uid, screen, selected, forceBlank, activeId, editorDate]);
+
+  const confirmDelete = useCallback(async () => {
+    if (!uid) return;
+    const target =
+      screen === 'detail' && selected
+        ? selected
+        : screen === 'editor' && !forceBlank && selected
+          ? selected
+          : screen === 'editor' && !forceBlank && activeId
+            ? { id: activeId, date: editorDate }
+            : null;
+    setDeleteConfirmOpen(false);
+    if (!target?.id) return;
     try {
       await deleteDiaryEntry(uid, target.id, target.date);
       closePane();
@@ -239,7 +255,7 @@ export default function App() {
                 onOpenMonthPicker={() => setMonthPickerOpen(true)}
                 canGoNextMonth={canGoNextMonth}
                 canDelete={canDelete}
-                onDelete={() => void handleDelete()}
+                onDelete={requestDelete}
               />
               <div className="app-doc-frame">{mainPane}</div>
             </div>
@@ -252,11 +268,33 @@ export default function App() {
               onClose={() => setMonthPickerOpen(false)}
             />
           )}
+          {deleteConfirmOpen && (
+            <ConfirmDialog
+              title="이 일기를 삭제할까요?"
+              description="삭제하면 되돌릴 수 없습니다."
+              confirmLabel="삭제"
+              cancelLabel="취소"
+              danger
+              onConfirm={() => void confirmDelete()}
+              onCancel={() => setDeleteConfirmOpen(false)}
+            />
+          )}
         </div>
       ) : (
         <>
           {screen === 'list' && list}
           {mainPane}
+          {deleteConfirmOpen && (
+            <ConfirmDialog
+              title="이 일기를 삭제할까요?"
+              description="삭제하면 되돌릴 수 없습니다."
+              confirmLabel="삭제"
+              cancelLabel="취소"
+              danger
+              onConfirm={() => void confirmDelete()}
+              onCancel={() => setDeleteConfirmOpen(false)}
+            />
+          )}
         </>
       )}
     </AppShell>

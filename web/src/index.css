@@ -763,6 +763,49 @@
     background-color: var(--color-surface-muted);
   }
 
+  .app-btn-danger {
+    border: 1px solid color-mix(in srgb, var(--color-danger) 35%, var(--color-border));
+    background-color: var(--color-danger-soft);
+    color: var(--color-danger);
+  }
+
+  .app-btn-danger:not(:disabled):active {
+    background-color: color-mix(in srgb, var(--color-danger-soft) 70%, var(--color-danger));
+  }
+
+  .app-confirm {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background-color: var(--color-overlay);
+    backdrop-filter: blur(2px);
+  }
+
+  .app-confirm__panel {
+    width: min(100%, 360px);
+    border: 1px solid var(--color-border);
+    border-radius: 18px;
+    background-color: var(--color-surface);
+    padding: 22px 20px 18px;
+    box-shadow: var(--shadow-doc);
+  }
+
+  .app-confirm__desc {
+    margin: 10px 0 0;
+    color: var(--color-text-secondary);
+  }
+
+  .app-confirm__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 20px;
+  }
+
   .app-icon-btn {
     display: flex;
     height: 40px;
