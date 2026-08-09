@@ -39,7 +39,7 @@
   --app-frame-height-desktop: 768px;
   --app-frame-ratio: 1024 / 768;
   --frame-inset: 24px;
-  --desktop-list-width: 340px;
+  --desktop-list-width: 88px;
   --page-pad-x: 18px;
   --page-pad-top: 20px;
   --page-pad-bottom: 96px;
@@ -349,10 +349,6 @@
       box-shadow: none !important;
     }
 
-    .app-list-pane .app-header {
-      border-bottom: 0;
-    }
-
     .app-desktop-empty {
       display: flex;
       min-height: 100%;
@@ -365,12 +361,66 @@
     }
 
     .app-list-pane {
+      display: flex;
       min-height: 100%;
-      padding-bottom: 96px;
+      flex-direction: column;
+      align-items: center;
+      padding: 8px 0 16px;
     }
 
-    .app-list-pane .app-page {
-      padding-bottom: 24px;
+    .app-list-pane__body {
+      display: flex;
+      flex: 1;
+      width: 100%;
+      flex-direction: column;
+      align-items: center;
+      overflow: auto;
+      padding: 8px 0;
+    }
+
+    .app-list-pane__empty {
+      margin: 24px 4px;
+      text-align: center;
+      color: var(--color-text-muted);
+    }
+
+    .app-month-rail {
+      display: flex;
+      width: 100%;
+      flex-shrink: 0;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      padding: 8px 0 12px;
+    }
+
+    .app-month-rail__nav {
+      display: flex;
+      height: 28px;
+      width: 28px;
+      align-items: center;
+      justify-content: center;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--color-text-muted);
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .app-month-rail__nav:hover {
+      background-color: var(--color-surface-muted);
+      color: var(--color-text-primary);
+    }
+
+    .app-month-rail__label {
+      border: 0;
+      background: transparent;
+      padding: 4px 0;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      cursor: pointer;
     }
 
     .app-pane {
@@ -389,17 +439,6 @@
       position: absolute;
       right: 18px;
       bottom: 20px;
-    }
-
-    .app-list-item {
-      padding-left: 10px;
-      padding-right: 10px;
-      border-radius: 10px;
-      border-bottom: 0;
-    }
-
-    .app-list-item--selected {
-      background-color: var(--color-accent-soft);
     }
   }
 
@@ -427,49 +466,66 @@
     border: 1px solid var(--color-border);
   }
 
-  /* Diary list — simple date rows (not cards) */
+  /* Diary list — square date tiles */
   .app-list {
     display: flex;
     flex-direction: column;
-    gap: 0;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .app-list--tiles-mobile {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 0 4px;
   }
 
   .app-list-item {
     display: flex;
+    width: 64px;
+    height: 64px;
+    flex-direction: column;
     align-items: center;
-    min-height: 44px;
-    padding: 12px 4px;
+    justify-content: center;
+    gap: 2px;
     border: 0;
-    border-radius: 0;
-    border-bottom: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent);
+    border-radius: 14px;
     background: transparent;
     box-shadow: none;
     color: var(--color-text-primary);
-    text-align: left;
+    cursor: pointer;
     transition: background-color 0.15s ease, color 0.15s ease;
-  }
-
-  .app-list-item:last-child {
-    border-bottom: 0;
   }
 
   .app-list-item:active {
     background-color: var(--color-surface-muted);
   }
 
-  .app-list-item__label {
+  .app-list-item__day {
     font-size: 15px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .app-list-item__weekday {
+    font-size: 10px;
     font-weight: 500;
-    line-height: 1.4;
-    color: var(--color-text-primary);
+    line-height: 1.2;
+    color: var(--color-text-muted);
   }
 
   .app-list-item--selected {
-    background-color: var(--color-accent-soft);
+    background-color: var(--color-surface);
   }
 
-  .app-list-item--selected .app-list-item__label {
-    font-weight: 600;
+  .app-list-item--selected .app-list-item__weekday {
+    color: var(--color-text-secondary);
   }
 
   /* Header */

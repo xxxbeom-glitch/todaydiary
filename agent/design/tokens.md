@@ -48,7 +48,7 @@
 | `--app-frame-height-desktop` | `768px` 상한 |
 | `--app-frame-ratio` | `1024 / 768` — 뷰포트에 맞게 축소 |
 | `--frame-inset` | `24px` |
-| `--desktop-list-width` | `340px` |
+| `--desktop-list-width` | `88px` — 날짜 타일 레일 |
 | `--shadow-shell` | `0 8px 28px rgb(26 26 26 / 0.08)` |
 | `--shadow-doc` | `0 4px 24px rgb(26 26 26 / 0.06)` — 안쪽 문서 프레임 |
 | `--radius-doc` | `18px` |

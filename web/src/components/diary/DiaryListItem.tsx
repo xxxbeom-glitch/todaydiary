@@ -1,5 +1,5 @@
 import type { DiaryEntry } from '../../features/diary';
-import { formatListDateLabel } from '../../lib/date';
+import { formatListTileDate } from '../../lib/date';
 
 interface DiaryListItemProps {
   entry: DiaryEntry;
@@ -8,17 +8,18 @@ interface DiaryListItemProps {
 }
 
 export function DiaryListItem({ entry, onClick, selected = false }: DiaryListItemProps) {
-  const label = formatListDateLabel(entry.date);
+  const { dayLabel, weekdayLabel } = formatListTileDate(entry.date);
 
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`app-list-item w-full${selected ? ' app-list-item--selected' : ''}`}
+      className={`app-list-item${selected ? ' app-list-item--selected' : ''}`}
       aria-current={selected ? 'true' : undefined}
-      aria-label={`${label} 일기 보기`}
+      aria-label={`${dayLabel} ${weekdayLabel} 일기 보기`}
     >
-      <span className="app-list-item__label">{label}</span>
+      <span className="app-list-item__day">{dayLabel}</span>
+      <span className="app-list-item__weekday">{weekdayLabel}</span>
     </button>
   );
 }

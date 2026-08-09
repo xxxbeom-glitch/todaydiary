@@ -44,6 +44,22 @@ export function formatEntryDateLabel(dateStr: string): string {
   return `${y}년 ${m}월 ${d}일 (${WEEKDAYS[dt.getDay()]})`;
 }
 
+/** 목록 타일 — "9일" / "일요일" */
+export function formatListTileDate(dateStr: string): { dayLabel: string; weekdayLabel: string } {
+  const [, , d] = dateStr.split('-').map(Number);
+  const dt = new Date(Number(dateStr.slice(0, 4)), Number(dateStr.slice(5, 7)) - 1, d);
+  return {
+    dayLabel: `${d}일`,
+    weekdayLabel: `${WEEKDAYS[dt.getDay()]}요일`,
+  };
+}
+
+/** 좁은 사이드 — "8월" */
+export function formatMonthShort(key: string): string {
+  const { month } = parseYearMonth(key);
+  return `${month}월`;
+}
+
 /** 목록 행 — "8월 9일 (일)" */
 export function formatListDateLabel(dateStr: string): string {
   const [, m, d] = dateStr.split('-').map(Number);
