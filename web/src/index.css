@@ -791,7 +791,7 @@
     font-size: var(--font-size-prose);
     font-weight: var(--font-weight-regular);
     font-synthesis: none;
-    line-height: 1.8;
+    line-height: 2;
     letter-spacing: 0.01em;
     color: var(--color-text-primary);
     outline: none;
@@ -1340,7 +1340,7 @@
     font-size: var(--font-size-prose);
     font-weight: var(--font-weight-regular);
     font-synthesis: none;
-    line-height: 1.8;
+    line-height: 2;
     letter-spacing: 0.01em;
     color: var(--color-text-primary);
     background: transparent;
