@@ -247,6 +247,7 @@
     .app-desktop-split__list {
       position: relative;
       overflow: auto;
+      border: 0;
       border-right: 0;
       background-color: var(--color-bg);
     }
@@ -256,6 +257,8 @@
       display: flex;
       min-width: 0;
       overflow: hidden;
+      border: 0;
+      border-left: 0;
       background-color: var(--color-bg);
       padding: var(--doc-inset);
       padding-left: 12px;
@@ -269,7 +272,7 @@
       min-height: 0;
       flex-direction: column;
       overflow: auto;
-      border: 1px solid color-mix(in srgb, var(--color-border) 85%, transparent);
+      border: 0;
       border-radius: var(--radius-doc);
       background-color: var(--color-surface);
       box-shadow: var(--shadow-doc);
