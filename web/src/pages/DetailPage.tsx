@@ -1,5 +1,4 @@
-﻿import { useState } from 'react';
-import type { DiaryEntry } from '../features/diary';
+﻿import type { DiaryEntry } from '../features/diary';
 import { Header } from '../components/layout/Header';
 import { IconButton } from '../components/ui/IconButton';
 import { formatDetailDate } from '../lib/date';
@@ -8,7 +7,7 @@ interface DetailPageProps {
   entry: DiaryEntry;
   onBack: () => void;
   onEdit: () => void;
-  onDelete: () => void;
+  /** PC 분할 패널 — 닫기/more 없음, 더블클릭으로 수정 */
   embedded?: boolean;
 }
 
@@ -16,92 +15,46 @@ export function DetailPage({
   entry,
   onBack,
   onEdit,
-  onDelete,
   embedded = false,
 }: DetailPageProps) {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [confirmDelete, setConfirmDelete] = useState(false);
-
-  const handleDelete = () => {
-    if (!confirmDelete) {
-      setConfirmDelete(true);
-      return;
-    }
-    onDelete();
-    setMenuOpen(false);
-  };
-
   return (
     <div className={embedded ? 'app-pane' : 'flex min-h-dvh flex-col'}>
       <Header
         left={
-          <IconButton label={embedded ? '선택 해제' : '뒤로'} onClick={onBack}>
-            {embedded ? '✕' : '←'}
-          </IconButton>
+          embedded ? (
+            <span className="w-10" aria-hidden="true" />
+          ) : (
+            <IconButton label="뒤로" onClick={onBack}>
+              ←
+            </IconButton>
+          )
         }
         center={
           <span className="type-body-strong text-[14px]">{formatDetailDate(entry.date)}</span>
         }
-        right={
-          <IconButton label="더보기" onClick={() => setMenuOpen((v) => !v)}>
-            ⋯
-          </IconButton>
-        }
+        right={<span className="w-10" aria-hidden="true" />}
       />
 
       <article className="app-page app-page-prose flex-1">
-        <div className="app-read-body">
+        <div
+          className="app-read-body app-read-body--editable"
+          role="button"
+          tabIndex={0}
+          title="더블클릭하여 수정"
+          aria-label="일기 본문, 더블클릭하면 수정"
+          onDoubleClick={onEdit}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              onEdit();
+            }
+          }}
+        >
           {entry.body.trim() || (
             <span style={{ color: 'var(--color-text-muted)' }}>내용이 없는 일기입니다.</span>
           )}
         </div>
       </article>
-
-      {menuOpen && (
-        <>
-          <button
-            type="button"
-            className={embedded ? 'absolute inset-0 z-40' : 'fixed inset-0 z-40'}
-            style={{ backgroundColor: 'var(--color-overlay)' }}
-            aria-label="메뉴 닫기"
-            onClick={() => {
-              setMenuOpen(false);
-              setConfirmDelete(false);
-            }}
-          />
-          <div
-            className={
-              embedded
-                ? 'absolute right-4 top-14 z-50 w-44 overflow-hidden border border-[var(--color-border)]'
-                : 'fixed right-[max(18px,calc(50%-215px))] top-14 z-50 w-44 overflow-hidden border border-[var(--color-border)]'
-            }
-            style={{
-              borderRadius: 'var(--radius-card)',
-              backgroundColor: 'var(--color-surface)',
-              boxShadow: 'var(--shadow-card)',
-            }}
-          >
-            <button
-              type="button"
-              className="type-body block w-full px-4 py-3.5 text-left active:bg-[var(--color-surface-muted)]"
-              onClick={() => {
-                setMenuOpen(false);
-                onEdit();
-              }}
-            >
-              수정
-            </button>
-            <button
-              type="button"
-              className="type-body block w-full border-t border-[var(--color-border)] px-4 py-3.5 text-left active:bg-[var(--color-danger-soft)]"
-              style={{ color: 'var(--color-danger)' }}
-              onClick={handleDelete}
-            >
-              {confirmDelete ? '정말 삭제할까요?' : '삭제'}
-            </button>
-          </div>
-        </>
-      )}
     </div>
   );
 }

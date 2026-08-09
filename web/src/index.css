@@ -480,6 +480,16 @@
     padding: 8px 0;
   }
 
+  .app-read-body--editable {
+    cursor: text;
+    border-radius: 8px;
+    outline: none;
+  }
+
+  .app-read-body--editable:focus-visible {
+    box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--color-accent) 35%, transparent);
+  }
+
   /* Spinner */
   .app-spinner {
     height: 20px;

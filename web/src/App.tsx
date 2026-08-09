@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAuth } from './features/auth';
 import {
-  deleteDiaryEntry,
   newEntryId,
   useDiaries,
   type DiaryEntry,
@@ -93,16 +92,6 @@ export default function App() {
     if (screen === 'list') openCreate();
   }, [user, isDesktop, screen, openCreate]);
 
-  const handleDelete = useCallback(async () => {
-    if (!uid || !selected) return;
-    try {
-      await deleteDiaryEntry(uid, selected.id, selected.date);
-      closePane();
-    } catch (e) {
-      setDiaryError(e instanceof Error ? e.message : '삭제에 실패했습니다.');
-    }
-  }, [uid, selected, setDiaryError, closePane]);
-
   const editorInitialBody = useMemo(() => {
     if (forceBlank) return '';
     return selected?.body ?? '';
@@ -161,7 +150,6 @@ export default function App() {
           embedded={isDesktop}
           onBack={() => closePane()}
           onEdit={() => openEdit(liveSelected)}
-          onDelete={() => void handleDelete()}
         />
       )}
 
